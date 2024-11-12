@@ -1,3 +1,9 @@
+import Header from "@/components/Header";
+
 export default function Home() {
-  return <></>;
+  return (
+    <div className="flex flex-col">
+      <Header />
+    </div>
+  );
 }

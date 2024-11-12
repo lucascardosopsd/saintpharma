@@ -19,7 +19,7 @@
     --accent-foreground: 196 0% 15%;
     --destructive: 0 50% 50%;
     --destructive-foreground: 196 0% 100%;
-    --border: 196 20% 82%;
+    --border: 196 100% 50%;
     --input: 196 20% 50%;
     --ring: 196 100% 50%;
     --radius: 0.5rem;
@@ -53,5 +53,9 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .container {
+    @apply w-full max-w-[800px] mx-auto;
   }
 }
