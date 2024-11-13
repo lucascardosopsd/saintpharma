@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { Menu, User2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Sheet,
@@ -14,8 +14,17 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { userMenuOptions } from "@/constants/userMenuOptions";
 import { usePathname } from "next/navigation";
+import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
+import { User } from "@clerk/nextjs/server";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useState } from "react";
 
-const Header = () => {
+interface HeaderProps {
+  user: User | null;
+}
+
+const Header = ({ user }: HeaderProps) => {
+  const [open, onOpenChange] = useState(false);
   const pathname = usePathname();
 
   const currentPath =
@@ -26,7 +35,7 @@ const Header = () => {
       <div className="container flex items-center justify-between p-5">
         <Logo />
 
-        <Sheet>
+        <Sheet open={open} onOpenChange={onOpenChange}>
           <SheetTrigger>
             <Button variant="outline" size="icon" className="p-1" asChild>
               <Menu className="text-primary" />
@@ -34,13 +43,34 @@ const Header = () => {
           </SheetTrigger>
           <SheetContent className="w-full">
             <SheetHeader className="border-b">
-              <SheetTitle className="border-none text-start">Menu</SheetTitle>
+              <SheetTitle className="pb-2">
+                <SignedOut>
+                  <Link href="/sign-in" className="flex items-center gap-2">
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full border">
+                      <User2Icon />
+                    </div>
+
+                    <p className="font-normal">Entre com sua conta</p>
+                  </Link>
+                </SignedOut>
+
+                <SignedIn>
+                  <div className="flex items-center gap-2 font-normal">
+                    <Avatar>
+                      <AvatarImage src={user?.imageUrl} />
+                      <AvatarFallback></AvatarFallback>
+                    </Avatar>
+
+                    <p className="text-primary">{user?.firstName}</p>
+                  </div>
+                </SignedIn>
+              </SheetTitle>
             </SheetHeader>
 
-            <div className="flex flex-col items-center justify-between h-full py-5">
+            <div className="flex flex-col items-center justify-between h-full pb-10">
               <div></div>
 
-              <div className="flex flex-col items-center justify-center gap-5">
+              <div className="flex flex-col items-center justify-center gap-5 h-full">
                 {userMenuOptions.map((option, index) => (
                   <Link
                     key={index}
@@ -58,9 +88,13 @@ const Header = () => {
                 ))}
               </div>
 
-              <Link href="/">
-                <p className="text-4xl font-semibold">Sair</p>
-              </Link>
+              <SignedIn>
+                <SignOutButton redirectUrl="/">
+                  <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                    <p className="text-4xl font-semibold">Sair</p>
+                  </Button>
+                </SignOutButton>
+              </SignedIn>
             </div>
           </SheetContent>
         </Sheet>
