@@ -31,8 +31,8 @@ const Header = ({ user }: HeaderProps) => {
     pathname.split("?").length > 0 ? pathname.split("?")[0] : pathname;
 
   return (
-    <div className="border-b border-border">
-      <div className="container flex items-center justify-between p-5">
+    <div className="border-b border-border ">
+      <div className="container flex items-center justify-between p-5 h-[8svh]">
         <Logo />
 
         <Sheet open={open} onOpenChange={onOpenChange}>
