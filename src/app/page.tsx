@@ -1,12 +1,12 @@
 import Header from "@/components/Header";
-import { currentUser } from "@clerk/nextjs/server";
+import { useClerkUser } from "@/hooks/clerkUser";
 
 export default async function Home() {
-  const user = await currentUser();
+  const user = await useClerkUser();
 
   return (
     <div className="flex flex-col">
-      <Header user={JSON.parse(JSON.stringify(user))} />
+      <Header user={user} />
     </div>
   );
 }
