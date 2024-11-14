@@ -55,6 +55,26 @@
     @apply bg-background text-foreground;
   }
 
+  /* width */
+  ::-webkit-scrollbar {
+    width: 15px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #ffffff;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/75;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/50;
+  }
+
   .container {
     @apply w-full max-w-[800px] mx-auto;
   }
