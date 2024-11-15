@@ -6,15 +6,28 @@ export const CourseType = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "banner",
+      title: "Capa",
+      type: "image",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: "name",
       title: "Nome",
       type: "string",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "slug",
       title: "Abreviação",
       type: "slug",
       hidden: true,
+      options: {
+        source: "title",
+        maxLength: 200,
+        slugify: (input) =>
+          input.toLowerCase().replace(/\s+/g, "-").slice(0, 200),
+      },
     }),
 
     defineField({
@@ -22,12 +35,14 @@ export const CourseType = defineType({
       title: "Pontuação por conclusão",
       type: "number",
       initialValue: 100,
+      validation: (rule) => rule.required(),
     }),
 
     defineField({
       name: "content",
       title: "Conteúdo do Curso",
       type: "array",
+      validation: (rule) => rule.required(),
       of: [
         {
           type: "block",
@@ -48,11 +63,13 @@ export const CourseType = defineType({
       name: "workload",
       title: "Carga horária",
       type: "number",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "description",
       title: "Descrição no certificado",
       type: "text",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "premiumPoints",
@@ -63,6 +80,7 @@ export const CourseType = defineType({
       name: "quiz",
       title: "Quiz",
       type: "reference",
+      validation: (rule) => rule.required(),
       to: [{ type: "quiz" }],
     }),
   ],
