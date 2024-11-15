@@ -9,11 +9,13 @@ export const questionGroupType = defineType({
       name: "question",
       title: "Pergunta",
       type: "text",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "answers",
       title: "Respostas",
       type: "array",
+      validation: (rule) => rule.required(),
       of: [
         defineArrayMember({
           name: "options",
