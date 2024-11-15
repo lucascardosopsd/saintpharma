@@ -76,6 +76,6 @@
   }
 
   .container {
-    @apply w-full max-w-[800px] mx-auto;
+    @apply w-full max-w-[1200px] mx-auto m-0;
   }
 }

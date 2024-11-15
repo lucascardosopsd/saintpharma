@@ -53,8 +53,29 @@ export const CourseType = defineType({
         {
           type: "image",
         },
+
         {
-          type: "file",
+          type: "object",
+          name: "youtubeUrl",
+          title: "Vídeo do youtube",
+          fields: [
+            {
+              name: "url",
+              title: "URL",
+              type: "url",
+              validation: (Rule) =>
+                Rule.uri({
+                  scheme: ["https"],
+                  // @ts-ignore
+                }).regex(
+                  /^(https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]{11})$/,
+                  {
+                    name: "youtube",
+                    message: "Por favor, insira um link válido do YouTube.",
+                  }
+                ),
+            },
+          ],
         },
       ],
     }),

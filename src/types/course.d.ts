@@ -10,7 +10,7 @@ export type CourseProps = {
   name: string;
   slug: string;
   points: number;
-  content: string[];
+  content: TypedObject | TypedObject[];
   workload: number;
   description: string;
   premiumPoints: number;
