@@ -4,19 +4,23 @@ import { Input } from "./ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-const SearchSection = () => {
+type SearchSectionProps = {
+  defaultValue?: string;
+};
+
+const SearchSection = ({ defaultValue }: SearchSectionProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState(defaultValue || "");
 
   const handleSearch = () => {
-    if (!title.length) {
+    if (!name.length) {
       router.replace("/");
       return;
     }
 
     const params = new URLSearchParams(searchParams);
-    params.set("title", title);
+    params.set("name", name);
     router.replace(`/?${params.toString()}`);
   };
 
@@ -30,8 +34,8 @@ const SearchSection = () => {
           <Input
             className="border-background border-0 rounded-none border-b placeholder:text-background font-semibold placeholder:font-normal"
             placeholder="Busque por um curso"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => {
               e.key == "Enter" && handleSearch();
             }}
