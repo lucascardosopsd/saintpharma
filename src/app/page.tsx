@@ -1,4 +1,4 @@
-import { fetchCourses } from "@/actions/courses";
+import { getCourses } from "@/actions/courses/get";
 import CourseCard from "@/components/CourseCard";
 import Header from "@/components/Header";
 import SearchSection from "@/components/SearchSection";
@@ -13,7 +13,7 @@ type PageProps = {
 export default async function Home({ searchParams }: PageProps) {
   const sParams = await searchParams;
   const user = await useClerkUser();
-  let courses = await fetchCourses();
+  let courses = await getCourses();
 
   if (sParams?.name) {
     courses = courses.filter((course) =>
