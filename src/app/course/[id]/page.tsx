@@ -11,13 +11,13 @@ import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 
 type CoursePageProps = {
-  params?: Promise<{
+  params: Promise<{
     id: string;
   }>;
 };
 
 const CoursePage = async ({ params }: CoursePageProps) => {
-  const id = (await params)?.id;
+  const { id } = await params;
 
   if (!id) {
     redirect("/");
@@ -121,7 +121,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
               Curso concluído
             </p>
             <p>Garanta seu certificado</p>
-            <Link href="#" className="w-full">
+            <Link href={`/quiz/${id}`} className="w-full">
               <Button size="lg" className="w-full text-lg">
                 Certificar
               </Button>

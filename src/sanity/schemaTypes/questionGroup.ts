@@ -6,6 +6,17 @@ export const questionGroupType = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "title",
+      title: "Título",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "cover",
+      title: "Capa",
+      type: "image",
+    }),
+    defineField({
       name: "question",
       title: "Pergunta",
       type: "text",
@@ -30,6 +41,7 @@ export const questionGroupType = defineType({
             {
               title: "Marcar como correta",
               name: "isCorrect",
+              initialValue: false,
               type: "boolean",
             },
           ],
