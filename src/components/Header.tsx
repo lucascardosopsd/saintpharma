@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, User2Icon } from "lucide-react";
+import { ChevronLeft, Menu, User2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Sheet,
@@ -13,7 +13,7 @@ import Logo from "./Logo";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { userMenuOptions } from "@/constants/userMenuOptions";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -21,19 +21,32 @@ import { useState } from "react";
 
 interface HeaderProps {
   user: User | null;
+  backIcon?: boolean;
 }
 
-const Header = ({ user }: HeaderProps) => {
+const Header = ({ user, backIcon }: HeaderProps) => {
   const [open, onOpenChange] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const currentPath =
     pathname.split("?").length > 0 ? pathname.split("?")[0] : pathname;
 
   return (
-    <div className="border-b border-border ">
-      <div className="container flex items-center justify-between p-5 h-[8svh]">
-        <Logo />
+    <div className="border-b border-border">
+      <div className="container flex items-center justify-between py-2 h-[8svh]">
+        {backIcon ? (
+          <div className="flex items-center text-primary">
+            <ChevronLeft
+              onClick={() => router.back()}
+              size={32}
+              className="cursor-pointer"
+            />
+            <p>Voltar</p>
+          </div>
+        ) : (
+          <Logo />
+        )}
 
         <Sheet open={open} onOpenChange={onOpenChange}>
           <SheetTrigger>

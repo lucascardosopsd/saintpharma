@@ -90,7 +90,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   return (
     <div>
-      <Header user={user} />
+      <Header user={user} backIcon />
       <div className="w-full max-w-[1200px] mx-auto h-[90svh] overflow-y-auto ">
         <div className="h-[250px] w-full relative flex items-end  group overflow-hidden cursor-pointer">
           <Image
