@@ -36,12 +36,11 @@ const Header = ({ user, backIcon }: HeaderProps) => {
     <div className="border-b border-border">
       <div className="container flex items-center justify-between py-2 h-[8svh]">
         {backIcon ? (
-          <div className="flex items-center text-primary">
-            <ChevronLeft
-              onClick={() => router.back()}
-              size={32}
-              className="cursor-pointer"
-            />
+          <div
+            className="flex items-center text-primary cursor-pointer"
+            onClick={() => router.back()}
+          >
+            <ChevronLeft size={32} />
             <p>Voltar</p>
           </div>
         ) : (
