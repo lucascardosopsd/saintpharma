@@ -1,8 +1,8 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-export const questionGroupType = defineType({
-  name: "questionGroup",
-  title: "3. Perguntas",
+export const questionStep = defineType({
+  name: "questionStep",
+  title: "3. Pergunta",
   type: "document",
   fields: [
     defineField({

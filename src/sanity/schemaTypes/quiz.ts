@@ -14,9 +14,16 @@ export const QuizType = defineType({
     defineField({
       name: "questions",
       title: "Perguntas",
-      type: "reference",
-      validation: (rule) => rule.required(),
-      to: [{ type: "questionGroup" }],
+      type: "array",
+      of: [
+        {
+          title: "Pergunta",
+          name: "questionStep",
+          validation: (rule) => rule.required(),
+          type: "reference",
+          to: [{ type: "questionStep" }],
+        },
+      ],
     }),
   ],
 });

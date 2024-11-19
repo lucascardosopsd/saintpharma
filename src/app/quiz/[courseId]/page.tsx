@@ -19,9 +19,12 @@ const QuizPage = async ({ params }: QuizPageProps) => {
   const quiz = await getQuizByCourseId({ id: courseId });
   const user = await useClerkUser();
 
+  console.log(quiz);
+
   return (
     <div>
       <Header user={user} backIcon />
+      {/* <Exam quiz={quiz} /> */}
     </div>
   );
 };

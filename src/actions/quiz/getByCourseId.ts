@@ -6,18 +6,18 @@ export const getQuizByCourseId = async ({ id }: { id: string }) => {
     *[_type == "course"&& _id == "${id}"][0]{
       quiz -> {
         title,
-        questions -> {
-          title,
-          cover{
-            asset -> {
-              url
+        questions[] -> {
+            title,
+            cover{
+              asset -> {
+                url
+              },
             },
-          },
-          question,
-          "answers": answers[]{
-            answer,
-            isCorrect,
-          },
+            question,
+            "answers": answers[]{
+              answer,
+              isCorrect,
+            },
         },
       },
     }
