@@ -1,4 +1,5 @@
 import { getQuizByCourseId } from "@/actions/quiz/getByCourseId";
+import Exam from "@/components/exam";
 import Header from "@/components/Header";
 import { useClerkUser } from "@/hooks/clerkUser";
 import { redirect } from "next/navigation";
@@ -19,12 +20,10 @@ const QuizPage = async ({ params }: QuizPageProps) => {
   const quiz = await getQuizByCourseId({ id: courseId });
   const user = await useClerkUser();
 
-  console.log(quiz);
-
   return (
     <div>
       <Header user={user} backIcon />
-      {/* <Exam quiz={quiz} /> */}
+      <Exam quiz={quiz} />
     </div>
   );
 };

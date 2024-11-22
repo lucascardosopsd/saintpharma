@@ -3,17 +3,18 @@ export type AnswerProps = {
   isCorrect: boolean;
 };
 
-export type QuestioProps = {
-  cover: {
-    aseet: {
+export type QuestionProps = {
+  cover?: {
+    asset: {
       url: string;
     };
   };
   question: string;
   answers: AnswerProps[];
+  title: string;
 };
 
 export type QuizProps = {
   title: string;
-  questions: QuestioProps[];
+  questions: QuestionProps[];
 };

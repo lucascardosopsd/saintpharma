@@ -34,7 +34,7 @@ const Header = ({ user, backIcon }: HeaderProps) => {
 
   return (
     <div className="border-b border-border">
-      <div className="container flex items-center justify-between py-2 h-[8svh]">
+      <div className="container flex items-center justify-between py-2 px-5 h-[8svh]">
         {backIcon ? (
           <div
             className="flex items-center text-primary cursor-pointer"

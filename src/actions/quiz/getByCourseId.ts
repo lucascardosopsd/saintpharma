@@ -23,5 +23,5 @@ export const getQuizByCourseId = async ({ id }: { id: string }) => {
     }
   `;
 
-  return (await client.fetch(query)) as QuizProps;
+  return (await client.fetch(query)).quiz as QuizProps;
 };
