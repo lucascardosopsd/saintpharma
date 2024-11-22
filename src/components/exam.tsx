@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { minExamPercentage, pointsAward } from "@/constants/exam";
+import { addUserPoints } from "@/actions/quiz/addUserPoints";
 
 type ExamProps = {
   quiz: QuizProps;
@@ -37,6 +38,7 @@ const Exam = ({ quiz }: ExamProps) => {
 
   const finalPoints = points.reduce((prev, current) => prev + current, 0);
 
+  // Step Components
   const steps = [
     ...quiz.questions.map((question, index) => (
       <QuestionForm
@@ -117,9 +119,18 @@ const Exam = ({ quiz }: ExamProps) => {
     </Dialog>,
   ];
 
-  const handleNext = () =>
-    answers[step] !== undefined &&
-    setStep((prev) => Math.min(prev + 1, steps.length - 1));
+  const handleNext = () => {
+    if (answers[step] !== undefined) {
+      setStep((prev) => Math.min(prev + 1, steps.length - 1));
+    }
+
+    if (
+      step >= quiz.questions.length - 1 &&
+      finalPoints >= Math.ceil(quiz.questions.length * minExamPercentage)
+    ) {
+      addUserPoints({ points: pointsAward });
+    }
+  };
   const handlePrev = () => setStep((prev) => Math.max(prev - 1, 0));
 
   return (
