@@ -9,6 +9,8 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { minExamPercentage, pointsAward } from "@/constants/exam";
 import { addUserPoints } from "@/actions/quiz/addUserPoints";
+import { updateQuizzes } from "@/actions/user/updateQuizzes";
+import { revalidatePath } from "next/cache";
 
 type ExamProps = {
   quiz: QuizProps;
@@ -119,6 +121,12 @@ const Exam = ({ quiz }: ExamProps) => {
     </Dialog>,
   ];
 
+  const finalOps = async () => {
+    await addUserPoints({ points: pointsAward });
+    await updateQuizzes({ quizId: quiz._id });
+    revalidatePath("/");
+  };
+
   const handleNext = () => {
     if (answers[step] !== undefined) {
       setStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -128,7 +136,7 @@ const Exam = ({ quiz }: ExamProps) => {
       step >= quiz.questions.length - 1 &&
       finalPoints >= Math.ceil(quiz.questions.length * minExamPercentage)
     ) {
-      addUserPoints({ points: pointsAward });
+      finalOps();
     }
   };
   const handlePrev = () => setStep((prev) => Math.max(prev - 1, 0));

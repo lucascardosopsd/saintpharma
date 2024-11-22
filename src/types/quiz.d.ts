@@ -15,6 +15,7 @@ export type QuestionProps = {
 };
 
 export type QuizProps = {
+  _id: string;
   title: string;
   questions: QuestionProps[];
 };

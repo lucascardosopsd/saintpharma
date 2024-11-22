@@ -23,6 +23,7 @@ model User {
   googleResourceId        String?         @unique
   localGoogleCredentialId String?         @db.ObjectId
   points                  Int             @default(0)
+  quizzes                 String[]        @default([])
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @updatedAt
   certifications          Certification[]

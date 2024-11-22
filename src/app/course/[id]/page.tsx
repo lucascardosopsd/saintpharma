@@ -1,7 +1,6 @@
 import { getCourseById } from "@/actions/courses/getId";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { useClerkUser } from "@/hooks/clerkUser";
 import { getUrlParam } from "@/tools/getUrlParm";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { PortableText, PortableTextComponents } from "next-sanity";
@@ -9,6 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { getQuizByCourseId } from "@/actions/quiz/getByCourseId";
+import { getUserByClerk } from "@/actions/user/getUserByClerk";
 
 type CoursePageProps = {
   params: Promise<{
@@ -24,7 +25,13 @@ const CoursePage = async ({ params }: CoursePageProps) => {
   }
 
   const course = await getCourseById({ id });
-  const user = await useClerkUser();
+  const quiz = await getQuizByCourseId({ id: course._id });
+
+  const user = await getUserByClerk();
+
+  const isQuizCompleted = user?.quizzes.some(
+    (userQuiz) => userQuiz == quiz._id
+  );
 
   const serializers: PortableTextComponents = {
     types: {
@@ -116,29 +123,39 @@ const CoursePage = async ({ params }: CoursePageProps) => {
         <Separator orientation="horizontal" />
 
         <div className="flex flex-col w-full items-center justify-center h-[400px] max-w-[500px] mx-auto px-5">
-          <SignedIn>
-            <p className="text-2xl text-primary font-semibold">
-              Curso concluído
-            </p>
-            <p>Garanta seu certificado</p>
-            <Link href={`/quiz/${id}`} className="w-full">
-              <Button size="lg" className="w-full text-lg">
-                Certificar
-              </Button>
-            </Link>
-          </SignedIn>
+          {isQuizCompleted ? (
+            <>
+              <p className="text-2xl text-primary font-semibold">
+                Você ja recebeu o certificado.
+              </p>
+            </>
+          ) : (
+            <>
+              <SignedIn>
+                <p className="text-2xl text-primary font-semibold">
+                  Curso concluído
+                </p>
+                <p>Garanta seu certificado</p>
+                <Link href={`/quiz/${id}`} className="w-full">
+                  <Button size="lg" className="w-full text-lg">
+                    Certificar
+                  </Button>
+                </Link>
+              </SignedIn>
 
-          <SignedOut>
-            <p className="text-2xl text-primary font-semibold">
-              Curso concluído
-            </p>
-            <p>Faça login para a certificação</p>
-            <Link href="/sign-in" className="w-full">
-              <Button size="lg" className="w-full text-lg">
-                Entrar
-              </Button>
-            </Link>
-          </SignedOut>
+              <SignedOut>
+                <p className="text-2xl text-primary font-semibold">
+                  Curso concluído
+                </p>
+                <p>Faça login para a certificação</p>
+                <Link href="/sign-in" className="w-full">
+                  <Button size="lg" className="w-full text-lg">
+                    Entrar
+                  </Button>
+                </Link>
+              </SignedOut>
+            </>
+          )}
         </div>
       </div>
     </div>

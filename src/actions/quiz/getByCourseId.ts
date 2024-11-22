@@ -5,6 +5,7 @@ export const getQuizByCourseId = async ({ id }: { id: string }) => {
   const query = `
     *[_type == "course"&& _id == "${id}"][0]{
       quiz -> {
+        _id,
         title,
         questions[] -> {
             title,
