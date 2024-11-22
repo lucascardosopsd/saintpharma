@@ -1,7 +1,6 @@
 import { getQuizByCourseId } from "@/actions/quiz/getByCourseId";
 import Exam from "@/components/exam";
 import Header from "@/components/Header";
-import { useClerkUser } from "@/hooks/clerkUser";
 import { redirect } from "next/navigation";
 
 type QuizPageProps = {
@@ -18,11 +17,10 @@ const QuizPage = async ({ params }: QuizPageProps) => {
   }
 
   const quiz = await getQuizByCourseId({ id: courseId });
-  const user = await useClerkUser();
 
   return (
     <div>
-      <Header user={user} backIcon />
+      <Header backIcon />
       <Exam quiz={quiz} />
     </div>
   );

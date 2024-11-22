@@ -1,5 +1,4 @@
 "use client";
-
 import { ChevronLeft, Menu, User2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -15,22 +14,27 @@ import { cn } from "@/lib/utils";
 import { userMenuOptions } from "@/constants/userMenuOptions";
 import { usePathname, useRouter } from "next/navigation";
 import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/server";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getClerkUser } from "@/actions/user/getClerkUser";
+import { User } from "@clerk/nextjs/server";
 
 interface HeaderProps {
-  user: User | null;
   backIcon?: boolean;
 }
 
-const Header = ({ user, backIcon }: HeaderProps) => {
+const Header = ({ backIcon }: HeaderProps) => {
+  const [user, setUser] = useState({} as User);
   const [open, onOpenChange] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const currentPath =
     pathname.split("?").length > 0 ? pathname.split("?")[0] : pathname;
+
+  useEffect(() => {
+    getClerkUser().then((data) => setUser(data));
+  }, []);
 
   return (
     <div className="border-b border-border">
