@@ -7,6 +7,7 @@ import { CircleCheckBig, CircleX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { minExamPercentage, pointsAward } from "@/constants/exam";
 
 type ExamProps = {
   quiz: QuizProps;
@@ -19,7 +20,6 @@ const Exam = ({ quiz }: ExamProps) => {
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
-  const rate = 0.6;
 
   const handleNewAnswer = (answer: string) => {
     const updatedAnswers = [...answers];
@@ -49,7 +49,7 @@ const Exam = ({ quiz }: ExamProps) => {
       />
     )),
 
-    finalPoints >= Math.ceil(quiz.questions.length * rate) ? (
+    finalPoints >= Math.ceil(quiz.questions.length * minExamPercentage) ? (
       <div
         key="result-passed"
         className="flex flex-col items-center justify-center h-[92svh]"
@@ -62,7 +62,9 @@ const Exam = ({ quiz }: ExamProps) => {
         <Button size="lg">Certificado</Button>
         <p className="text-muted-foreground flex gap-1">
           Você recebeu
-          <span className="text-foreground font-semibold">100 Pts</span>
+          <span className="text-foreground font-semibold">
+            {pointsAward} Pts
+          </span>
         </p>
       </div>
     ) : (
