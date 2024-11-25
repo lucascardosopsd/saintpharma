@@ -1,5 +1,4 @@
 import { getCourseById } from "@/actions/courses/getId";
-import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { PortableText } from "next-sanity";
@@ -35,7 +34,6 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   return (
     <div>
-      <Header backIcon />
       <div className="w-full max-w-[1200px] mx-auto h-[90svh] overflow-y-auto ">
         <div className="h-[250px] w-full relative flex items-end  group overflow-hidden cursor-pointer">
           <Image
