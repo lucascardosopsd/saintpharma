@@ -11,16 +11,22 @@ import { minExamPercentage, pointsAward } from "@/constants/exam";
 import { addUserPoints } from "@/actions/quiz/addUserPoints";
 import { updateQuizzes } from "@/actions/user/updateQuizzes";
 import { revalidatePath } from "next/cache";
+import { createCertificate } from "@/actions/certification/create";
+import { CourseProps } from "@/types/course";
+import Link from "next/link";
 
 type ExamProps = {
   quiz: QuizProps;
+  course: CourseProps;
+  userId: string;
 };
 
-const Exam = ({ quiz }: ExamProps) => {
+const Exam = ({ quiz, course, userId }: ExamProps) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState([] as number[]);
   const [points, setPoints] = useState([0] as number[]);
   const [open, setOpen] = useState(false);
+  const [certificateId, setCertificate] = useState("");
 
   const router = useRouter();
 
@@ -63,7 +69,12 @@ const Exam = ({ quiz }: ExamProps) => {
         <p className="text-muted-foreground">
           {finalPoints}/{quiz.questions.length}
         </p>
-        <Button size="lg">Certificado</Button>
+
+        <Link href={certificateId ? `/certificate/${certificateId}` : "#"}>
+          <Button size="lg" disabled={!certificateId}>
+            Certificado
+          </Button>
+        </Link>
         <p className="text-muted-foreground flex gap-1">
           Você recebeu
           <span className="text-foreground font-semibold">
@@ -121,12 +132,6 @@ const Exam = ({ quiz }: ExamProps) => {
     </Dialog>,
   ];
 
-  const finalOps = async () => {
-    await addUserPoints({ points: pointsAward });
-    await updateQuizzes({ quizId: quiz._id });
-    revalidatePath("/");
-  };
-
   const handleNext = () => {
     if (answers[step] !== undefined) {
       setStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -139,6 +144,18 @@ const Exam = ({ quiz }: ExamProps) => {
       finalOps();
     }
   };
+
+  const finalOps = async () => {
+    await addUserPoints({ points: pointsAward });
+    await updateQuizzes({ quizId: quiz._id });
+
+    const certificate = await createCertificate({ course, userId });
+    console.log(certificate);
+    setCertificate(certificate.id);
+
+    revalidatePath("/");
+  };
+
   const handlePrev = () => setStep((prev) => Math.max(prev - 1, 0));
 
   return (

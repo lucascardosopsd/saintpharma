@@ -14,6 +14,9 @@ export default {
         tablet: "1040px",
         desktop: "1620px",
       },
+      aspectRatio: {
+        "A4": "1.414 / 1",
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
