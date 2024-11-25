@@ -150,7 +150,6 @@ const Exam = ({ quiz, course, userId }: ExamProps) => {
     await updateQuizzes({ quizId: quiz._id });
 
     const certificate = await createCertificate({ course, userId });
-    console.log(certificate);
     setCertificate(certificate.id);
 
     revalidatePath("/");

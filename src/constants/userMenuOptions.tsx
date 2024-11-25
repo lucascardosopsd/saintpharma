@@ -8,7 +8,7 @@ export const userMenuOptions: UserMenuOptionProps[] = [
   },
   {
     label: "Certificados",
-    href: "/certifications",
+    href: "/certificates",
   },
   {
     label: "Perfil",
