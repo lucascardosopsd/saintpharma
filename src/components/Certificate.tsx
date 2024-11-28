@@ -112,9 +112,15 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
             </p>
 
             <div>
-              <p className={cn("text-4xl leading-none", sacramento.className)}>
-                {user?.fullName}
-              </p>
+              <div
+                className={cn(
+                  "text-4xl leading-none flex gap-2",
+                  sacramento.className
+                )}
+              >
+                <p>{user?.firstName}</p>
+                <p>{user?.lastName}</p>
+              </div>
 
               <Separator className="text-primary w-full" />
             </div>
