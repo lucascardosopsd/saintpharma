@@ -24,6 +24,7 @@ export const getCourseById = async ({ id }: { id: string }) => {
         },
         workload,
         description,
+        premiumPoints,
     }
   `;
 

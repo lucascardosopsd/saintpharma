@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { getQuizByCourseId } from "@/actions/quiz/getByCourseId";
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import { coursePageSerializer } from "@/serializers/course";
+import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 
 type CoursePageProps = {
   params: Promise<{
@@ -23,7 +24,14 @@ const CoursePage = async ({ params }: CoursePageProps) => {
     redirect("/");
   }
 
+  const weekPoints = await getWeekPoints();
+
   const course = await getCourseById({ id });
+
+  if (course.premiumPoints > weekPoints) {
+    redirect("/");
+  }
+
   const quiz = await getQuizByCourseId({ id: course._id });
 
   const user = await getUserByClerk();

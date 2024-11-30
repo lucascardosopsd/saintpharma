@@ -3,7 +3,7 @@ import { CourseProps } from "@/types/course";
 
 export const getCourses = async () => {
   const query = `
-    *[_type == "course"]{
+    *[_type == "course"] | order(_createdAt asc){
         _id,
         banner{
           asset -> {
@@ -16,6 +16,7 @@ export const getCourses = async () => {
         content,
         workload,
         description,
+        premiumPoints,
     }
     `;
 

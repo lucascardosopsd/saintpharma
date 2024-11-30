@@ -53,7 +53,7 @@ export const getRanking = async () => {
     acc[user.id] = {
       userId: user.id,
       name: user.name! || "",
-      points: user.points,
+      points: (acc[user.id].points += certificate.points),
       profileImage: user.profileImage!,
     };
 

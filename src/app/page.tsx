@@ -1,4 +1,5 @@
 import { getCourses } from "@/actions/courses/get";
+import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 import CourseCard from "@/components/CourseCard";
 import Header from "@/components/Header";
 import SearchSection from "@/components/SearchSection";
@@ -19,6 +20,8 @@ export default async function Home({ searchParams }: PageProps) {
     );
   }
 
+  const userPoints = await getWeekPoints();
+
   return (
     <div className="flex flex-col">
       <Header />
@@ -26,7 +29,12 @@ export default async function Home({ searchParams }: PageProps) {
         <SearchSection defaultValue={sParams?.name} />
         <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 tablet:gap-2 tablet:p-2">
           {courses.map((course) => (
-            <CourseCard course={course} key={course._id} />
+            <CourseCard
+              course={course}
+              key={course._id}
+              disabled={userPoints <= course.premiumPoints}
+              points={userPoints}
+            />
           ))}
         </div>
       </div>
