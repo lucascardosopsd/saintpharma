@@ -7,6 +7,10 @@ export const userMenuOptions: UserMenuOptionProps[] = [
     href: "/",
   },
   {
+    label: "Ranking",
+    href: "/ranking",
+  },
+  {
     label: "Certificados",
     href: "/certificates",
   },

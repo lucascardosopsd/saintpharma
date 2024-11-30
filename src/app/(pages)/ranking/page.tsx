@@ -73,7 +73,7 @@ const ProfilePage = async () => {
       <p className="text-muted-foreground">Últimos 7 Dias</p>
 
       {sortedUsers.map((user, index) => (
-        <Card className="w-full mt-5">
+        <Card className="w-full mt-5" key={index}>
           <CardHeader className="flex-row justify-between w-full">
             <div className="flex items-center gap-2">
               <p className="text-muted-foreground">#{index + 1}</p>
