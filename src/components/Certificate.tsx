@@ -87,7 +87,7 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
           className="flex items-center absolute opacity-100 w-[842px] h-[595px]"
           id="certificate"
         >
-          <div className="flex flex-col items-center justify-center p-2 m-5 border border-primary border-b-0">
+          <div className="flex flex-col gap-2 items-center justify-center p-2 m-5 border border-primary border-b-0">
             <p className="text-primary">
               <span className="font-bold">Plataforma EAD:</span>{" "}
               www.saintpharmacursos.com.br
@@ -121,6 +121,8 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
                 <p>{user?.firstName}</p>
                 <p>{user?.lastName}</p>
               </div>
+
+              <Separator className="text-primary mt-4" />
             </div>
 
             <div className="text-primary flex flex-col items-center justify-center text-xs">
