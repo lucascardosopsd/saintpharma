@@ -16,9 +16,10 @@ import { toast } from "sonner";
 type UserProfileProps = {
   user: User;
   serverClerkUser: ClerkUser;
+  points: number;
 };
 
-const UserProfile = ({ user, serverClerkUser }: UserProfileProps) => {
+const UserProfile = ({ user, serverClerkUser, points }: UserProfileProps) => {
   const { user: clerkUser } = useUser();
 
   const form = useUserProfileForm({
@@ -62,7 +63,7 @@ const UserProfile = ({ user, serverClerkUser }: UserProfileProps) => {
             <p>{clerkUser?.lastName}</p>
           </div>
 
-          <p className="text-lg font-light text-center">{user.points} Pontos</p>
+          <p className="text-lg font-light text-center">{points} Pontos</p>
         </div>
 
         <FieldBuilder

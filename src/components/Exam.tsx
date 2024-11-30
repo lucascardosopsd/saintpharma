@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { minExamPercentage, pointsAward } from "@/constants/exam";
-import { addUserPoints } from "@/actions/quiz/addUserPoints";
 import { updateQuizzes } from "@/actions/user/updateQuizzes";
 import { revalidatePath } from "next/cache";
 import { createCertificate } from "@/actions/certification/create";
@@ -146,7 +145,6 @@ const Exam = ({ quiz, course, userId }: ExamProps) => {
   };
 
   const finalOps = async () => {
-    await addUserPoints({ points: pointsAward });
     await updateQuizzes({ quizId: quiz._id });
 
     const certificate = await createCertificate({ course, userId });

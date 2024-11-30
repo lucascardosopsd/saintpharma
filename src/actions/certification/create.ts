@@ -2,6 +2,7 @@
 
 import { CourseProps } from "@/types/course";
 import prisma from "@/lib/prisma";
+import { pointsAward } from "@/constants/exam";
 
 type CreateCertificationProps = {
   userId: string;
@@ -19,6 +20,7 @@ export const createCertificate = async ({
         courseTitle: course.name,
         description: course.description,
         workload: course.workload,
+        points: pointsAward,
         userId: userId,
       },
     });
