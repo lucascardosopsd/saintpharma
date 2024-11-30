@@ -28,12 +28,15 @@ const sacramento = Sacramento({
 
 const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
   const [imageData, setImageData] = useState<string | null>(null);
+  const [count, setCount] = useState(0);
 
   // Function to capture and generate the certificate image
   const generateImage = async () => {
     const element = document.getElementById("certificate");
 
     if (!element) return;
+
+    if (count < 1) setCount(count + 1);
 
     try {
       const canvas = await html2canvas(element, {
@@ -54,7 +57,7 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
   // Automatically generate the certificate image on page load
   useEffect(() => {
     generateImage();
-  }, []);
+  }, [count]);
 
   // Function to download the certificate as a PDF
   const downloadPDF = async () => {
@@ -66,7 +69,7 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
     const pdf = new jspdf({
       orientation: "landscape",
       unit: "px",
-      format: [842, 595],
+      format: "a4",
     });
 
     const width = pdf.internal.pageSize.getWidth();
@@ -81,10 +84,10 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
       <div className="relative">
         {/* Render the original certificate (hidden after image generation) */}
         <div
-          className="items-center absolute opacity-100 w-[842px] h-[595px]"
+          className="flex items-center absolute opacity-100 w-[842px] h-[595px]"
           id="certificate"
         >
-          <div className="flex flex-col items-center justify-center p-2 m-5 gap-5 border border-primary border-b-0">
+          <div className="flex flex-col items-center justify-center p-2 m-5 border border-primary border-b-0">
             <p className="text-primary">
               <span className="font-bold">Plataforma EAD:</span>{" "}
               www.saintpharmacursos.com.br
@@ -113,16 +116,11 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
 
             <div>
               <div
-                className={cn(
-                  "text-4xl leading-none flex gap-2",
-                  sacramento.className
-                )}
+                className={cn("text-4xl flex gap-2 mb-2", sacramento.className)}
               >
                 <p>{user?.firstName}</p>
                 <p>{user?.lastName}</p>
               </div>
-
-              <Separator className="text-primary w-full" />
             </div>
 
             <div className="text-primary flex flex-col items-center justify-center text-xs">

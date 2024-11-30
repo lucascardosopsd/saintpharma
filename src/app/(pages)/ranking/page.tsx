@@ -3,7 +3,6 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Certificate, User } from "@prisma/client";
-
 import { startOfWeek, endOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
