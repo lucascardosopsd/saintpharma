@@ -17,9 +17,9 @@ const Page = async () => {
       <p className="text-2xl font-semibold text-primary">Certificados</p>
       {certificates.map((certificate) => (
         <Link href={`/certificate/${certificate.id}`}>
-          <Card>
+          <Card className="cursor-pointer group hover:bg-primary transition">
             <CardHeader>
-              <CardTitle className="flex justify-between font-normal items-center">
+              <CardTitle className="flex justify-between font-normal items-center group-hover:text-background">
                 <div className="flex gap-2 items-center">
                   <p className="font-semibold">{certificate.courseTitle}</p>
                   <p>|</p>
