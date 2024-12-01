@@ -108,11 +108,11 @@ const Exam = ({ quiz, course, userId }: ExamProps) => {
 
   const modals = [
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="h-[100svh]">
+      <DialogContent className="h-[100svh] max-w-screen">
         <DialogHeader>
           <DialogTitle></DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col items-center justify-center h-full 0">
+        <div className="flex flex-col items-center justify-center h-full w-full">
           <div className="mb-10 text-center my-auto">
             <p className="text-6xl text-primary font-semibold">Parabéns!</p>
             <p className="font-semibold text-2xl">
