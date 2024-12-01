@@ -12,13 +12,13 @@ import { coursePageSerializer } from "@/serializers/course";
 import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 
 type CoursePageProps = {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 };
 
 const CoursePage = async ({ params }: CoursePageProps) => {
-  const { id } = await params;
+  const { id } = params;
 
   if (!id) {
     redirect("/");

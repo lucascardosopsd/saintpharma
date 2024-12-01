@@ -4,13 +4,13 @@ import { getClerkUser } from "@/actions/user/getClerkUser";
 import Certificate from "@/components/Certificate";
 
 type CertificatePageProps = {
-  params: Promise<{
+  params: {
     certificateId: string;
-  }>;
+  };
 };
 
 const CertificatePage = async ({ params }: CertificatePageProps) => {
-  const { certificateId: id } = await params;
+  const { certificateId: id } = params;
 
   const user = await getClerkUser();
 
