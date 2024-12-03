@@ -6,7 +6,6 @@ const isPublicRoute = createRouteMatcher([
   "/course(.*)",
   "/studio(.*)",
   "/api/clerk(.*)",
-  "/api/uploadthing",
   "/",
 ]);
 
