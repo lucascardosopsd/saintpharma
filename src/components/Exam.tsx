@@ -9,10 +9,10 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { minExamPercentage, pointsAward } from "@/constants/exam";
 import { updateQuizzes } from "@/actions/user/updateQuizzes";
-import { revalidatePath } from "next/cache";
 import { createCertificate } from "@/actions/certification/create";
 import { CourseProps } from "@/types/course";
 import Link from "next/link";
+import { revalidateRoute } from "@/actions/revalidateRoute";
 
 type ExamProps = {
   quiz: QuizProps;
@@ -150,7 +150,7 @@ const Exam = ({ quiz, course, userId }: ExamProps) => {
     const certificate = await createCertificate({ course, userId });
     setCertificate(certificate.id);
 
-    revalidatePath("/");
+    revalidateRoute({ fullPath: "/" });
   };
 
   const handlePrev = () => setStep((prev) => Math.max(prev - 1, 0));
