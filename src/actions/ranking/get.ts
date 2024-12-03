@@ -48,12 +48,13 @@ export const getRanking = async () => {
 
   const userPoints = certificates.reduce((acc: UserPoints, certificate) => {
     const user = certificate.User;
+
     if (!user) return acc;
 
     acc[user.id] = {
       userId: user.id,
       name: user.name! || "",
-      points: (acc[user.id].points += certificate.points),
+      points: (acc[user.id]?.points || 0) + certificate.points,
       profileImage: user.profileImage!,
     };
 
