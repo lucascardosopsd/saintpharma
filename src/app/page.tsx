@@ -32,7 +32,9 @@ export default async function Home({ searchParams }: PageProps) {
             <CourseCard
               course={course}
               key={course._id}
-              disabled={userPoints <= course.premiumPoints}
+              disabled={
+                userPoints <= course.premiumPoints && !!course.premiumPoints
+              }
               points={userPoints}
             />
           ))}
