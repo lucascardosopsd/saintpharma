@@ -53,7 +53,7 @@ const CourseCard = ({ course, points, disabled }: CourseCardProps) => {
       </AlertDialog>
 
       <Link
-        href={!disabled ? `/course/${course._id}` : ""}
+        href={!disabled ? `/course/${course._id}` : "#"}
         onClick={handleOpenModal}
       >
         <div className="h-[250px] w-full relative flex items-end tablet:rounded group overflow-hidden cursor-pointer">
