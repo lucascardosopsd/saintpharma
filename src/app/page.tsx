@@ -22,6 +22,8 @@ export default async function Home({ searchParams }: PageProps) {
 
   const userPoints = await getWeekPoints();
 
+  console.log(courses[1].premiumPoints);
+
   return (
     <div className="flex flex-col">
       <Header />
