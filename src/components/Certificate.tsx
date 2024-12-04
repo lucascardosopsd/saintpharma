@@ -5,7 +5,6 @@ import { Button } from "./ui/button";
 import { Certificate as CertificateType } from "@prisma/client";
 import { User } from "@clerk/nextjs/server";
 import html2canvas from "html2canvas";
-import Logo from "./Logo";
 import { Star } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { format } from "date-fns";
@@ -92,7 +91,14 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
               <span className="font-bold">Plataforma EAD:</span>{" "}
               www.saintpharmacursos.com.br
             </p>
-            <Logo />
+
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              height={1000}
+              width={1000}
+              className="h-16 w-auto"
+            />
 
             <div className="flex gap-5">
               {[...new Array(5)].map((_, index) => (
