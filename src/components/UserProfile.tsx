@@ -46,7 +46,7 @@ const UserProfile = ({ user, serverClerkUser, points }: UserProfileProps) => {
   return (
     <Form {...form}>
       <form
-        className="flex flex-col items-center justify-center gap-2 container px-5"
+        className="flex flex-col items-center justify-center gap-2 max-w-lg w-full px-5"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <Avatar className="h-44 w-44">
