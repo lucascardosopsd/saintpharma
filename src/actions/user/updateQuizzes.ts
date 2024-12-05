@@ -17,9 +17,10 @@ export const updateQuizzes = async ({ quizId }: UpdateQuizzesProps) => {
 
     await prisma.user.update({
       where: { id: user?.id! },
-      data: { quizzes: [...user!.quizzes, quizId] },
+      data: { quizzes: [...(user?.quizzes || []), quizId] },
     });
   } catch (error) {
-    throw new Error("Error when add points to user");
+    console.log(error);
+    throw new Error("Error when update quizzes");
   }
 };
