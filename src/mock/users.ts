@@ -1,13 +1,18 @@
-export const users = [
+type LectureProps = {
+  id: string;
+  lectureId: string;
+  courseId: string;
+};
+type UsersProps = {
+  id: string;
+  name: string;
+  lectures: LectureProps[];
+};
+
+export const users: UsersProps[] = [
   {
     id: "1",
     name: "Lucas Cardoso",
-    lectures: [
-      {
-        id: "1",
-        lectureId: "1",
-        points: 10,
-      },
-    ],
+    lectures: [] as unknown as LectureProps[],
   },
 ];

@@ -2,8 +2,9 @@
 import prisma from "@/lib/prisma";
 
 type NewLectureProps = {
-  userId: string;
   lectureCmsId: string;
+  courseId: string;
+  userId: string;
 };
 
 type CreateUserLectureProps = {
@@ -14,6 +15,7 @@ export const createUserLecture = async ({ data }: CreateUserLectureProps) => {
   try {
     await prisma.userLecture.create({ data });
   } catch (error) {
-    throw new Error("Error when update quizzes");
+    console.log(error);
+    throw new Error("Error when create user lecture");
   }
 };

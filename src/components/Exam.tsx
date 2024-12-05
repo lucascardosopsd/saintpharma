@@ -8,10 +8,10 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { minExamPercentage } from "@/constants/exam";
 import { CourseProps } from "@/types/course";
-import Link from "next/link";
 import { toast } from "sonner";
 import { createUserLecture } from "@/actions/lecture/createLecture";
 import { getUserLectureById } from "@/actions/lecture/getLectureById";
+import { useRouter } from "next/navigation";
 
 type ExamProps = {
   quiz: QuizProps;
@@ -25,6 +25,7 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
   const [answers, setAnswers] = useState([] as number[]);
   const [points, setPoints] = useState([0] as number[]);
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleNewAnswer = (answer: string) => {
     const updatedAnswers = [...answers];
@@ -66,9 +67,9 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
           {finalPoints}/{quiz.questions.length}
         </p>
 
-        <Link href={`/course/${course.id}`}>
-          <Button size="lg">Concluir</Button>
-        </Link>
+        <Button size="lg" onClick={() => finalOps()}>
+          Concluir
+        </Button>
       </div>
     ) : (
       <div
@@ -92,14 +93,6 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
       </div>
     ),
   ];
-
-  useEffect(() => {
-    if (step == Math.floor(quiz.questions.length / 2)) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }, [step]);
 
   const modals = [
     <Dialog open={open} onOpenChange={setOpen}>
@@ -126,16 +119,17 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
     </Dialog>,
   ];
 
+  useEffect(() => {
+    if (step == Math.floor(quiz.questions.length / 2)) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [step]);
+
   const handleNext = () => {
     if (answers[step] !== undefined) {
       setStep((prev) => Math.min(prev + 1, steps.length - 1));
-    }
-
-    if (
-      step >= quiz.questions.length - 1 &&
-      finalPoints >= Math.ceil(quiz.questions.length * minExamPercentage)
-    ) {
-      finalOps();
     }
   };
 
@@ -147,11 +141,15 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
         await createUserLecture({
           data: {
             lectureCmsId: lectureId,
+            courseId: course.id,
             userId,
           },
         });
       }
+
+      router.push(`/course/${course.id}`);
     } catch (error) {
+      console.log(error);
       toast.error("Erro ao concluir aula");
       throw new Error("Error when finish lecture");
     }

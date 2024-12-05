@@ -1,8 +1,9 @@
+import { getUserLectures } from "@/actions/lecture/getUserLectures";
+import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import { Card, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { courses } from "@/mock/courses";
 import { courseLectures } from "@/mock/lectures";
-import { users } from "@/mock/users";
 import { Check, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,8 +17,9 @@ type CoursePageProps = {
 
 const CoursePage = async ({ params }: CoursePageProps) => {
   const { id } = params;
+  const user = await getUserByClerk();
 
-  if (!id) {
+  if (!id || !user) {
     redirect("/");
   }
 
@@ -25,6 +27,10 @@ const CoursePage = async ({ params }: CoursePageProps) => {
   const lectures = courseLectures.filter(
     (lecture) => lecture.courseId == course.id
   );
+
+  const userLectures = await getUserLectures({ userId: user?.id });
+
+  console.log(userLectures);
 
   return (
     <div>
@@ -48,8 +54,8 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
         <div className="p-5 flex flex-col gap-2 ">
           {lectures.map((lecture, index) => {
-            const isCompleted = users.some((user) =>
-              user.lectures.some((userLecture) => userLecture.id == lecture.id)
+            const isCompleted = userLectures.some(
+              (userLecture) => userLecture.lectureCmsId == lecture.id
             );
 
             return (

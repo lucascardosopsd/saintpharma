@@ -1,3 +1,4 @@
+import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import Exam from "@/components/Exam";
 import { courses } from "@/mock/courses";
 import { lectureQuizzes } from "@/mock/lectureQuizzes";
@@ -11,12 +12,14 @@ type LecturePageProps = {
   };
 };
 
-const LecturePage = ({ params }: LecturePageProps) => {
+const LecturePage = async ({ params }: LecturePageProps) => {
   const { courseId, lectureId } = params;
 
   const quiz = lectureQuizzes.filter((quiz) => quiz.lectureId == lectureId)[0];
 
   const course = courses.filter((course) => course.id == courseId)[0];
+
+  const user = await getUserByClerk();
 
   return (
     <div className="flex flex-col">
@@ -26,7 +29,12 @@ const LecturePage = ({ params }: LecturePageProps) => {
         </div>
       </Link>
 
-      <Exam course={course} quiz={quiz} userId="1" lectureId={lectureId} />
+      <Exam
+        course={course}
+        quiz={quiz}
+        userId={user?.id!}
+        lectureId={lectureId}
+      />
     </div>
   );
 };

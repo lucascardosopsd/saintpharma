@@ -45,6 +45,7 @@ model Certificate {
 model UserLecture {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   lectureCmsId String
+  courseId     String
   userId       String? @db.ObjectId
   User         User?   @relation(fields: [userId], references: [id])
 }
