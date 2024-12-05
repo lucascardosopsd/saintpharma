@@ -18,6 +18,14 @@ const CertificatePage = async ({ params }: CertificatePageProps) => {
 
   const course = await getCourseById({ id: certificate?.courseCmsId! });
 
+  if (!course) {
+    return (
+      <div className="h-[92svh] w-full flex items-center justify-center">
+        <p>Este curso não está mais disponível.</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="w-full max-w-[800px] mx-auto flex flex-col gap-5 h-screen items-center justify-center">
