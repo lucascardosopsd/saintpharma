@@ -1,5 +1,5 @@
 "use client";
-import { ChevronLeft, Menu, User2Icon } from "lucide-react";
+import { Menu, User2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Sheet,
@@ -12,22 +12,17 @@ import Logo from "./Logo";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { userMenuOptions } from "@/constants/userMenuOptions";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useEffect, useState } from "react";
 import { getClerkUser } from "@/actions/user/getClerkUser";
 import { User } from "@clerk/nextjs/server";
 
-interface HeaderProps {
-  backIcon?: boolean;
-}
-
-const Header = ({ backIcon }: HeaderProps) => {
+const Header = () => {
   const [user, setUser] = useState({} as User);
   const [open, onOpenChange] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
 
   const currentPath =
     pathname.split("?").length > 0 ? pathname.split("?")[0] : pathname;
@@ -39,17 +34,7 @@ const Header = ({ backIcon }: HeaderProps) => {
   return (
     <div className="border-b border-border">
       <div className="container flex items-center justify-between py-2 px-5 h-[8svh]">
-        {backIcon ? (
-          <div
-            className="flex items-center text-primary cursor-pointer"
-            onClick={() => router.back()}
-          >
-            <ChevronLeft size={32} />
-            <p>Voltar</p>
-          </div>
-        ) : (
-          <Logo />
-        )}
+        <Logo />
 
         <Sheet open={open} onOpenChange={onOpenChange}>
           <SheetTrigger>
