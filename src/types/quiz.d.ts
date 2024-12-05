@@ -4,18 +4,19 @@ export type AnswerProps = {
 };
 
 export type QuestionProps = {
+  title: string;
+  question: string;
   cover?: {
     asset: {
       url: string;
     };
   };
-  question: string;
   answers: AnswerProps[];
-  title: string;
 };
 
 export type QuizProps = {
-  _id: string;
+  id: string;
+  lectureId: string;
   title: string;
   questions: QuestionProps[];
 };

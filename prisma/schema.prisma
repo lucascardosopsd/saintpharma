@@ -26,6 +26,7 @@ model User {
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
   certificates            Certificate[]
+  lectures                UserLecture[]
 }
 
 model Certificate {
@@ -39,4 +40,11 @@ model Certificate {
   userId      String?  @db.ObjectId
   points      Int
   User        User?    @relation(fields: [userId], references: [id])
+}
+
+model UserLecture {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  lectureCmsId String
+  userId       String? @db.ObjectId
+  User         User?   @relation(fields: [userId], references: [id])
 }

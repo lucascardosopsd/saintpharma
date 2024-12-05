@@ -1,15 +1,12 @@
-import { getCourseById } from "@/actions/courses/getId";
-import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { PortableText } from "next-sanity";
+import { Card, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { courses } from "@/mock/courses";
+import { courseLectures } from "@/mock/lectures";
+import { users } from "@/mock/users";
+import { Check, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
-import { getQuizByCourseId } from "@/actions/quiz/getByCourseId";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
-import { coursePageSerializer } from "@/serializers/course";
-import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 
 type CoursePageProps = {
   params: {
@@ -24,26 +21,15 @@ const CoursePage = async ({ params }: CoursePageProps) => {
     redirect("/");
   }
 
-  const weekPoints = await getWeekPoints();
-
-  const course = await getCourseById({ id });
-
-  if (course.premiumPoints > weekPoints) {
-    redirect("/");
-  }
-
-  const quiz = await getQuizByCourseId({ id: course._id });
-
-  const user = await getUserByClerk();
-
-  const isQuizCompleted = user?.quizzes.some(
-    (userQuiz) => userQuiz == quiz._id
+  const course = courses.filter((course) => course.id == id)[0];
+  const lectures = courseLectures.filter(
+    (lecture) => lecture.courseId == course.id
   );
 
   return (
     <div>
-      <div className="w-full max-w-[1200px] mx-auto h-[90svh] overflow-y-auto ">
-        <div className="h-[250px] w-full relative flex items-end  group overflow-hidden cursor-pointer">
+      <div className="w-full max-w-[1200px] mx-auto h-[92svh] overflow-y-auto pb-25">
+        <div className="h-[250px] w-full relative flex items-end  group overflow-hidden">
           <Image
             src={course.banner.asset.url}
             alt="Imagem curso"
@@ -52,57 +38,67 @@ const CoursePage = async ({ params }: CoursePageProps) => {
             className="w-full h-full  object-cover absolute -z-50 left-0 top-0 group-hover:scale-125 transition-all"
           />
 
-          <div className="h-full w-full absolute left-0 top-0 bg-gradient-to-t from-primary to-transparent z-10 tablet:rounded" />
+          <div className="h-full w-full absolute left-0 top-0 bg-gradient-to-t via-transparent from-primary to-transparent z-10 tablet:rounded" />
         </div>
 
-        <div className="flex justify-between bg-primary p-5 w-full z-50 text-background font-semibold">
-          <p className="text-semibold">{course.name}</p>
-          <p className="text-semibold">{course.workload} hrs</p>
+        <div className="flex justify-between bg-primary p-5 text-background">
+          <p className="text-2xl font-bold">{course.name}</p>
+          <p className="text-2xl">{course.workload}Hrs</p>
         </div>
 
-        <div className="p-5">
-          <PortableText
-            value={course.content}
-            components={coursePageSerializer}
-          />
+        <div className="p-5 flex flex-col gap-2 ">
+          {lectures.map((lecture, index) => {
+            const isCompleted = users.some((user) =>
+              user.lectures.some((userLecture) => userLecture.id == lecture.id)
+            );
+
+            return (
+              <Link
+                href={`/lecture/${lecture.id}/${course.id}`}
+                key={lecture.id}
+              >
+                <Card
+                  className={cn(
+                    "hover:bg-primary transition group cursor-pointer relative",
+                    isCompleted && "bg-primary"
+                  )}
+                >
+                  <CardHeader
+                    className={cn(
+                      "flex flex-row justify-between items-center text-primary",
+                      isCompleted && "text-background"
+                    )}
+                  >
+                    <p
+                      className={cn(
+                        "text-xl font-semibold group-hover:text-background transition flex items-center gap-2",
+                        isCompleted && "text-background"
+                      )}
+                    >
+                      Aula {index + 1}: {lecture.title}{" "}
+                      {isCompleted && (
+                        <span className="h-5 w-5 rounded-full flex items-center justify-center bg-background">
+                          <Check size={16} className="text-primary" />
+                        </span>
+                      )}
+                    </p>
+
+                    <ChevronRight
+                      size={32}
+                      className={cn(
+                        "group-hover:text-background transition",
+                        isCompleted && "text-background"
+                      )}
+                    />
+                  </CardHeader>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
 
-        <Separator orientation="horizontal" />
-
-        <div className="flex flex-col w-full items-center justify-center h-[400px] max-w-[500px] mx-auto px-5">
-          {isQuizCompleted ? (
-            <>
-              <p className="text-2xl text-primary font-semibold">
-                Você ja recebeu o certificado.
-              </p>
-            </>
-          ) : (
-            <>
-              <SignedIn>
-                <p className="text-2xl text-primary font-semibold">
-                  Curso concluído
-                </p>
-                <p>Garanta seu certificado</p>
-                <Link href={`/quiz/${id}`} className="w-full">
-                  <Button size="lg" className="w-full text-lg">
-                    Certificar
-                  </Button>
-                </Link>
-              </SignedIn>
-
-              <SignedOut>
-                <p className="text-2xl text-primary font-semibold">
-                  Curso concluído
-                </p>
-                <p>Faça login para a certificação</p>
-                <Link href="/sign-in" className="w-full">
-                  <Button size="lg" className="w-full text-lg">
-                    Entrar
-                  </Button>
-                </Link>
-              </SignedOut>
-            </>
-          )}
+        <div className="h-20 w-full absolute bottom-0 left-0 bg-primary text-background text-2xl flex items-center justify-center font-semibold cursor-pointer">
+          Certificado
         </div>
       </div>
     </div>

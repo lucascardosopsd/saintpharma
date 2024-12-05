@@ -4,30 +4,27 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import QuestionForm from "./Question";
 import { CircleCheckBig, CircleX } from "lucide-react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import { minExamPercentage, pointsAward } from "@/constants/exam";
-import { updateQuizzes } from "@/actions/user/updateQuizzes";
-import { createCertificate } from "@/actions/certification/create";
+import { minExamPercentage } from "@/constants/exam";
 import { CourseProps } from "@/types/course";
 import Link from "next/link";
-import { revalidateRoute } from "@/actions/revalidateRoute";
+import { toast } from "sonner";
+import { createUserLecture } from "@/actions/lecture/createLecture";
+import { getUserLectureById } from "@/actions/lecture/getLectureById";
 
 type ExamProps = {
   quiz: QuizProps;
   course: CourseProps;
   userId: string;
+  lectureId: string;
 };
 
-const Exam = ({ quiz, course, userId }: ExamProps) => {
+const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState([] as number[]);
   const [points, setPoints] = useState([0] as number[]);
   const [open, setOpen] = useState(false);
-  const [certificateId, setCertificate] = useState("");
-
-  const router = useRouter();
 
   const handleNewAnswer = (answer: string) => {
     const updatedAnswers = [...answers];
@@ -69,17 +66,9 @@ const Exam = ({ quiz, course, userId }: ExamProps) => {
           {finalPoints}/{quiz.questions.length}
         </p>
 
-        <Link href={certificateId ? `/certificate/${certificateId}` : "#"}>
-          <Button size="lg" disabled={!certificateId}>
-            Certificado
-          </Button>
+        <Link href={`/course/${course.id}`}>
+          <Button size="lg">Concluir</Button>
         </Link>
-        <p className="text-muted-foreground flex gap-1">
-          Você recebeu
-          <span className="text-foreground font-semibold">
-            {pointsAward} Pts
-          </span>
-        </p>
       </div>
     ) : (
       <div
@@ -91,7 +80,13 @@ const Exam = ({ quiz, course, userId }: ExamProps) => {
         <p className="text-muted-foreground">
           {finalPoints}/{quiz.questions.length}
         </p>
-        <Button size="lg" onClick={() => router.refresh()}>
+        <Button
+          size="lg"
+          onClick={() => {
+            setStep(0);
+            setAnswers([]);
+          }}
+        >
           Repetir
         </Button>
       </div>
@@ -145,12 +140,21 @@ const Exam = ({ quiz, course, userId }: ExamProps) => {
   };
 
   const finalOps = async () => {
-    await updateQuizzes({ quizId: quiz._id });
+    try {
+      const exists = await getUserLectureById({ id: lectureId });
 
-    const certificate = await createCertificate({ course, userId });
-    setCertificate(certificate.id);
-
-    revalidateRoute({ fullPath: "/" });
+      if (!exists) {
+        await createUserLecture({
+          data: {
+            lectureCmsId: lectureId,
+            userId,
+          },
+        });
+      }
+    } catch (error) {
+      toast.error("Erro ao concluir aula");
+      throw new Error("Error when finish lecture");
+    }
   };
 
   const handlePrev = () => setStep((prev) => Math.max(prev - 1, 0));
