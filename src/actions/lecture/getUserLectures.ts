@@ -1,15 +1,10 @@
+"use server";
 import prisma from "@/lib/prisma";
 
-type getUserLecturesProps = {
-  userId: string;
-};
-
-export const getUserLectures = async ({ userId }: getUserLecturesProps) => {
+export const getUserLectures = async ({ userId }: { userId: string }) => {
   try {
-    return await prisma.userLecture.findMany({
-      where: { userId },
-    });
+    return await prisma.userLecture.findMany({ where: { userId } });
   } catch (error) {
-    throw new Error("error when get user lectures");
+    throw new Error("Error when get user lectures");
   }
 };
