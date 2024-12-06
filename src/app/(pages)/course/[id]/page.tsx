@@ -2,9 +2,9 @@ import { getCourseById } from "@/actions/courses/getId";
 import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import CourseCertificateButton from "@/components/CourseCertificateButton";
 import { Card, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { courseLectures } from "@/mock/lectures";
 import { Check, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,11 +30,11 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   const userLectures = await getUserLectures({ userId: user?.id });
 
-  console.log(userLectures);
-
   const userCurrentCourseLectures = userLectures.filter(
     (userLecture) => userLecture.courseId == course._id
   );
+
+  const courseLectures = await getLecturesByCourseId({ courseId: course._id });
 
   const certificateAvailable =
     userCurrentCourseLectures.length == courseLectures.length;
@@ -113,14 +113,11 @@ const CoursePage = async ({ params }: CoursePageProps) => {
           })}
         </div>
 
-        <div
-          className={cn(
-            "h-20 w-full absolute bottom-0 left-0 bg-primary text-background text-2xl flex items-center justify-center font-semibold cursor-pointer",
-            !certificateAvailable && "bg-primary/50 cursor-default"
-          )}
-        >
-          Certificado
-        </div>
+        <CourseCertificateButton
+          course={course}
+          disabled={certificateAvailable}
+          userId={user.id}
+        />
       </div>
     </div>
   );
