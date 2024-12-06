@@ -2,7 +2,7 @@ import { defineField, defineType } from "sanity";
 
 export const QuizType = defineType({
   name: "quiz",
-  title: "2. Quizzes",
+  title: "3. Quizzes",
   type: "document",
   fields: [
     defineField({

@@ -1,8 +1,9 @@
 import { type SchemaTypeDefinition } from "sanity";
 import { CourseType } from "./course";
-import { questionStep } from "./questionStep";
+import { QuestionType } from "./questionStep";
 import { QuizType } from "./quiz";
+import { LectureType } from "./lecture";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [CourseType, QuizType, questionStep],
+  types: [CourseType, LectureType, QuizType, QuestionType],
 };
