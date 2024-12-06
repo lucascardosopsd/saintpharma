@@ -13,15 +13,6 @@ export const getCourseById = async ({ id }: { id: string }) => {
         name,
         slug,
         points,
-        content[] {
-            _type == "block" => @,
-            _type == "youtubeUrl" => @,
-            _type == "image" => {
-            "_type":"image",
-                "imageUrl": asset->url,
-                "caption": caption // Inclua a legenda, se necessário
-            }
-        },
         workload,
         description,
         premiumPoints,
