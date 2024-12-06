@@ -1,7 +1,7 @@
 import { QuizProps } from "./quiz";
 
 export type CourseProps = {
-  id: string;
+  _id: string;
   banner: {
     asset: {
       url: string;

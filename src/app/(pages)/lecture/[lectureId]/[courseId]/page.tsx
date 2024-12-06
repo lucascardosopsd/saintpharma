@@ -1,5 +1,7 @@
-import { courseLectures } from "@/mock/lectures";
+import { getLectureById } from "@/actions/lecture/getLectureById";
+import { LecturePageSerializer } from "@/serializers/course";
 import { ChevronLeft } from "lucide-react";
+import { PortableText } from "next-sanity";
 import Link from "next/link";
 
 type LecturePageProps = {
@@ -9,12 +11,10 @@ type LecturePageProps = {
   };
 };
 
-const LecturePage = ({ params }: LecturePageProps) => {
+const LecturePage = async ({ params }: LecturePageProps) => {
   const { lectureId, courseId } = params;
 
-  const lecture = courseLectures.filter(
-    (lecture) => lecture.id == lectureId
-  )[0];
+  const lecture = await getLectureById({ id: lectureId });
 
   return (
     <div className="flex flex-col">
@@ -26,7 +26,20 @@ const LecturePage = ({ params }: LecturePageProps) => {
         </div>
       </Link>
       <div className="h-[92svh] overflow-y-auto pb-20">
-        <p className="p-5">{lecture.content}</p>
+        <div className="p-5">
+          <PortableText
+            value={lecture.content}
+            components={LecturePageSerializer}
+          />
+          <PortableText
+            value={lecture.content}
+            components={LecturePageSerializer}
+          />
+          <PortableText
+            value={lecture.content}
+            components={LecturePageSerializer}
+          />
+        </div>
 
         <Link
           href={`/exam/${courseId}/${lectureId}`}

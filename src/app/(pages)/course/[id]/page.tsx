@@ -30,6 +30,8 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   const userLectures = await getUserLectures({ userId: user?.id });
 
+  console.log(userLectures);
+
   const userCurrentCourseLectures = userLectures.filter(
     (userLecture) => userLecture.courseId == course._id
   );

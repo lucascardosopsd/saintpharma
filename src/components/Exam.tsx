@@ -9,9 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { minExamPercentage } from "@/constants/exam";
 import { CourseProps } from "@/types/course";
 import { toast } from "sonner";
-import { createUserLecture } from "@/actions/lecture/createLecture";
-import { getUserLectureById } from "@/actions/lecture/getLectureById";
+import { createUserLecture } from "@/actions/lecture/createUserLecture";
 import { useRouter } from "next/navigation";
+import { getUserLectureById } from "@/actions/lecture/getUserLectureById";
 
 type ExamProps = {
   quiz: QuizProps;
@@ -120,7 +120,7 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
   ];
 
   useEffect(() => {
-    if (step == Math.floor(quiz.questions.length / 2)) {
+    if (step == Math.floor(quiz.questions.length / 2) && steps.length > 1) {
       setOpen(true);
     } else {
       setOpen(false);
@@ -135,19 +135,21 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
 
   const finalOps = async () => {
     try {
-      const exists = await getUserLectureById({ id: lectureId });
+      const exists = await getUserLectureById({ lectureCmsId: lectureId });
+
+      console.log(exists);
 
       if (!exists) {
         await createUserLecture({
           data: {
             lectureCmsId: lectureId,
-            courseId: course.id,
+            courseId: course._id,
             userId,
           },
         });
       }
 
-      router.push(`/course/${course.id}`);
+      router.push(`/course/${course._id}`);
     } catch (error) {
       console.log(error);
       toast.error("Erro ao concluir aula");
@@ -162,7 +164,9 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
       <div className="flex flex-col gap-5 p-5 pb-20 h-[92svh] overflow-y-scroll container max-w-[500px]">
         {steps[step]}
 
-        {modals}
+        {modals.map((modal, index) => (
+          <span key={index}>{modal}</span>
+        ))}
       </div>
 
       {step <= quiz.questions.length - 1 && (

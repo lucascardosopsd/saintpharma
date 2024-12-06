@@ -2,7 +2,7 @@ import { getUrlParam } from "@/tools/getUrlParm";
 import { PortableTextComponents } from "next-sanity";
 import Image from "next/image";
 
-export const coursePageSerializer: PortableTextComponents = {
+export const LecturePageSerializer: PortableTextComponents = {
   types: {
     youtubeUrl: ({ value }) => {
       const videoId = getUrlParam(value.url, "v");

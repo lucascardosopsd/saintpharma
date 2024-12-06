@@ -1,9 +1,13 @@
 import { client } from "@/sanity/lib/client";
 import { QuizProps } from "@/types/quiz";
 
-export const getQuizByCourseId = async ({ id }: { id: string }) => {
+export const getQuizByLectureId = async ({
+  lectureId,
+}: {
+  lectureId: string;
+}) => {
   const query = `
-    *[_type == "course"&& _id == "${id}"][0]{
+    *[_type == "lecture" && _id == "${lectureId}"][0]{
       quiz -> {
         _id,
         title,
@@ -24,5 +28,5 @@ export const getQuizByCourseId = async ({ id }: { id: string }) => {
     }
   `;
 
-  return (await client.fetch(query)).quiz as QuizProps;
+  return (await client.fetch(query, {})).quiz as QuizProps;
 };

@@ -1,7 +1,7 @@
+import { getCourseById } from "@/actions/courses/getId";
+import { getQuizByLectureId } from "@/actions/quiz/getByLectureId";
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import Exam from "@/components/Exam";
-import { courses } from "@/mock/courses";
-import { lectureQuizzes } from "@/mock/lectureQuizzes";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -15,9 +15,9 @@ type LecturePageProps = {
 const LecturePage = async ({ params }: LecturePageProps) => {
   const { courseId, lectureId } = params;
 
-  const quiz = lectureQuizzes.filter((quiz) => quiz.lectureId == lectureId)[0];
+  const quiz = await getQuizByLectureId({ lectureId });
 
-  const course = courses.filter((course) => course.id == courseId)[0];
+  const course = await getCourseById({ id: courseId });
 
   const user = await getUserByClerk();
 
