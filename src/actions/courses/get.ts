@@ -13,7 +13,6 @@ export const getCourses = async () => {
         name,
         slug,
         points,
-        content,
         workload,
         description,
         premiumPoints,
