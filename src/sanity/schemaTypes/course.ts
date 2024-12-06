@@ -39,48 +39,6 @@ export const CourseType = defineType({
     }),
 
     defineField({
-      name: "content",
-      title: "Conteúdo do Curso",
-      type: "array",
-      validation: (rule) => rule.required(),
-      of: [
-        {
-          type: "block",
-          options: {
-            spellcheck: false,
-          },
-        },
-        {
-          type: "image",
-        },
-
-        {
-          type: "object",
-          name: "youtubeUrl",
-          title: "Vídeo do youtube",
-          fields: [
-            {
-              name: "url",
-              title: "URL",
-              type: "url",
-              validation: (Rule) =>
-                Rule.uri({
-                  scheme: ["https"],
-                  // @ts-ignore
-                }).regex(
-                  /^(https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]{11})$/,
-                  {
-                    name: "youtube",
-                    message: "Por favor, insira um link válido do YouTube.",
-                  }
-                ),
-            },
-          ],
-        },
-      ],
-    }),
-
-    defineField({
       name: "workload",
       title: "Carga horária",
       type: "number",
@@ -98,11 +56,11 @@ export const CourseType = defineType({
       type: "number",
     }),
     defineField({
-      name: "quiz",
-      title: "Quiz",
+      name: "lectures",
+      title: "Aulas",
       type: "reference",
       validation: (rule) => rule.required(),
-      to: [{ type: "quiz" }],
+      to: [{ type: "lecture" }],
     }),
   ],
 });
