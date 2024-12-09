@@ -14,19 +14,16 @@ datasource db {
 }
 
 model User {
-  id                      String        @id @default(auto()) @map("_id") @db.ObjectId
-  clerkId                 String        @unique
-  name                    String?
-  email                   String        @unique
-  profileImage            String?
-  localGoogleId           String?       @unique
-  googleResourceId        String?       @unique
-  localGoogleCredentialId String?       @db.ObjectId
-  quizzes                 String[]      @default([])
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime      @updatedAt
-  certificates            Certificate[]
-  lectures                UserLecture[]
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId      String        @unique
+  name         String?
+  email        String        @unique
+  profileImage String?
+  quizzes      String[]      @default([])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  certificates Certificate[]
+  lectures     UserLecture[]
 }
 
 model Certificate {

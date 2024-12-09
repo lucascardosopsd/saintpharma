@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const email = email_addresses[0]?.email_address;
 
     await prisma.user.upsert({
-      where: { clerkId: id },
+      where: { email: email },
       update: {
         email,
         name: first_name,
@@ -22,6 +22,7 @@ export async function POST(req: Request) {
         profileImage: image_url || "",
       },
     });
+
     return new NextResponse("User updated in database successfully", {
       status: 200,
     });
