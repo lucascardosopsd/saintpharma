@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { createUserLecture } from "@/actions/lecture/createUserLecture";
 import { useRouter } from "next/navigation";
 import { getUserLectureById } from "@/actions/lecture/getUserLectureById";
+import { revalidateRoute } from "@/actions/revalidateRoute";
 
 type ExamProps = {
   quiz: QuizProps;
@@ -148,6 +149,8 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
           },
         });
       }
+
+      revalidateRoute({ fullPath: "/" });
 
       router.push(`/course/${course._id}`);
     } catch (error) {
