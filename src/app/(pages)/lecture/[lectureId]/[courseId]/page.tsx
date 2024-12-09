@@ -34,7 +34,7 @@ const LecturePage = async ({ params }: LecturePageProps) => {
           <p className="text-xl text-primary">{lecture.title}</p>
         </div>
       </Link>
-      <div className="h-[92svh] overflow-y-auto pb-20">
+      <div className="h-[92svh] overflow-y-auto pb-20 max-w-[800px] mx-auto">
         <div className="p-5">
           <PortableText
             value={lecture.content}
