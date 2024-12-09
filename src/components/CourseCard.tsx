@@ -14,21 +14,29 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { useUser } from "@clerk/nextjs";
 
 type CourseCardProps = {
   course: CourseProps;
-  disabled?: boolean;
-  points: number;
+  userPoints: number;
 };
 
-const CourseCard = ({ course, points, disabled }: CourseCardProps) => {
+const CourseCard = ({ course, userPoints }: CourseCardProps) => {
   const [open, setOpen] = useState(false);
+
+  const { user } = useUser();
+
+  const disabled = userPoints <= course.premiumPoints && !!course.premiumPoints;
 
   const handleOpenModal = () => {
     if (disabled) {
       setOpen(true);
     }
   };
+
+  let link = (!user && "/sign-in") || "";
+  if (!disabled && user) link = `/course/${course._id}`;
+  if (disabled) link = "#";
 
   return (
     <>
@@ -52,15 +60,12 @@ const CourseCard = ({ course, points, disabled }: CourseCardProps) => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Link
-        href={!disabled ? `/course/${course._id}` : "#"}
-        onClick={handleOpenModal}
-      >
+      <Link href={link} onClick={handleOpenModal}>
         <div className="h-[250px] w-full relative flex items-end tablet:rounded group overflow-hidden cursor-pointer">
           {course.premiumPoints > 0 && (
             <span className="p-1 absolute right-5 px-4 top-5 rounded-full flex items-center justify-center bg-primary text-background font-semibold text-xs gap-1">
               <p>Premium</p>
-              <p>{points}</p>
+              <p>{course.premiumPoints}</p>
             </span>
           )}
 
