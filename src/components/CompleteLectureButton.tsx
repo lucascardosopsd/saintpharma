@@ -1,7 +1,9 @@
 "use client";
 
 import { createUserLecture } from "@/actions/lecture/createUserLecture";
+import { getUserLectureById } from "@/actions/lecture/getUserLectureById";
 import { CourseProps } from "@/types/course";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type CompleteLectureButtonProps = {
@@ -15,15 +17,22 @@ const CompleteLectureButton = ({
   lectureId,
   userId,
 }: CompleteLectureButtonProps) => {
+  const router = useRouter();
+
   const completeLecture = async () => {
+    const exists = await getUserLectureById({ lectureCmsId: lectureId });
+
     try {
-      await createUserLecture({
-        data: {
-          lectureCmsId: lectureId,
-          courseId: course._id,
-          userId,
-        },
-      });
+      if (!exists) {
+        await createUserLecture({
+          data: {
+            lectureCmsId: lectureId,
+            courseId: course._id,
+            userId,
+          },
+        });
+      }
+      router.push(`/course/${course._id}`);
     } catch (error) {
       toast.error("Erro ao concluir a aula");
       throw new Error("Error when complete lecture");

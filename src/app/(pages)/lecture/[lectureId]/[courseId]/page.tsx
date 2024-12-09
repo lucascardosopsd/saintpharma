@@ -40,14 +40,6 @@ const LecturePage = async ({ params }: LecturePageProps) => {
             value={lecture.content}
             components={LecturePageSerializer}
           />
-          <PortableText
-            value={lecture.content}
-            components={LecturePageSerializer}
-          />
-          <PortableText
-            value={lecture.content}
-            components={LecturePageSerializer}
-          />
         </div>
 
         {!quiz ? (

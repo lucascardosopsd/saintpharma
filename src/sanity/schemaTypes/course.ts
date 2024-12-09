@@ -58,9 +58,16 @@ export const CourseType = defineType({
     defineField({
       name: "lectures",
       title: "Aulas",
-      type: "reference",
-      validation: (rule) => rule.required(),
-      to: [{ type: "lecture" }],
+      type: "array",
+      of: [
+        defineField({
+          name: "lecture",
+          title: "Aulas",
+          type: "reference",
+          validation: (rule) => rule.required(),
+          to: [{ type: "lecture" }],
+        }),
+      ],
     }),
   ],
 });

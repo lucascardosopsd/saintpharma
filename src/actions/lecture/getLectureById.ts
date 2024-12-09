@@ -6,9 +6,6 @@ export const getLectureById = async ({ id }: { id: string }) => {
     *[_type == "lecture" && _id == "${id}"][0]{
         _id,
         title,
-        course->{
-          _id,
-        },
         content[] {
             _type == "block" => @,
             _type == "youtubeUrl" => @,

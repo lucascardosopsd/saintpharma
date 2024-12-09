@@ -7,12 +7,9 @@ export const getLecturesByCourseId = async ({
   courseId: string;
 }) => {
   const query = `
-    *[_type == "lecture" && references($courseId)] | order(_createdAt asc) {
+    *[_type == "course" && _id == $courseId].lectures->{
       _id,
       title,
-      course->{
-        _id
-      },
       content[] {
         _type == "block" => @,
         _type == "youtubeUrl" => @,

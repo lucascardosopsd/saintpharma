@@ -26,15 +26,15 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   const course = await getCourseById({ id: id });
 
-  const lectures = await getLecturesByCourseId({ courseId: course._id });
-
   const userLectures = await getUserLectures({ userId: user?.id });
 
   const userCurrentCourseLectures = userLectures.filter(
     (userLecture) => userLecture.courseId == course._id
   );
 
-  const courseLectures = await getLecturesByCourseId({ courseId: course._id });
+  const courseLectures = await getLecturesByCourseId({
+    courseId: course._id,
+  });
 
   const certificateAvailable =
     userCurrentCourseLectures.length == courseLectures.length;
@@ -63,7 +63,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
           <p className="text-muted-foreground text-xs">
             Complete as aulas para emitir o certificado
           </p>
-          {lectures.map((lecture, index) => {
+          {courseLectures.map((lecture, index) => {
             const isCompleted = userLectures.some(
               (userLecture) => userLecture.lectureCmsId == lecture._id
             );

@@ -12,12 +12,6 @@ export const LectureType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: "course",
-      title: "Course",
-      type: "reference",
-      to: [{ type: "course" }],
-    }),
-    defineField({
       name: "content",
       title: "Conteúdo do Curso",
       type: "array",
@@ -62,6 +56,7 @@ export const LectureType = defineType({
       name: "quiz",
       title: "Quiz",
       type: "reference",
+
       to: [{ type: "quiz" }],
     }),
   ],
