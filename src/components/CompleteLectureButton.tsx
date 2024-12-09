@@ -2,6 +2,7 @@
 
 import { createUserLecture } from "@/actions/lecture/createUserLecture";
 import { getUserLectureById } from "@/actions/lecture/getUserLectureById";
+import { revalidateRoute } from "@/actions/revalidateRoute";
 import { CourseProps } from "@/types/course";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -32,6 +33,9 @@ const CompleteLectureButton = ({
           },
         });
       }
+
+      revalidateRoute({ fullPath: "/" });
+
       router.push(`/course/${course._id}`);
     } catch (error) {
       toast.error("Erro ao concluir a aula");
