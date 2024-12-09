@@ -63,54 +63,55 @@ const CoursePage = async ({ params }: CoursePageProps) => {
           <p className="text-muted-foreground text-xs">
             Complete as aulas para emitir o certificado
           </p>
-          {courseLectures.map((lecture, index) => {
-            const isCompleted = userLectures.some(
-              (userLecture) => userLecture.lectureCmsId == lecture._id
-            );
+          {courseLectures &&
+            courseLectures.map((lecture, index) => {
+              const isCompleted = userLectures.some(
+                (userLecture) => userLecture.lectureCmsId == lecture._id
+              );
 
-            return (
-              <Link
-                href={`/lecture/${lecture._id}/${course._id}`}
-                key={lecture._id}
-              >
-                <Card
-                  className={cn(
-                    "hover:bg-primary transition group cursor-pointer relative",
-                    isCompleted && "bg-primary"
-                  )}
+              return (
+                <Link
+                  href={`/lecture/${lecture._id}/${course._id}`}
+                  key={lecture._id}
                 >
-                  <CardHeader
+                  <Card
                     className={cn(
-                      "flex flex-row justify-between items-center text-primary",
-                      isCompleted && "text-background"
+                      "hover:bg-primary transition group cursor-pointer relative",
+                      isCompleted && "bg-primary"
                     )}
                   >
-                    <p
+                    <CardHeader
                       className={cn(
-                        "text-xl font-semibold group-hover:text-background transition flex items-center gap-2",
+                        "flex flex-row justify-between items-center text-primary",
                         isCompleted && "text-background"
                       )}
                     >
-                      Aula {index + 1}: {lecture.title}{" "}
-                      {isCompleted && (
-                        <span className="h-5 w-5 rounded-full flex items-center justify-center bg-background">
-                          <Check size={16} className="text-primary" />
-                        </span>
-                      )}
-                    </p>
+                      <p
+                        className={cn(
+                          "text-xl font-semibold group-hover:text-background transition flex items-center gap-2",
+                          isCompleted && "text-background"
+                        )}
+                      >
+                        Aula {index + 1}: {lecture.title}{" "}
+                        {isCompleted && (
+                          <span className="h-5 w-5 rounded-full flex items-center justify-center bg-background">
+                            <Check size={16} className="text-primary" />
+                          </span>
+                        )}
+                      </p>
 
-                    <ChevronRight
-                      size={32}
-                      className={cn(
-                        "group-hover:text-background transition",
-                        isCompleted && "text-background"
-                      )}
-                    />
-                  </CardHeader>
-                </Card>
-              </Link>
-            );
-          })}
+                      <ChevronRight
+                        size={32}
+                        className={cn(
+                          "group-hover:text-background transition",
+                          isCompleted && "text-background"
+                        )}
+                      />
+                    </CardHeader>
+                  </Card>
+                </Link>
+              );
+            })}
         </div>
 
         <CourseCertificateButton

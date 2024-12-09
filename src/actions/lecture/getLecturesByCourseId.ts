@@ -7,7 +7,7 @@ export const getLecturesByCourseId = async ({
   courseId: string;
 }) => {
   const query = `
-    *[_type == "course" && _id == $courseId].lectures->{
+    *[_type == "course" && _id == $courseId].lectures[]->{
       _id,
       title,
       content[] {
