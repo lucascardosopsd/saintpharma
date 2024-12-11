@@ -21,7 +21,10 @@ const CompleteLectureButton = ({
   const router = useRouter();
 
   const completeLecture = async () => {
-    const exists = await getUserLectureById({ lectureCmsId: lectureId });
+    const exists = await getUserLectureById({
+      lectureCmsId: lectureId,
+      userId,
+    });
 
     try {
       if (!exists) {

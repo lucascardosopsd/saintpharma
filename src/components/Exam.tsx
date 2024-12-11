@@ -136,9 +136,10 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
 
   const finalOps = async () => {
     try {
-      const exists = await getUserLectureById({ lectureCmsId: lectureId });
-
-      console.log(exists);
+      const exists = await getUserLectureById({
+        lectureCmsId: lectureId,
+        userId,
+      });
 
       if (!exists) {
         await createUserLecture({
