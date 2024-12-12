@@ -11,7 +11,7 @@ const Logo = () => {
         width={1000}
         className="h-10 w-auto"
       />
-      <p className="font-bold text-primary">SaintPharma</p>
+      <p className="font-bold text-primary">SainTPharma</p>
     </Link>
   );
 };
