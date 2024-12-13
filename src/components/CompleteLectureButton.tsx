@@ -48,7 +48,7 @@ const CompleteLectureButton = ({
 
   return (
     <div
-      className="absolute bottom-0 left-0 w-full cursor-pointer"
+      className="absolute bottom-0 left-0 right-0 w-full cursor-pointer max-w-[800px] mx-auto"
       onClick={completeLecture}
     >
       <div className="flex flex-col justify-center items-center bg-primary h-20">

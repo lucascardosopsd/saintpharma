@@ -51,9 +51,9 @@ const LecturePage = async ({ params }: LecturePageProps) => {
         ) : (
           <Link
             href={`/exam/${courseId}/${lectureId}`}
-            className="absolute bottom-0 left-0 w-full"
+            className="absolute bottom-0 left-0 w-full "
           >
-            <div className="flex flex-col justify-center items-center bg-primary h-20">
+            <div className="flex flex-col justify-center items-center bg-primary h-20 max-w-[800px] mx-auto rounded">
               <p className="font-semibold text-background text-2xl">
                 Questionário
               </p>

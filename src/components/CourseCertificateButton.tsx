@@ -46,7 +46,7 @@ const CourseCertificateButton = ({
   return (
     <div
       className={cn(
-        "h-20 w-full absolute bottom-0 left-0 bg-primary text-background text-2xl flex items-center justify-center font-semibold cursor-pointer",
+        "h-20 w-full max-w-[800px] rounded mx-auto absolute bottom-0 left-0 right-0 bg-primary text-background text-2xl flex items-center justify-center font-semibold cursor-pointer",
         !disabled && "bg-primary/50 cursor-default"
       )}
       onClick={() => disabled && handleCreateCertificate()}
