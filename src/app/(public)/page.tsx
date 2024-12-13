@@ -3,6 +3,8 @@ import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 import CourseCard from "@/components/CourseCard";
 import Header from "@/components/Header";
 import SearchSection from "@/components/SearchSection";
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 type PageProps = {
   searchParams?: Promise<{
@@ -27,6 +29,16 @@ export default async function Home({ searchParams }: PageProps) {
       <Header />
       <div className="h-[92svh] overflow-y-auto">
         <SearchSection defaultValue={sParams?.name} />
+
+        <Link href="/ranking" className="flex flex-col py-5">
+          <p className="h-10 w-full flex items-center justify-center font-semibold text-primary leading-none">
+            Conheça o Ranking <ExternalLink />
+          </p>
+          <p className="text-xs text-center leading-none">
+            Os 50 melhores da semana ganham acesso a um curso premium
+          </p>
+        </Link>
+
         <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 tablet:gap-2 tablet:p-2">
           {courses.map((course) => (
             <CourseCard
