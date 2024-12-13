@@ -22,7 +22,7 @@ export default function AddToMobileChrome(props: Props) {
     <>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTitle></AlertDialogTitle>
-        <AlertDialogContent className="rounded h-screen flex items-center justify-center flex-col">
+        <AlertDialogContent className="rounded h-svh flex items-center justify-center flex-col">
           <ArrowUp className="text-4xl absolute top-[10px] right-[10px] text-primary z-50 animate-bounce" />
 
           <div className="flex gap-2 items-center justify-center text-lg">
