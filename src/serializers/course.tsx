@@ -57,6 +57,24 @@ export const LecturePageSerializer: PortableTextComponents = {
   },
 
   marks: {
+    link: ({ children, value }) => {
+      const { href, target } = value;
+
+      if (!href) return children;
+
+      const isExternal = href.startsWith("http");
+
+      return (
+        <a
+          href={href}
+          target={isExternal ? "_blank" : target || "_self"}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          className="text-primary underline hover:text-primary-dark transition-colors"
+        >
+          {children}
+        </a>
+      );
+    },
     strong: ({ children }) => <strong className="font-bold">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
   },
