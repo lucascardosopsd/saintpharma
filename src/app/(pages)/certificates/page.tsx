@@ -15,7 +15,9 @@ const Page = async () => {
   return (
     <div className="max-w-lg mx-auto w-full">
       <div className="flex flex-col gap-2 h-[92svh] overflow-y-auto p-5">
-        <p className="text-2xl font-semibold text-primary">Certificados</p>
+        <p className="text-2xl font-semibold text-primary text-center">
+          Certificados
+        </p>
         {certificates.map((certificate) => (
           <Link href={`/certificate/${certificate.id}`} key={certificate.id}>
             <Card className="cursor-pointer group hover:bg-primary transition">
