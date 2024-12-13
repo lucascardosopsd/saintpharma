@@ -23,7 +23,7 @@ export const LecturePageSerializer: PortableTextComponents = {
           <Image
             height={1000}
             width={1000}
-            className="w-full h-auto max-w-[500px] mx-auto"
+            className="w-full h-[500px] mx-auto"
             src={value.imageUrl}
             alt={value.caption || "Imagem"}
           />
