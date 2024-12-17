@@ -26,9 +26,13 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   const course = await getCourseById({ id: id });
 
+  if (!course) {
+    return <>Curso não encontrado</>;
+  }
+
   const userLectures = await getUserLectures({ userId: user?.id });
 
-  const userCurrentCourseLectures = userLectures.filter(
+  const userCurrentCourseLectures = userLectures?.filter(
     (userLecture) => userLecture.courseId == course._id
   );
 
@@ -37,7 +41,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
   });
 
   const certificateAvailable =
-    userCurrentCourseLectures.length == courseLectures.length;
+    userCurrentCourseLectures?.length == courseLectures?.length;
 
   return (
     <div>

@@ -42,7 +42,7 @@ const LecturePage = async ({ params }: LecturePageProps) => {
           />
         </div>
 
-        {!quiz ? (
+        {!quiz._id ? (
           <CompleteLectureButton
             course={course}
             lectureId={lectureId}
