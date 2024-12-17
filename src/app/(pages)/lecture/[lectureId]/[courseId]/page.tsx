@@ -31,11 +31,12 @@ const LecturePage = async ({ params }: LecturePageProps) => {
         <div className="p-5 flex items-center border-b border-border text-primary justify-between">
           <ChevronLeft size={32} />
 
-          <p className="text-xl text-primary">{lecture.title}</p>
+          <p className="text-xl text-primary">{course.name}</p>
         </div>
       </Link>
       <div className="h-[92svh] overflow-y-auto pb-20 max-w-[800px] mx-auto">
-        <div className="p-5">
+        <div className="p-5 space-y-2">
+          <p className="text-2xl font-semibold text-primary">{course.name}</p>
           <PortableText
             value={lecture.content}
             components={LecturePageSerializer}
