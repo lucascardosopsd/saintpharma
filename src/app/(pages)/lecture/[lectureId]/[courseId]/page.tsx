@@ -25,6 +25,8 @@ const LecturePage = async ({ params }: LecturePageProps) => {
   const course = await getCourseById({ id: courseId });
   const user = await getUserByClerk();
 
+  console.log(quiz);
+
   return (
     <div className="flex flex-col">
       <Link href={`/course/${courseId}`}>
@@ -43,7 +45,7 @@ const LecturePage = async ({ params }: LecturePageProps) => {
           />
         </div>
 
-        {!quiz._id ? (
+        {!quiz?._id ? (
           <CompleteLectureButton
             course={course}
             lectureId={lectureId}
