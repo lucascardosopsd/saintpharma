@@ -2,6 +2,7 @@
 
 import { createCertificate } from "@/actions/certification/create";
 import { getUserCertificateByCourse } from "@/actions/certification/getUserCertificatesByCourse";
+import { revalidateRoute } from "@/actions/revalidateRoute";
 import { cn } from "@/lib/utils";
 import { CourseProps } from "@/types/course";
 import { useRouter } from "next/navigation";
@@ -27,8 +28,6 @@ const CourseCertificateButton = ({
         userId,
       });
 
-      console.log(existentCertificate);
-
       if (!existentCertificate) {
         const newCertificate = await createCertificate({
           course,
@@ -36,6 +35,8 @@ const CourseCertificateButton = ({
         });
 
         router.push(`/certificate/${newCertificate.id}`);
+
+        revalidateRoute({ fullPath: "/" });
         return;
       }
 
