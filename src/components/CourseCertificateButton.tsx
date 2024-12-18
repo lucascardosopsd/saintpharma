@@ -34,9 +34,10 @@ const CourseCertificateButton = ({
           userId,
         });
 
+        await revalidateRoute({ fullPath: "/" });
+
         router.push(`/certificate/${newCertificate.id}`);
 
-        revalidateRoute({ fullPath: "/" });
         return;
       }
 
