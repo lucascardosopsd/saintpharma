@@ -58,7 +58,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
           <div className="h-full w-full absolute left-0 top-0 bg-gradient-to-t via-transparent from-primary to-transparent z-10" />
         </div>
 
-        <div className="flex justify-between bg-primary p-5 text-background rounded-b-lg">
+        <div className="flex justify-between bg-primary p-5 text-background rounded-none tablet:rounded-b-lg">
           <p className="text-2xl font-bold">{course.name}</p>
           <p className="text-2xl">{course.workload}Hrs</p>
         </div>
@@ -80,7 +80,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
                 >
                   <Card
                     className={cn(
-                      "hover:bg-primary transition group cursor-pointer relative",
+                      "hover:bg-primary transition group cursor-pointer relative rounded-none tablet:rounded-lg",
                       isCompleted && "bg-primary"
                     )}
                   >
