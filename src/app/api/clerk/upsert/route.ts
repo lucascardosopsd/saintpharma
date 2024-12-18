@@ -8,20 +8,27 @@ export async function POST(req: Request) {
 
     const email = email_addresses[0]?.email_address;
 
-    await prisma.user.upsert({
-      where: { email: email },
-      update: {
-        email,
-        name: first_name,
-        profileImage: image_url,
-      },
-      create: {
-        clerkId: id,
-        email,
-        name: first_name || "",
-        profileImage: image_url || "",
-      },
-    });
+    const exists = await prisma.user.findFirst({ where: { email } });
+
+    if (exists) {
+      await prisma.user.update({
+        where: { email },
+        data: {
+          email,
+          name: first_name,
+          profileImage: image_url,
+        },
+      });
+    } else {
+      await prisma.user.create({
+        data: {
+          clerkId: id,
+          email,
+          name: first_name || "",
+          profileImage: image_url || "",
+        },
+      });
+    }
 
     return new NextResponse("User updated in database successfully", {
       status: 200,
