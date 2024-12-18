@@ -96,28 +96,30 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
   ];
 
   const modals = [
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="h-[100svh] max-w-screen">
-        <DialogHeader>
-          <DialogTitle></DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col items-center justify-center h-full w-full">
-          <div className="mb-10 text-center my-auto">
-            <p className="text-6xl text-primary font-semibold">Parabéns!</p>
-            <p className="font-semibold text-2xl">
-              Você concluiu 50% do teste!
-            </p>
+    quiz.questions.length > 1 && (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="h-[100svh] max-w-screen">
+          <DialogHeader>
+            <DialogTitle></DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center justify-center h-full w-full">
+            <div className="mb-10 text-center my-auto">
+              <p className="text-6xl text-primary font-semibold">Parabéns!</p>
+              <p className="font-semibold text-2xl">
+                Você concluiu 50% do teste!
+              </p>
+            </div>
+            <Image
+              alt="Concluiu 50%"
+              src="/happy-news.png"
+              height={1000}
+              width={1000}
+              className="h-[400px] w-auto mt-auto"
+            />
           </div>
-          <Image
-            alt="Concluiu 50%"
-            src="/happy-news.png"
-            height={1000}
-            width={1000}
-            className="h-[400px] w-auto mt-auto"
-          />
-        </div>
-      </DialogContent>
-    </Dialog>,
+        </DialogContent>
+      </Dialog>
+    ),
   ];
 
   useEffect(() => {
