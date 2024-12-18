@@ -27,7 +27,7 @@ export default async function Home({ searchParams }: PageProps) {
   return (
     <div className="flex flex-col">
       <Header />
-      <div className="h-[92svh] overflow-y-auto">
+      <div className="h-[92svh] overflow-y-auto ">
         <SearchSection defaultValue={sParams?.name} />
 
         <Link href="/ranking" className="flex flex-col py-5">
@@ -39,14 +39,16 @@ export default async function Home({ searchParams }: PageProps) {
           </p>
         </Link>
 
-        <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 tablet:gap-2 tablet:p-2">
-          {courses.map((course) => (
-            <CourseCard
-              course={course}
-              key={course._id}
-              userPoints={userPoints}
-            />
-          ))}
+        <div className="max-w-[1200px] mx-auto">
+          <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 tablet:gap-2 tablet:p-2">
+            {courses.map((course) => (
+              <CourseCard
+                course={course}
+                key={course._id}
+                userPoints={userPoints}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

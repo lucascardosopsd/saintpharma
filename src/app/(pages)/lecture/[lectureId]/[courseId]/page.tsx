@@ -25,8 +25,6 @@ const LecturePage = async ({ params }: LecturePageProps) => {
   const course = await getCourseById({ id: courseId });
   const user = await getUserByClerk();
 
-  console.log(quiz);
-
   return (
     <div className="flex flex-col">
       <Link href={`/course/${courseId}`}>
