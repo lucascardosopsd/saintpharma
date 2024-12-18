@@ -22,11 +22,14 @@ const CourseCertificateButton = ({
 
   const handleCreateCertificate = async () => {
     try {
-      const courseCertificate = await getUserCertificateByCourse({
+      const existentCertificate = await getUserCertificateByCourse({
         courseId: course._id,
+        userId,
       });
 
-      if (!courseCertificate) {
+      console.log(existentCertificate);
+
+      if (!existentCertificate) {
         const newCertificate = await createCertificate({
           course,
           userId,
@@ -36,7 +39,7 @@ const CourseCertificateButton = ({
         return;
       }
 
-      router.push(`/certificate/${courseCertificate.id}`);
+      router.push(`/certificate/${existentCertificate.id}`);
     } catch (error) {
       toast.error("Erro ao criar certificado");
       throw new Error("Error when create certificate");
