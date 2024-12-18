@@ -45,8 +45,8 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   return (
     <div>
-      <div className="w-full max-w-[1200px] mx-auto h-[92svh] overflow-y-auto pb-25">
-        <div className="h-[250px] w-full relative flex items-end  group overflow-hidden">
+      <div className="w-full max-w-[800px] mx-auto h-[92svh] overflow-y-auto pb-25">
+        <div className="h-[250px] w-full relative flex items-end  group overflow-hidden ">
           <Image
             src={course.banner.asset.url}
             alt="Imagem curso"
@@ -55,15 +55,15 @@ const CoursePage = async ({ params }: CoursePageProps) => {
             className="w-full h-full  object-cover absolute -z-50 left-0 top-0 group-hover:scale-125 transition-all"
           />
 
-          <div className="h-full w-full absolute left-0 top-0 bg-gradient-to-t via-transparent from-primary to-transparent z-10 tablet:rounded" />
+          <div className="h-full w-full absolute left-0 top-0 bg-gradient-to-t via-transparent from-primary to-transparent z-10" />
         </div>
 
-        <div className="flex justify-between bg-primary p-5 text-background">
+        <div className="flex justify-between bg-primary p-5 text-background rounded-b-lg">
           <p className="text-2xl font-bold">{course.name}</p>
           <p className="text-2xl">{course.workload}Hrs</p>
         </div>
 
-        <div className="p-5 flex flex-col gap-2 ">
+        <div className="flex flex-col gap-2 my-5">
           <p className="text-muted-foreground text-xs">
             Complete as aulas para emitir o certificado
           </p>
