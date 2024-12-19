@@ -1,10 +1,13 @@
 import { getRanking } from "@/actions/ranking/get";
+import { revalidateRoute } from "@/actions/revalidateRoute";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 const ProfilePage = async () => {
   const ranking = await getRanking();
+
+  await revalidateRoute({ fullPath: "/ranking" });
 
   return (
     <div className="h-[92svh] overflow-y-auto w-full flex flex-col items-center p-5">
