@@ -2,9 +2,12 @@ import { getRanking } from "@/actions/ranking/get";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { revalidatePath } from "next/cache";
 
 const ProfilePage = async () => {
   const ranking = await getRanking();
+
+  revalidatePath("/ranking");
 
   return (
     <div className="h-[92svh] overflow-y-auto w-full flex flex-col items-center p-5">
