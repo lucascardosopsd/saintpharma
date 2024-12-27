@@ -1,20 +1,17 @@
 "use client";
-
 import { CourseProps } from "@/types/course";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "./ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 
 type CourseCardProps = {
   course: CourseProps;
@@ -40,25 +37,24 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
 
   return (
     <>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent>
-          <div className="w-[90svw] h-svh flex items-center justify-center flex-col">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Pontos insuficientes!</AlertDialogTitle>
-              <AlertDialogDescription>
-                Você não possuiu pontos suficientes para se inscrever nesse
-                curso. Continue fazendo os cursos gratuitos e verifique o
-                ranking em "menu &gt; ranking"
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="text-2xl h-12 w-64">
-                Fechar
-              </AlertDialogCancel>
-            </AlertDialogFooter>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="h-svh">
+          <div className="flex items-center justify-center flex-col">
+            <DialogHeader>
+              <DialogTitle className="text-center">
+                Pontos insuficientes!
+              </DialogTitle>
+              <DialogDescription>
+                <p className="text-center">
+                  Você não possuiu pontos suficientes para se inscrever nesse
+                  curso. Continue fazendo os cursos gratuitos e verifique o
+                  ranking em "menu &gt; ranking"
+                </p>
+              </DialogDescription>
+            </DialogHeader>
           </div>
-        </AlertDialogContent>
-      </AlertDialog>
+        </DialogContent>
+      </Dialog>
 
       <Link href={link} onClick={handleOpenModal}>
         <div className="h-[250px] w-full relative flex items-end tablet:rounded group overflow-hidden cursor-pointer">
