@@ -32,16 +32,16 @@ const CoursePage = async ({ params }: CoursePageProps) => {
 
   const userLectures = await getUserLectures({ userId: user?.id });
 
-  const userCurrentCourseLectures = userLectures?.filter(
-    (userLecture) => userLecture.courseId == course._id
-  );
-
   const courseLectures = await getLecturesByCourseId({
     courseId: course._id,
   });
 
+  const userCurrentLectures = courseLectures.filter((cLecture) =>
+    userLectures.some((uLecture) => uLecture.lectureCmsId == cLecture._id)
+  );
+
   const certificateAvailable =
-    userCurrentCourseLectures?.length == courseLectures?.length;
+    userCurrentLectures?.length == courseLectures?.length;
 
   return (
     <div>
