@@ -92,12 +92,12 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
               www.saintpharmacursos.com.br
             </p>
 
-            <Image
+            <img
               src="/logo.png"
               alt="Logo"
               height={1000}
               width={1000}
-              className="h-16 w-auto"
+              className="h-full max-h-[300px] w-auto absolute -z-10 opacity-10"
             />
 
             <div className="flex gap-5">
@@ -181,7 +181,7 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
 
       <Button
         onClick={() => downloadPDF()}
-        className="w-full max-w-[300px] mx-auto"
+        className="w-full mx-auto absolute bottom-0 left-0"
       >
         Baixar certificado
       </Button>
