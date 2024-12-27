@@ -31,10 +31,7 @@ const NewExamButton = ({
       return;
     }
 
-    if (exam && exam.reproved && !exam.complete) {
-      handleRetryExam();
-      return;
-    }
+    handleRetryExam();
   };
 
   const handleNewExam = async () => {
