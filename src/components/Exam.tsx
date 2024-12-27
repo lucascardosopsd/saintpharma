@@ -13,15 +13,26 @@ import { createUserLecture } from "@/actions/lecture/createUserLecture";
 import { useRouter } from "next/navigation";
 import { getUserLectureById } from "@/actions/lecture/getUserLectureById";
 import { revalidateRoute } from "@/actions/revalidateRoute";
+import { updateExam } from "@/actions/exam/updateExam";
+import { createDamage } from "@/actions/damage/createDamage";
 
 type ExamProps = {
   quiz: QuizProps;
   course: CourseProps;
   userId: string;
   lectureId: string;
+  examId: string;
+  userLifes: number;
 };
 
-const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
+const Exam = ({
+  quiz,
+  course,
+  userId,
+  lectureId,
+  examId,
+  userLifes,
+}: ExamProps) => {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState([] as number[]);
   const [points, setPoints] = useState([0] as number[]);
@@ -43,6 +54,63 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
   };
 
   const finalPoints = points.reduce((prev, current) => prev + current, 0);
+
+  const handleRepeat = async () => {
+    try {
+      await createDamage({ userId });
+
+      await updateExam({
+        id: examId,
+        data: {
+          reproved: true,
+          lectureCMSid: lectureId,
+          userId,
+        },
+      });
+
+      setStep(0);
+      setAnswers([]);
+    } catch (error) {
+      toast.error("Erro ao repetir prova");
+    }
+  };
+
+  const handleComplete = async () => {
+    try {
+      await updateExam({
+        id: examId,
+        data: {
+          reproved: false,
+          complete: true,
+          lectureCMSid: lectureId,
+          userId,
+        },
+      });
+
+      const exists = await getUserLectureById({
+        lectureCmsId: lectureId,
+        userId,
+      });
+
+      if (!exists) {
+        await createUserLecture({
+          data: {
+            lectureCmsId: lectureId,
+            courseId: course._id,
+            userId,
+          },
+        });
+      }
+
+      revalidateRoute({ fullPath: "/" });
+
+      router.push(`/course/${course._id}`);
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao concluir prova");
+      throw new Error("Error when finish exam");
+    }
+  };
 
   // Step Components
   const steps = [
@@ -68,7 +136,7 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
           {finalPoints}/{quiz.questions.length}
         </p>
 
-        <Button size="lg" onClick={() => finalOps()}>
+        <Button size="lg" onClick={handleComplete}>
           Concluir
         </Button>
       </div>
@@ -82,15 +150,10 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
         <p className="text-muted-foreground">
           {finalPoints}/{quiz.questions.length}
         </p>
-        <Button
-          size="lg"
-          onClick={() => {
-            setStep(0);
-            setAnswers([]);
-          }}
-        >
+        <Button size="lg" onClick={handleRepeat} disabled={!userLifes}>
           Repetir
         </Button>
+        <p>{userLifes ? " Isso custará 1 vida" : "Você não tem mais vidas."}</p>
       </div>
     ),
   ];
@@ -133,33 +196,6 @@ const Exam = ({ quiz, course, userId, lectureId }: ExamProps) => {
   const handleNext = () => {
     if (answers[step] !== undefined) {
       setStep((prev) => Math.min(prev + 1, steps.length - 1));
-    }
-  };
-
-  const finalOps = async () => {
-    try {
-      const exists = await getUserLectureById({
-        lectureCmsId: lectureId,
-        userId,
-      });
-
-      if (!exists) {
-        await createUserLecture({
-          data: {
-            lectureCmsId: lectureId,
-            courseId: course._id,
-            userId,
-          },
-        });
-      }
-
-      revalidateRoute({ fullPath: "/" });
-
-      router.push(`/course/${course._id}`);
-    } catch (error) {
-      console.log(error);
-      toast.error("Erro ao concluir aula");
-      throw new Error("Error when finish lecture");
     }
   };
 
