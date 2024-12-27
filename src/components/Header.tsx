@@ -21,15 +21,7 @@ import { User } from "@clerk/nextjs/server";
 import { getUserDamage } from "@/actions/damage/getUserDamage";
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import { subHours } from "date-fns";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { defaultLifes } from "@/constants/exam";
 import { toast } from "sonner";
 import { revalidateRoute } from "@/actions/revalidateRoute";
@@ -81,20 +73,20 @@ const Header = () => {
                     </Button>
                   </DialogTrigger>
 
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center justify-center gap-2">
-                        Vidas <Heart className="fill-red-500 stroke-red-500" />
-                      </DialogTitle>
-                    </DialogHeader>
-                    Esse é o total de vidas que ainda restam para tentar
-                    realizar as provas novamente. Cada vida demora 12 horas para
-                    ser restaurantada e ao final de todas as vidas você fica
-                    impedido de realizar uma nova tentativa até que ao menos uma
-                    se restaure.
-                    <DialogFooter>
-                      <DialogClose asChild>Fechar</DialogClose>
-                    </DialogFooter>
+                  <DialogContent className="h-svh items-center">
+                    <div>
+                      <div className="flex gap-2 justify-center">
+                        <p className="text-center">Vidas</p>
+                        <Heart className="fill-red-500 stroke-red-500" />
+                      </div>
+                      <p className="text-center">
+                        Esse é o total de vidas que ainda restam para tentar
+                        realizar as provas novamente. Cada vida demora 12 horas
+                        para ser restaurantada e ao final de todas as vidas você
+                        fica impedido de realizar uma nova tentativa até que ao
+                        menos uma se restaure.
+                      </p>
+                    </div>
                   </DialogContent>
                 </Dialog>
               ) : (
