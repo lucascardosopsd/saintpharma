@@ -32,6 +32,7 @@ import {
 } from "./ui/dialog";
 import { defaultLifes } from "@/constants/exam";
 import { toast } from "sonner";
+import { revalidateRoute } from "@/actions/revalidateRoute";
 
 const Header = () => {
   const [user, setUser] = useState({} as User);
@@ -60,6 +61,7 @@ const Header = () => {
 
   useEffect(() => {
     getData();
+    revalidateRoute({ fullPath: "/" });
   }, []);
 
   return (
@@ -68,32 +70,37 @@ const Header = () => {
         <Logo />
 
         <div className="flex items-center gap-2">
-          {damage !== null ? (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="text-red-500" variant="outline">
-                  <p>{defaultLifes - damage!}</p>
-                  <Heart className="fill-red-500 stroke-red-500" />
-                </Button>
-              </DialogTrigger>
+          {user && (
+            <>
+              {damage !== null ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="text-red-500" variant="outline">
+                      <p>{defaultLifes - damage!}</p>
+                      <Heart className="fill-red-500 stroke-red-500" />
+                    </Button>
+                  </DialogTrigger>
 
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle className="flex items-center justify-center gap-2">
-                    Vidas <Heart className="fill-red-500 stroke-red-500" />
-                  </DialogTitle>
-                </DialogHeader>
-                Esse é o total de vidas que ainda restam para tentar realizar as
-                provas novamente. Cada vida demora 12 horas para ser
-                restaurantada e ao final de todas as vidas você fica impedido de
-                realizar uma nova tentativa até que ao menos uma se restaure.
-                <DialogFooter>
-                  <DialogClose asChild>Fechar</DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          ) : (
-            <CircleDashed className="animate-spin text-red-500" />
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center justify-center gap-2">
+                        Vidas <Heart className="fill-red-500 stroke-red-500" />
+                      </DialogTitle>
+                    </DialogHeader>
+                    Esse é o total de vidas que ainda restam para tentar
+                    realizar as provas novamente. Cada vida demora 12 horas para
+                    ser restaurantada e ao final de todas as vidas você fica
+                    impedido de realizar uma nova tentativa até que ao menos uma
+                    se restaure.
+                    <DialogFooter>
+                      <DialogClose asChild>Fechar</DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              ) : (
+                <CircleDashed className="animate-spin text-red-500" />
+              )}
+            </>
           )}
 
           <Sheet open={open} onOpenChange={onOpenChange}>
