@@ -6,6 +6,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Exam } from "@prisma/client";
+import { createDamage } from "@/actions/damage/createDamage";
 
 type NewExamButtonProps = {
   lectureId: string;
@@ -54,6 +55,7 @@ const NewExamButton = ({
 
   const handleRetryExam = async () => {
     try {
+      await createDamage({ userId });
       router.push(`/exam/${exam?.id!}/${courseId}/${lectureId}`);
     } catch (error) {
       toast.error("Erro ao iniciar a prova");
