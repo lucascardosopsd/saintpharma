@@ -63,7 +63,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
           <p className="text-2xl">{course.workload}Hrs</p>
         </div>
 
-        <div className="flex flex-col gap-2 my-5">
+        <div className="flex flex-col gap-2 my-5 mb-12">
           <p className="text-muted-foreground text-xs">
             Complete as aulas para emitir o certificado
           </p>
