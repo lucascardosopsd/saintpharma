@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import AddToHomeScreen from "@/components/pwaPrompt/AddAppToHomeScreen";
 import { ReactNode } from "react";
 
@@ -6,6 +7,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
     <>
       <AddToHomeScreen />
       {children}
+      <Footer />
     </>
   );
 };

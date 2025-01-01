@@ -1,6 +1,7 @@
 import { getCourses } from "@/actions/courses/get";
 import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 import CourseCard from "@/components/CourseCard";
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import SearchSection from "@/components/SearchSection";
 import { ExternalLink } from "lucide-react";
@@ -50,6 +51,8 @@ export default async function Home({ searchParams }: PageProps) {
             ))}
           </div>
         </div>
+
+        <Footer />
       </div>
     </div>
   );
