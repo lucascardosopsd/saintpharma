@@ -181,7 +181,7 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
 
       <Button
         onClick={() => downloadPDF()}
-        className="w-full mx-auto absolute bottom-0 left-0"
+        className="w-full mx-auto absolute bottom-0 rounded-b-none left-0"
       >
         Baixar certificado
       </Button>
