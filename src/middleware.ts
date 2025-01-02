@@ -7,6 +7,7 @@ const isPublicRoute = createRouteMatcher([
   "/studio(.*)",
   "/api/clerk(.*)",
   "/api/sanity/revalidate(.*)",
+  "/privacy-policy",
   "/",
 ]);
 
