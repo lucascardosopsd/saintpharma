@@ -30,7 +30,7 @@ const LecturePage = async ({ params }: LecturePageProps) => {
 
   const userDamage = await getUserDamage({
     userId: user?.id!,
-    from: subHours(new Date(), 12),
+    from: subHours(new Date(), 6),
   });
 
   return (
