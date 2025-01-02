@@ -20,7 +20,11 @@ const CoursePage = async ({ params }: CoursePageProps) => {
   const { id } = params;
   const user = await getUserByClerk();
 
-  if (!id || !user) {
+  if (!id) {
+    redirect("/");
+  }
+
+  if (!user) {
     redirect("/sign-in");
   }
 
