@@ -39,6 +39,8 @@ const UserProfile = ({ user, serverClerkUser, points }: UserProfileProps) => {
         lastName: data.lastName,
       });
 
+      toast.success("Informações atualizadas");
+
       revalidateRoute({ fullPath: "/" });
     } catch (error) {
       toast.error("Ocorreu um erro ao salvar");
