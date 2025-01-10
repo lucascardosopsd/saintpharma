@@ -57,7 +57,7 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
       </Dialog>
 
       <Link href={link} onClick={handleOpenModal}>
-        <div className="h-[250px] w-full relative flex items-end tablet:rounded group overflow-hidden cursor-pointer">
+        <div className="h-[250px] w-full relative flex items-end tablet:rounded group overflow-hidden cursor-pointer rounded">
           {course.premiumPoints > 0 && (
             <span className="p-1 absolute right-5 px-4 top-5 rounded-full flex items-center justify-center bg-primary text-background font-semibold text-xs gap-1">
               <p>Premium</p>
