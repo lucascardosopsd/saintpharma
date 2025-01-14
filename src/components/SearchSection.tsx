@@ -27,7 +27,7 @@ const SearchSection = ({ defaultValue }: SearchSectionProps) => {
   return (
     <div className="flex flex-col  justify-center bg-primary p-5 h-[300px] gap-10">
       <div className="w-full max-w-[500px] mx-auto">
-        <p className="text-5xl text-background font-semibold">
+        <p className="text-4xl text-background font-semibold">
           O que você deseja aprender hoje?
         </p>
         <div className="flex relative items-center">
