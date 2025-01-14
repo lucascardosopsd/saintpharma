@@ -33,6 +33,14 @@ const Exam = ({
   examId,
   userLifes,
 }: ExamProps) => {
+  if (!userLifes) {
+    return (
+      <div className="h-svh w-full flex items-center justify-center">
+        <p className="text-2xl">Você não possuí mais vidas!</p>
+      </div>
+    );
+  }
+
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState([] as number[]);
   const [points, setPoints] = useState([0] as number[]);
