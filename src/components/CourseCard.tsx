@@ -59,7 +59,7 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
       <Link href={link} onClick={handleOpenModal}>
         <div className="h-[250px] w-full relative flex items-end tablet:rounded group overflow-hidden cursor-pointer rounded">
           {course.premiumPoints > 0 && (
-            <span className="p-1 absolute right-5 px-4 top-5 rounded-full flex items-center justify-center bg-primary text-background font-semibold text-xs gap-1">
+            <span className="p-1 absolute right-5 px-4 top-5 rounded-full flex items-center justify-center bg-blue-800 text-background font-semibold text-xs gap-1">
               <p>Premium</p>
               <p>{course.premiumPoints}</p>
             </span>
@@ -82,9 +82,10 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
             )}
           />
 
-          <div className="flex justify-between text-background p-5 w-full z-50 ">
-            <p className="text-semibold">{course.name}</p>
-            <p className="text-semibold">{course.workload} hrs</p>
+          <div className="flex justify-between text-background p-5 w-full z-50">
+            <p className="font-semibold">{course.name}</p>
+
+            <p className="font-semibold">{course.workload} hrs</p>
           </div>
         </div>
       </Link>
