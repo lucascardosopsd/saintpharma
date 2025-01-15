@@ -9,7 +9,10 @@ export const LecturePageSerializer: PortableTextComponents = {
 
       return (
         <iframe
-          className="rounded w-full h-[400px] tablet:h-[500px]"
+          style={{
+            width: "90svw",
+          }}
+          className="rounded w-auto h-[400px] tablet:h-[500px] mx-auto"
           src={`https://www.youtube.com/embed/${videoId}`}
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
