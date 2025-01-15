@@ -159,7 +159,7 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
                 <img
                   src="/assinatura_elaine.png"
                   alt="Assinatura"
-                  className="h-16 w-auto absolute -top-3 left-0 mx-auto"
+                  className="h-16 w-auto absolute -top-0 left-0 mx-auto"
                 />
                 <Separator />
                 <p className="font-semibold text-center">
