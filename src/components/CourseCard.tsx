@@ -78,7 +78,7 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
 
           <div
             className={cn(
-              "h-full w-full absolute left-0 top-0 bg-gradient-to-t from-primary via-transparent to-transparent z-10 tablet:rounded"
+              "h-full w-full absolute left-0 top-0 bg-gradient-to-t from-blue-800 via-transparent to-transparent z-10 tablet:rounded"
             )}
           />
 
