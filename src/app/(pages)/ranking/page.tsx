@@ -2,6 +2,8 @@ import { getRanking } from "@/actions/ranking/get";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { revalidatePath } from "next/cache";
 
 const ProfilePage = async () => {
@@ -13,7 +15,9 @@ const ProfilePage = async () => {
     <div className="h-[92svh] overflow-y-auto w-full flex flex-col items-center p-5">
       <p className="text-4xl font-bold text-primary">Ranking</p>
       <p className="text-lg text-primary">Os 50 melhores</p>
-      <p className="text-muted-foreground">Últimos 7 Dias</p>
+      <p className="text-muted-foreground capitalize">
+        Do mês de {format(new Date(), "LLLL", { locale: ptBR })}
+      </p>
 
       <div className="mx-auto max-w-lg w-full">
         {ranking.map((user, index) => (

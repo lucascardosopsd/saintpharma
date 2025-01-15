@@ -1,9 +1,7 @@
 "use server";
-
 import { Certificate, User } from "@prisma/client";
-import { endOfWeek, startOfWeek } from "date-fns";
+import { endOfMonth, startOfMonth } from "date-fns";
 import { getManyCertificates } from "../certification/getManyCertificates";
-import { ptBR } from "date-fns/locale";
 
 type CustomCertificateProps = Certificate & {
   User: User;
@@ -26,9 +24,9 @@ type UserPoints = {
 export const getRanking = async () => {
   const today = new Date();
 
-  const firstDayOfWeek = startOfWeek(today, { locale: ptBR, weekStartsOn: 0 });
+  const firstDayOfMonth = startOfMonth(today);
 
-  const lastDayOfWeek = endOfWeek(today, { locale: ptBR, weekStartsOn: 0 });
+  const lastDayOfMonth = endOfMonth(today);
 
   const { certificates } = await getManyCertificates<CustomCertificatesReturn>({
     page: 0,
@@ -36,8 +34,8 @@ export const getRanking = async () => {
     query: {
       where: {
         createdAt: {
-          lte: new Date(lastDayOfWeek),
-          gte: new Date(firstDayOfWeek),
+          lte: new Date(lastDayOfMonth),
+          gte: new Date(firstDayOfMonth),
         },
       },
       include: {
