@@ -155,7 +155,12 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
                 <p className="text-xs">{certificate!.description}</p>
               </div>
 
-              <div className="flex flex-col flex-1 text-primary text-xs justify-center items-center">
+              <div className="flex flex-col flex-1 text-primary text-xs justify-center items-center relative">
+                <img
+                  src="/assinatura_elaine.png"
+                  alt="Assinatura"
+                  className="h-16 w-auto absolute -top-3 left-0 mx-auto"
+                />
                 <Separator />
                 <p className="font-semibold text-center">
                   Elaine Cristina Wandeur da Costa
