@@ -28,7 +28,7 @@ const CertificatePage = async ({ params }: CertificatePageProps) => {
 
   return (
     <>
-      <div className="w-full max-w-[800px] mx-auto flex flex-col gap-5 h-screen items-center justify-center">
+      <div className="w-full max-w-[800px] mx-auto flex flex-col gap-5 h-screen items-center justify-center pb-20">
         <Certificate certificate={certificate!} course={course} user={user!} />
       </div>
     </>
