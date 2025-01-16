@@ -56,44 +56,47 @@ const Header = () => {
     revalidateRoute({ fullPath: "/" });
   }, []);
 
+  const handleSignout = () => {
+    onOpenChange(false);
+    revalidateRoute({ fullPath: "/" });
+  };
+
   return (
     <div className="border-b border-border">
       <div className="container flex items-center justify-between py-2 px-5 h-[8svh]">
         <Logo />
 
         <div className="flex items-center gap-2">
-          {user && (
-            <>
-              {damage !== null ? (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="text-red-500" variant="outline">
-                      <p>{defaultLifes - damage!}</p>
-                      <Heart className="fill-red-500 stroke-red-500" />
-                    </Button>
-                  </DialogTrigger>
+          <SignedIn>
+            {damage !== null ? (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="text-red-500" variant="outline">
+                    <p>{defaultLifes - damage!}</p>
+                    <Heart className="fill-red-500 stroke-red-500" />
+                  </Button>
+                </DialogTrigger>
 
-                  <DialogContent className="h-svh items-center">
-                    <div>
-                      <div className="flex gap-2 justify-center">
-                        <p className="text-center">Vidas</p>
-                        <Heart className="fill-red-500 stroke-red-500" />
-                      </div>
-                      <p className="text-center">
-                        Esse é o total de vidas que ainda restam para tentar
-                        realizar as provas novamente. Cada vida demora 12 horas
-                        para ser restaurantada e ao final de todas as vidas você
-                        fica impedido de realizar uma nova tentativa até que ao
-                        menos uma se restaure.
-                      </p>
+                <DialogContent className="h-svh items-center">
+                  <div>
+                    <div className="flex gap-2 justify-center">
+                      <p className="text-center">Vidas</p>
+                      <Heart className="fill-red-500 stroke-red-500" />
                     </div>
-                  </DialogContent>
-                </Dialog>
-              ) : (
-                <CircleDashed className="animate-spin text-red-500" />
-              )}
-            </>
-          )}
+                    <p className="text-center">
+                      Esse é o total de vidas que ainda restam para tentar
+                      realizar as provas novamente. Cada vida demora 12 horas
+                      para ser restaurantada e ao final de todas as vidas você
+                      fica impedido de realizar uma nova tentativa até que ao
+                      menos uma se restaure.
+                    </p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              <CircleDashed className="animate-spin text-red-500" />
+            )}
+          </SignedIn>
 
           <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetTrigger>
@@ -150,7 +153,7 @@ const Header = () => {
 
                 <SignedIn>
                   <SignOutButton redirectUrl="/">
-                    <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                    <Button variant="ghost" onClick={handleSignout}>
                       <p className="text-4xl font-semibold">Sair</p>
                     </Button>
                   </SignOutButton>
