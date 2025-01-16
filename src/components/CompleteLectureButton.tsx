@@ -6,6 +6,7 @@ import { revalidateRoute } from "@/actions/revalidateRoute";
 import { CourseProps } from "@/types/course";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "./ui/button";
 
 type CompleteLectureButtonProps = {
   course: CourseProps;
@@ -47,14 +48,12 @@ const CompleteLectureButton = ({
   };
 
   return (
-    <div
-      className="absolute bottom-0 left-0 right-0 w-full cursor-pointer max-w-[800px] mx-auto"
+    <Button
+      className="absolute bottom-0 left-0 right-0 w-full rounded-b-none cursor-pointer  mx-auto"
       onClick={completeLecture}
     >
-      <div className="flex flex-col justify-center items-center bg-primary h-20">
-        <p className="font-semibold text-background text-2xl">Concluir</p>
-      </div>
-    </div>
+      <p className="font-semibold text-background ">Concluir</p>
+    </Button>
   );
 };
 
