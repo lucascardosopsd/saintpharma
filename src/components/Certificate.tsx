@@ -155,11 +155,11 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
                 <p className="text-xs">{certificate!.description}</p>
               </div>
 
-              <div className="flex flex-col flex-1 text-primary text-xs justify-center items-center relative">
+              <div className="flex flex-col flex-1 text-primary text-xs justify-center items-center relative w-full min-w-[220px]">
                 <img
                   src="/assinatura_elaine.png"
                   alt="Assinatura"
-                  className="h-16 w-auto absolute -top-5 left-0 mx-auto"
+                  className="h-16 w-auto mx-auto -mb-4"
                 />
                 <Separator />
                 <p className="font-semibold text-center">
