@@ -17,14 +17,14 @@ const ConsentModal = () => {
 
   const getConsent = () => {
     const isConsentChecked = JSON.parse(
-      localStorage.getItem("consent") || "false"
+      localStorage.getItem("saintpharma-consent") || "false"
     );
 
     !isConsentChecked ? setOpen(true) : null;
   };
 
   const acceptTerms = () => {
-    localStorage.setItem("consent", "true");
+    localStorage.setItem("saintpharma-consent", "true");
     setOpen(false);
   };
 
