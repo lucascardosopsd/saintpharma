@@ -41,7 +41,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
   });
 
   const userCurrentLectures = courseLectures.filter((cLecture) =>
-    userLectures.some((uLecture) => uLecture.lectureCmsId == cLecture._id)
+    userLectures.some((uLecture) => uLecture.lectureCmsId == cLecture?._id)
   );
 
   const certificateAvailable =
@@ -71,16 +71,16 @@ const CoursePage = async ({ params }: CoursePageProps) => {
           <p className="text-muted-foreground text-xs">
             Complete as aulas para emitir o certificado
           </p>
-          {courseLectures &&
+          {courseLectures.length &&
             courseLectures.map((lecture, index) => {
               const isCompleted = userLectures.some(
-                (userLecture) => userLecture.lectureCmsId == lecture._id
+                (userLecture) => userLecture.lectureCmsId == lecture?._id
               );
 
               return (
                 <Link
-                  href={`/lecture/${lecture._id}/${course._id}`}
-                  key={lecture._id}
+                  href={`/lecture/${lecture?._id}/${course?._id}`}
+                  key={lecture?._id}
                 >
                   <Card
                     className={cn(
@@ -100,7 +100,7 @@ const CoursePage = async ({ params }: CoursePageProps) => {
                           isCompleted && "text-background"
                         )}
                       >
-                        Aula {index + 1}: {lecture.title}{" "}
+                        Aula {index + 1}: {lecture?.title}{" "}
                         {isCompleted && (
                           <span className="h-5 w-5 rounded-full flex items-center justify-center bg-background">
                             <Check size={16} className="text-primary" />
