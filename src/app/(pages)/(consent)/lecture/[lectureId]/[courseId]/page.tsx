@@ -11,6 +11,8 @@ import { LecturePageSerializer } from "@/serializers/course";
 import { subHours } from "date-fns";
 import { ChevronLeft } from "lucide-react";
 import { PortableText } from "next-sanity";
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import Link from "next/link";
 
 type LecturePageProps = {
@@ -21,6 +23,11 @@ type LecturePageProps = {
 };
 
 const LecturePage = async ({ params }: LecturePageProps) => {
+  const headerList = headers();
+  const pathname = headerList.get("x-current-path");
+
+  revalidatePath(pathname!);
+
   const { lectureId, courseId } = params;
   const exam = await getExamByLectureId({ lectureId });
 
