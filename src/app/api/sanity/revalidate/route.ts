@@ -1,8 +1,7 @@
-import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const { body, isValidSignature } = await parseBody<{
       _type: string;
@@ -17,7 +16,6 @@ export async function POST(req: NextRequest) {
       return new Response("Bad Request", { status: 400 });
     }
 
-    revalidatePath("/");
     return NextResponse.json({
       status: 200,
       revalidated: true,
