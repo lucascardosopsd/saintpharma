@@ -25,12 +25,24 @@ import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { defaultLifes } from "@/constants/exam";
 import { toast } from "sonner";
 import { revalidateRoute } from "@/actions/revalidateRoute";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const Header = () => {
+type HeaderProps = {
+  userLives: number | null;
+  isLessonPage?: boolean;
+};
+
+const Header = ({ userLives, isLessonPage = false }: HeaderProps) => {
   const [user, setUser] = useState({} as User);
-  const [damage, setDamage] = useState<null | number>(null);
+  const [damage, setDamage] = useState<number>(0);
   const [open, onOpenChange] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Use client-side pathname to determine if we're on a lesson page
+  // This will update whenever the route changes
+  const isCurrentlyOnLessonPage = pathname.startsWith("/lecture/");
 
   const currentPath =
     pathname.split("?").length > 0 ? pathname.split("?")[0] : pathname;
@@ -61,14 +73,27 @@ const Header = () => {
     revalidateRoute({ fullPath: "/" });
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <div className="border-b border-border">
       <div className="container flex items-center justify-between py-2 px-5 h-[8svh]">
-        <Logo />
+        {isCurrentlyOnLessonPage ? (
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={handleGoBack} className="p-1">
+              <ArrowLeft className="text-primary" />{" "}
+              <p className="text-primary font-medium">Voltar</p>
+            </Button>
+          </div>
+        ) : (
+          <Logo />
+        )}
 
         <div className="flex items-center gap-2">
           <SignedIn>
-            {damage !== null ? (
+            {userLives !== null ? (
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="text-red-500" variant="outline">

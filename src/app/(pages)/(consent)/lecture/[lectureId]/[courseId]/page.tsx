@@ -9,11 +9,9 @@ import NewExamButton from "@/components/NewExamButton";
 import { defaultLifes } from "@/constants/exam";
 import { LecturePageSerializer } from "@/serializers/course";
 import { subHours } from "date-fns";
-import { ChevronLeft } from "lucide-react";
 import { PortableText } from "next-sanity";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import Link from "next/link";
 
 type LecturePageProps = {
   params: {
@@ -46,13 +44,6 @@ const LecturePage = async ({ params }: LecturePageProps) => {
 
   return (
     <div className="flex flex-col">
-      <Link href={`/course/${courseId}`}>
-        <div className="p-5 flex items-center border-b border-border text-primary justify-between">
-          <ChevronLeft size={32} />
-
-          <p className="text-xl text-primary">{course.name}</p>
-        </div>
-      </Link>
       <div className="h-[92svh] overflow-y-auto pb-20 max-w-[800px] mx-auto">
         <div className="p-5 space-y-2">
           <p className="text-2xl font-semibold text-primary">{course.name}</p>

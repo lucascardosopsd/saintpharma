@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Toaster } from "@/components/ui/sonner";
+import "./globals.css";
 import { ptBR } from "@clerk/localizations";
+import { Toaster } from "sonner";
+import HeaderWithLives from "@/components/HeaderWithLives";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -22,10 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider localization={ptBR}>
-      <html lang="pt-BR" className="overflow-hidden">
-        <body className={`${poppins.className} antialiased`}>
-          <Toaster />
-          {children}
+      <html lang="pt-BR">
+        <body className="min-h-screen">
+          <HeaderWithLives />
+          <main>{children}</main>
+          <Toaster position="top-center" />
         </body>
       </html>
     </ClerkProvider>

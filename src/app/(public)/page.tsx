@@ -1,8 +1,6 @@
 import { getCourses } from "@/actions/courses/get";
 import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 import CourseCard from "@/components/CourseCard";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import SearchSection from "@/components/SearchSection";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
@@ -27,7 +25,6 @@ export default async function Home({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col">
-      <Header />
       <div className="h-[92svh] overflow-y-auto flex flex-col justify-between ">
         <div>
           <SearchSection defaultValue={sParams?.name} />
@@ -53,8 +50,6 @@ export default async function Home({ searchParams }: PageProps) {
             ))}
           </div>
         </div>
-
-        <Footer />
       </div>
     </div>
   );
