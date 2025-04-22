@@ -50,7 +50,7 @@ const CourseCertificateButton = ({
   return (
     <Button
       disabled={!disabled}
-      className="absolute left-0 bottom-0 w-full rounded-b-none z-50"
+      className="w-full text-2xl font-semibold text-background h-20"
       onClick={() => disabled && handleCreateCertificate()}
     >
       Certificado

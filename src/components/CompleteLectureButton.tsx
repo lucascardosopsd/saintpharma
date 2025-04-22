@@ -49,10 +49,10 @@ const CompleteLectureButton = ({
 
   return (
     <Button
-      className="absolute bottom-0 left-0 right-0 w-full rounded-b-none cursor-pointer  mx-auto"
+      className="w-full h-20 font-semibold text-background text-2xl"
       onClick={completeLecture}
     >
-      <p className="font-semibold text-background ">Concluir</p>
+      Concluir
     </Button>
   );
 };

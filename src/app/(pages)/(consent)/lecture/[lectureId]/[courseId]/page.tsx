@@ -60,23 +60,22 @@ const LecturePage = async ({ params }: LecturePageProps) => {
             value={lecture.content}
             components={LecturePageSerializer}
           />
+          {!quiz?._id ? (
+            <CompleteLectureButton
+              course={course}
+              lectureId={lectureId}
+              userId={user?.id!}
+            />
+          ) : (
+            <NewExamButton
+              courseId={courseId}
+              lectureId={lectureId}
+              userId={user?.id!}
+              exam={exam}
+              userLifes={defaultLifes - userDamage.length}
+            />
+          )}
         </div>
-
-        {!quiz?._id ? (
-          <CompleteLectureButton
-            course={course}
-            lectureId={lectureId}
-            userId={user?.id!}
-          />
-        ) : (
-          <NewExamButton
-            courseId={courseId}
-            lectureId={lectureId}
-            userId={user?.id!}
-            exam={exam}
-            userLifes={defaultLifes - userDamage.length}
-          />
-        )}
       </div>
     </div>
   );

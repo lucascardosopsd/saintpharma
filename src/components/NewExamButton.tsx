@@ -65,15 +65,14 @@ const NewExamButton = ({
   };
 
   return (
-    <div className="absolute bottom-0 left-0 w-full rounded-b-none">
+    <div className="w-full">
       <Button
         onClick={handleCheckExam}
         disabled={loading || !userLifes}
-        className="w-full"
+        className="w-full h-20 text-2xl font-semibold"
       >
         {userLifes ? "Questionário" : "Vidas Insuficientes"}
       </Button>
-      {userLifes == 0 ? "" : ""}
     </div>
   );
 };
