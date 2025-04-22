@@ -1,32 +1,29 @@
-import { getManyCertificates } from "@/actions/certification/getManyCertificates";
-import { getClerkUser } from "@/actions/user/getClerkUser";
+// Assuming this is your profile page
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import UserProfile from "@/components/UserProfile";
+import { currentUser } from "@clerk/nextjs/server";
 
-const ProfilePage = async () => {
-  const clerkUser = await getClerkUser();
+export default async function ProfilePage() {
   const user = await getUserByClerk();
+  const clerkUser = await currentUser();
 
-  const { certificates } = await getManyCertificates({
-    page: 0,
-    take: 1000,
-    query: {
-      where: {
-        userId: user?.id!,
-      },
-    },
-  });
+  // Calculate points or get them from somewhere
+  const points = user?.points || 0;
 
-  const points = certificates.reduce(
-    (acc, certificate) => acc + certificate.points,
-    0
-  );
+  if (!user || !clerkUser) {
+    return <div>User not found</div>;
+  }
+
+  const serializedUser = JSON.parse(JSON.stringify(user));
+  const serializedClerkUser = JSON.parse(JSON.stringify(clerkUser));
 
   return (
-    <div className="h-[92svh] w-full flex items-center justify-center">
-      <UserProfile user={user!} serverClerkUser={clerkUser} points={points} />
+    <div className="flex flex-col items-center justify-center min-h-screen py-10">
+      <UserProfile
+        user={serializedUser}
+        serverClerkUser={serializedClerkUser}
+        points={points}
+      />
     </div>
   );
-};
-
-export default ProfilePage;
+}

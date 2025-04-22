@@ -10,5 +10,8 @@ export const getUserByClerk = async () => {
     return null;
   }
 
-  return await prisma.user.findUnique({ where: { clerkId: clerk?.id } });
+  const user = await prisma.user.findUnique({ where: { clerkId: clerk?.id } });
+  
+  // Serialize the Prisma result to a plain object
+  return user ? JSON.parse(JSON.stringify(user)) : null;
 };

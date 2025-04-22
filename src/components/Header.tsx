@@ -15,12 +15,8 @@ import { userMenuOptions } from "@/constants/userMenuOptions";
 import { usePathname } from "next/navigation";
 import { SignedIn, SignedOut, SignOutButton } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useEffect, useState } from "react";
-import { getClerkUser } from "@/actions/user/getClerkUser";
+import { useState } from "react";
 import { User } from "@clerk/nextjs/server";
-import { getUserDamage } from "@/actions/damage/getUserDamage";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
-import { subHours } from "date-fns";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { defaultLifes } from "@/constants/exam";
 import { toast } from "sonner";
@@ -31,11 +27,20 @@ import { useRouter } from "next/navigation";
 type HeaderProps = {
   userLives: number | null;
   isLessonPage?: boolean;
+  clerkUser: User | null;
+  user: any | null;
+  damage: number;
+  remainingLives: number;
 };
 
-const Header = ({ userLives, isLessonPage = false }: HeaderProps) => {
-  const [user, setUser] = useState({} as User);
-  const [damage, setDamage] = useState<number>(0);
+const Header = ({ 
+  userLives, 
+  isLessonPage = false,
+  clerkUser,
+  user,
+  damage,
+  remainingLives
+}: HeaderProps) => {
   const [open, onOpenChange] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -46,27 +51,6 @@ const Header = ({ userLives, isLessonPage = false }: HeaderProps) => {
 
   const currentPath =
     pathname.split("?").length > 0 ? pathname.split("?")[0] : pathname;
-
-  const getData = async () => {
-    try {
-      getClerkUser().then((data) => setUser(data));
-
-      const user = await getUserByClerk();
-      const userDamage = await getUserDamage({
-        userId: user?.id!,
-        from: subHours(new Date(), 10),
-      });
-
-      setDamage(userDamage.length);
-    } catch (error) {
-      toast.error("Erro ao carregar dados do cabeçalho");
-    }
-  };
-
-  useEffect(() => {
-    getData();
-    revalidateRoute({ fullPath: "/" });
-  }, []);
 
   const handleSignout = () => {
     onOpenChange(false);
@@ -97,7 +81,7 @@ const Header = ({ userLives, isLessonPage = false }: HeaderProps) => {
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="text-red-500" variant="outline">
-                    <p>{defaultLifes - damage!}</p>
+                    <p>{remainingLives}</p>
                     <Heart className="fill-red-500 stroke-red-500" />
                   </Button>
                 </DialogTrigger>
@@ -145,11 +129,13 @@ const Header = ({ userLives, isLessonPage = false }: HeaderProps) => {
                   <SignedIn>
                     <div className="flex items-center gap-2 font-normal">
                       <Avatar>
-                        <AvatarImage src={user?.imageUrl} />
-                        <AvatarFallback></AvatarFallback>
+                        <AvatarImage src={clerkUser?.imageUrl} />
+                        <AvatarFallback>
+                          {clerkUser?.firstName?.[0]?.toUpperCase() || ""}
+                        </AvatarFallback>
                       </Avatar>
 
-                      <p className="text-primary">{user?.firstName}</p>
+                      <p className="text-primary">{clerkUser?.firstName}</p>
                     </div>
                   </SignedIn>
                 </SheetTitle>

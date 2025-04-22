@@ -1,8 +1,18 @@
 "use server";
 
-import { currentUser, User } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
-export const getClerkUser = async (): Promise<User> => {
-  const user = await currentUser();
-  return JSON.parse(JSON.stringify(user));
+export const getClerkUser = async () => {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  } catch (error) {
+    console.error("Error fetching Clerk user:", error);
+    return null;
+  }
 };
