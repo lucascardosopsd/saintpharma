@@ -1,5 +1,4 @@
 "use client";
-import { createCertificate } from "@/actions/certification/create";
 import { getUserCertificateByCourse } from "@/actions/certification/getUserCertificatesByCourse";
 import { revalidateRoute } from "@/actions/revalidateRoute";
 import { CourseProps } from "@/types/course";
@@ -28,20 +27,35 @@ const CourseCertificateButton = ({
       });
 
       if (!existentCertificate) {
-        const newCertificate = await createCertificate({
-          course,
-          userId,
+        const response = await fetch("/api/certificate/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, course }),
         });
+
+        if (!response.ok) {
+          throw new Error("Erro ao criar certificado");
+        }
+
+        const data = await response.json();
+        const certificate = data.certificate;
+
+        console.log(certificate);
 
         await revalidateRoute({ fullPath: "/" });
 
-        router.push(`/certificate/${newCertificate.id}`);
+        router.push(`/certificate/${certificate.id}`);
 
         return;
       }
 
+      console.log(existentCertificate);
+
       router.push(`/certificate/${existentCertificate.id}`);
     } catch (error) {
+      console.log(error);
       toast.error("Erro ao criar certificado");
       throw new Error("Error when create certificate");
     }

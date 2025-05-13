@@ -1,3 +1,4 @@
+"use server";
 import { getCertificateById } from "@/actions/certification/getById";
 import { getCourseById } from "@/actions/courses/getId";
 import { getClerkUser } from "@/actions/user/getClerkUser";

@@ -10,7 +10,7 @@ export const getClerkUser = async () => {
       return null;
     }
 
-    return user;
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
     console.error("Error fetching Clerk user:", error);
     return null;

@@ -1,3 +1,5 @@
+"use server";
+
 import { getUserLives } from "@/actions/user/getUserLives";
 import Header from "./Header";
 import { headers } from "next/headers";
@@ -12,13 +14,13 @@ const HeaderWithLives = async () => {
   const userLives = await getUserLives();
   const headersList = headers();
   const pathname = headersList.get("x-current-path") || "";
-  
+
   // Get Clerk user
   const clerkUser = await currentUser();
-  
+
   // Get user from database
   const user = await getUserByClerk();
-  
+
   // Get user damage if user exists
   let damage = 0;
   if (user?.id) {
@@ -36,13 +38,15 @@ const HeaderWithLives = async () => {
   const isLessonPage = pathname.startsWith("/lecture/");
 
   // Serialize the data to avoid "Only plain objects..." error
-  const serializedClerkUser = clerkUser ? JSON.parse(JSON.stringify(clerkUser)) : null;
+  const serializedClerkUser = clerkUser
+    ? JSON.parse(JSON.stringify(clerkUser))
+    : null;
   const serializedUser = user ? JSON.parse(JSON.stringify(user)) : null;
 
   return (
-    <Header 
-      userLives={userLives} 
-      isLessonPage={isLessonPage} 
+    <Header
+      userLives={userLives}
+      isLessonPage={isLessonPage}
       clerkUser={serializedClerkUser}
       user={serializedUser}
       damage={damage}

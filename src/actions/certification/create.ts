@@ -12,7 +12,7 @@ export const createCertificate = async ({
   course,
 }: CreateCertificationProps) => {
   try {
-    return prisma.certificate.create({
+    const certificate = await prisma.certificate.create({
       data: {
         courseCmsId: course._id,
         courseTitle: course.name,
@@ -22,7 +22,12 @@ export const createCertificate = async ({
         userId: userId,
       },
     });
+
+    console.log(certificate);
+
+    return certificate;
   } catch (error) {
+    console.log(error);
     throw new Error("Error when create certification");
   }
 };
