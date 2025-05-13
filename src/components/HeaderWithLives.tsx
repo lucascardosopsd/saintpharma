@@ -1,5 +1,3 @@
-"use server";
-
 import { getUserLives } from "@/actions/user/getUserLives";
 import Header from "./Header";
 import { headers } from "next/headers";
