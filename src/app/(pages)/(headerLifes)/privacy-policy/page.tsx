@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-
+export const dynamic = "force-dynamic";
 const PrivacyPolicyPage = () => {
   return (
     <div className="flex flex-col items-center p-5 gap-5 max-w-[600px] mx-auto h-[calc(100svh-180px)] overflow-y-auto">

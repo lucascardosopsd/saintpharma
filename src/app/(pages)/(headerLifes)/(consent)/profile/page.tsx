@@ -3,6 +3,8 @@ import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import UserProfile from "@/components/UserProfile";
 import { currentUser } from "@clerk/nextjs/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfilePage() {
   const user = await getUserByClerk();
   const clerkUser = await currentUser();

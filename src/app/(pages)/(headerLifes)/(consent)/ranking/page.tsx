@@ -6,6 +6,8 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { revalidatePath } from "next/cache";
 
+export const dynamic = "force-dynamic";
+
 const ProfilePage = async () => {
   const ranking = await getRanking();
 

@@ -5,6 +5,8 @@ import SearchSection from "@/components/SearchSection";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   searchParams?: Promise<{
     name: string;
