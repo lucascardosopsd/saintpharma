@@ -7,6 +7,7 @@ import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import CompleteLectureButton from "@/components/CompleteLectureButton";
 import NewExamButton from "@/components/NewExamButton";
 import { defaultLifes } from "@/constants/exam";
+import { requireAuth } from "@/lib/authGuard";
 import { LecturePageSerializer } from "@/serializers/course";
 import { subHours } from "date-fns";
 import { PortableText } from "next-sanity";
@@ -21,6 +22,7 @@ type LecturePageProps = {
 };
 
 const LecturePage = async ({ params }: LecturePageProps) => {
+  await requireAuth();
   const headerList = headers();
   const pathname = headerList.get("x-current-path");
 

@@ -2,6 +2,7 @@ import { getRanking } from "@/actions/ranking/get";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { requireAuth } from "@/lib/authGuard";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { revalidatePath } from "next/cache";
@@ -9,6 +10,7 @@ import { revalidatePath } from "next/cache";
 export const dynamic = "force-dynamic";
 
 const ProfilePage = async () => {
+  await requireAuth();
   const ranking = await getRanking();
 
   revalidatePath("/ranking");

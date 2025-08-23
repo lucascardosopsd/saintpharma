@@ -5,6 +5,7 @@ import { getQuizByLectureId } from "@/actions/quiz/getByLectureId";
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import Exam from "@/components/Exam";
 import { defaultLifes } from "@/constants/exam";
+import { requireAuth } from "@/lib/authGuard";
 import { subHours } from "date-fns";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ type LecturePageProps = {
 };
 
 const LecturePage = async ({ params }: LecturePageProps) => {
+  await requireAuth();
   const { courseId, lectureId } = params;
 
   const quiz = await getQuizByLectureId({ lectureId });

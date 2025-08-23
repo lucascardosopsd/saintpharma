@@ -108,8 +108,8 @@ const Header = ({
           </SignedIn>
 
           <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetTrigger>
-              <Button variant="outline" size="icon" className="p-1" asChild>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="p-1">
                 <Menu className="text-primary" />
               </Button>
             </SheetTrigger>

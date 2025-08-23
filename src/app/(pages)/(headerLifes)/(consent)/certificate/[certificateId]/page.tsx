@@ -3,6 +3,7 @@ import { getCertificateById } from "@/actions/certification/getById";
 import { getCourseById } from "@/actions/courses/getId";
 import { getClerkUser } from "@/actions/user/getClerkUser";
 import Certificate from "@/components/Certificate";
+import { requireAuth } from "@/lib/authGuard";
 
 type CertificatePageProps = {
   params: {
@@ -11,6 +12,7 @@ type CertificatePageProps = {
 };
 
 const CertificatePage = async ({ params }: CertificatePageProps) => {
+  await requireAuth();
   const { certificateId: id } = params;
 
   const user = await getClerkUser();

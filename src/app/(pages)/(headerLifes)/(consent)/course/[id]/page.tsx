@@ -4,6 +4,7 @@ import { getUserLectures } from "@/actions/lecture/getUserLectures";
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import CourseCertificateButton from "@/components/CourseCertificateButton";
 import { Card, CardHeader } from "@/components/ui/card";
+import { requireAuth } from "@/lib/authGuard";
 import { cn } from "@/lib/utils";
 import { Check, ChevronRight } from "lucide-react";
 import Image from "next/image";
@@ -18,14 +19,11 @@ type CoursePageProps = {
 
 const CoursePage = async ({ params }: CoursePageProps) => {
   const { id } = params;
+  await requireAuth();
   const user = await getUserByClerk();
 
   if (!id) {
     redirect("/");
-  }
-
-  if (!user) {
-    redirect("/sign-in");
   }
 
   const course = await getCourseById({ id: id });

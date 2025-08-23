@@ -1,13 +1,11 @@
 "use server";
-
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
-import { redirect } from "next/navigation";
 
 export async function deleteAccount() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       throw new Error("Usuário não autenticado");
     }
