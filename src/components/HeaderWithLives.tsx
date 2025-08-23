@@ -17,7 +17,7 @@ const HeaderWithLives = async () => {
   const clerkUser = await currentUser();
 
   // Get user from database
-  const user = await getUserByClerk();
+  const user = await getUserByClerk(clerkUser);
 
   // Get user damage if user exists
   let damage = 0;
