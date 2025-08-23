@@ -1,5 +1,3 @@
-"use server";
-
 import HeaderWithLives from "@/components/HeaderWithLives";
 import { ReactNode } from "react";
 

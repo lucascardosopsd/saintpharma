@@ -4,37 +4,111 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { id, email_addresses, first_name, image_url } = body?.data;
+    const { type, data } = body;
+    
+    console.log("Clerk webhook received:", { type, userId: data?.id });
 
-    const email = email_addresses[0]?.email_address;
+    // Verificar se é um evento de delete
+    if (type === "user.deleted") {
+      const { id: clerkId } = data;
+      
+      if (!clerkId) {
+        console.error("ClerkId não encontrado no evento de delete");
+        return new NextResponse("ClerkId é obrigatório para delete", { status: 400 });
+      }
 
-    const exists = await prisma.user.findFirst({ where: { email } });
-
-    if (exists) {
-      await prisma.user.update({
-        where: { email },
-        data: {
-          email,
-          name: first_name,
-          profileImage: image_url,
-        },
+      // Buscar usuário no banco pelo clerkId
+      const user = await prisma.user.findFirst({ 
+        where: { clerkId },
+        include: {
+          certificates: true,
+          lectures: true,
+          Exam: true,
+          Damage: true
+        }
       });
-    } else {
-      await prisma.user.create({
-        data: {
-          clerkId: id,
-          email,
-          name: first_name || "",
-          profileImage: image_url || "",
-        },
+
+      if (!user) {
+        console.log(`Usuário com clerkId ${clerkId} não encontrado no banco`);
+        return new NextResponse("Usuário não encontrado", { status: 404 });
+      }
+
+      // Deletar dados relacionados e o usuário
+      await prisma.$transaction(async (tx) => {
+        // Deletar certificados
+        await tx.certificate.deleteMany({
+          where: { userId: user.id }
+        });
+
+        // Deletar aulas do usuário
+        await tx.userLecture.deleteMany({
+          where: { userId: user.id }
+        });
+
+        // Deletar exames
+        await tx.exam.deleteMany({
+          where: { userId: user.id }
+        });
+
+        // Deletar danos/vidas
+        await tx.damage.deleteMany({
+          where: { userId: user.id }
+        });
+
+        // Deletar o usuário
+        await tx.user.delete({
+          where: { id: user.id }
+        });
       });
+
+      console.log(`Usuário ${user.email} (${clerkId}) deletado com sucesso do banco de dados`);
+      return new NextResponse("Usuário deletado com sucesso", { status: 200 });
     }
 
-    return new NextResponse("User updated in database successfully", {
-      status: 200,
-    });
+    // Eventos de criação/atualização (comportamento original)
+    if (type === "user.created" || type === "user.updated") {
+      const { id, email_addresses, first_name, image_url } = data;
+      const email = email_addresses[0]?.email_address;
+
+      if (!email) {
+        console.error("Email não encontrado nos dados do usuário");
+        return new NextResponse("Email é obrigatório", { status: 400 });
+      }
+
+      const exists = await prisma.user.findFirst({ where: { email } });
+
+      if (exists) {
+        await prisma.user.update({
+          where: { email },
+          data: {
+            clerkId: id,
+            email,
+            name: first_name || "",
+            profileImage: image_url || "",
+          },
+        });
+        console.log(`Usuário ${email} atualizado no banco de dados`);
+      } else {
+        await prisma.user.create({
+          data: {
+            clerkId: id,
+            email,
+            name: first_name || "",
+            profileImage: image_url || "",
+          },
+        });
+        console.log(`Usuário ${email} criado no banco de dados`);
+      }
+
+      return new NextResponse("Usuário processado com sucesso", { status: 200 });
+    }
+
+    // Evento não reconhecido
+    console.log(`Evento não processado: ${type}`);
+    return new NextResponse("Evento não processado", { status: 200 });
+    
   } catch (error) {
-    console.error("Error updating database:", error);
-    return new NextResponse("Error updating user in database", { status: 500 });
+    console.error("Erro no webhook do Clerk:", error);
+    return new NextResponse("Erro interno do servidor", { status: 500 });
   }
 }
