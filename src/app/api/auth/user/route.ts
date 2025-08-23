@@ -5,7 +5,7 @@ import {
   serverErrorResponse,
   successResponse,
 } from "@/lib/auth";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import { getUserPoints } from "@/actions/ranking/getUserPoints";
 import { getUserLives } from "@/actions/user/getUserLives";
 
@@ -36,8 +36,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Buscar usuário no banco de dados
-    const user = await getUserByClerk();
+    // Buscar usuário no banco de dados pelo clerkId
+    const user = await getUserByClerkId(userId);
+
+    console.log("user", user);
 
     if (!user) {
       return new Response(JSON.stringify({ error: "Usuário não encontrado" }), {
@@ -48,8 +50,8 @@ export async function GET(request: NextRequest) {
 
     // Buscar pontos e vidas do usuário
     const [userPoints, userLives] = await Promise.all([
-      getUserPoints(),
-      getUserLives(),
+      getUserPoints(user.id),
+      getUserLives(user.id),
     ]);
 
     const userData = {

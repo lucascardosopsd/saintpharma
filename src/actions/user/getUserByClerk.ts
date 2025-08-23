@@ -45,3 +45,18 @@ export const getUserByClerk = async (clerkUser?: User | null) => {
   // Serialize the Prisma result to a plain object
   return user ? JSON.parse(JSON.stringify(user)) : null;
 };
+
+// Function to get user directly by clerkId from database (for API routes)
+export const getUserByClerkId = async (clerkId: string) => {
+  try {
+    const user = await prisma.user.findUnique({ 
+      where: { clerkId } 
+    });
+    
+    // Serialize the Prisma result to a plain object
+    return user ? JSON.parse(JSON.stringify(user)) : null;
+  } catch (error) {
+    console.error('Error fetching user by clerkId:', error);
+    return null;
+  }
+};
