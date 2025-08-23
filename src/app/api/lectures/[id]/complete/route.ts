@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { createUserLecture } from "@/actions/lecture/createUserLecture";
 import { getUserLectureById } from "@/actions/lecture/getUserLectureById";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 
 /**
  * POST /api/lectures/[id]/complete
@@ -64,7 +64,7 @@ export async function POST(
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),

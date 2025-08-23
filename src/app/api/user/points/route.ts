@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import prisma from "@/lib/prisma";
 
 /**
@@ -36,7 +36,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),

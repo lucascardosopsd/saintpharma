@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { createExam } from "@/actions/exam/createExam";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import { getLectureById } from "@/actions/lecture/getLectureById";
 import { getQuizByLectureId } from "@/actions/quiz/getByLectureId";
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),

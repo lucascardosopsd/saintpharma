@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { getUserPoints } from "@/actions/ranking/getUserPoints";
 import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 
 /**
  * GET /api/ranking/user
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),
@@ -45,8 +45,8 @@ export async function GET(request: NextRequest) {
 
     // Buscar pontos do usuário
     const [totalPoints, weekPoints] = await Promise.all([
-      getUserPoints(),
-      getWeekPoints()
+      getUserPoints(user.id),
+      getWeekPoints(user.id)
     ]);
 
     return successResponse({

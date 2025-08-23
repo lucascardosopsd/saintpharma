@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 
 /**
  * GET /api/lectures
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),

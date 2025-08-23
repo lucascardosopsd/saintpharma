@@ -3,7 +3,7 @@ import { validateApiToken, unauthorizedResponse, serverErrorResponse, successRes
 import { getCourseById } from "@/actions/courses/getId";
 import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import { UserLecture } from "@prisma/client";
 
 /**
@@ -58,7 +58,7 @@ export async function GET(
     
     if (userId) {
       try {
-        const user = await getUserByClerk();
+        const user = await getUserByClerkId(userId);
         if (user) {
           userProgress = await getUserLectures({ userId: user.id });
         }

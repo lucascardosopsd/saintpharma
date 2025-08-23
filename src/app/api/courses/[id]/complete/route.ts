@@ -3,7 +3,7 @@ import { validateApiToken, unauthorizedResponse, serverErrorResponse, successRes
 import { getCourseById } from "@/actions/courses/getId";
 import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import { createCertificate } from "@/actions/certification/create";
 import { getUserCertificateByCourse } from "@/actions/certification/getUserCertificatesByCourse";
 
@@ -49,7 +49,7 @@ export async function POST(
     }
 
     // Buscar usuário
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),

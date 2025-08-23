@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { updateExam } from "@/actions/exam/updateExam";
 import { getExamById } from "@/actions/exam/getExamById";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import { createUserLecture } from "@/actions/lecture/createUserLecture";
 import { getUserLectureById } from "@/actions/lecture/getUserLectureById";
 import { createDamage } from "@/actions/damage/createDamage";
@@ -60,7 +60,7 @@ export async function PUT(
     const { complete, reproved, courseId } = body;
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),
@@ -229,7 +229,7 @@ export async function GET(
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),

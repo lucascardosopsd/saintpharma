@@ -1,11 +1,11 @@
 "use server";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { getManyCertificates } from "../certification/getManyCertificates";
-import { getUserByClerk } from "../user/getUserByClerk";
+import { getUserByClerk, getUserByClerkId } from "../user/getUserByClerk";
 import { ptBR } from "date-fns/locale";
 
-export const getWeekPoints = async () => {
-  const user = await getUserByClerk();
+export const getWeekPoints = async (userId?: string) => {
+  const user = userId ? await getUserByClerkId(userId) : await getUserByClerk();
 
   const today = new Date();
 

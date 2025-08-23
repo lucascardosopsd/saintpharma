@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { getUserLives } from "@/actions/user/getUserLives";
 import { getUserDamage } from "@/actions/damage/getUserDamage";
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import { createDamage } from "@/actions/damage/createDamage";
 import { defaultLifes } from "@/constants/exam";
 import { subHours } from "date-fns";
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Buscar vidas do usuário
-    const userLives = await getUserLives();
+    const userLives = await getUserLives(user.id);
     
     // Buscar danos nas últimas 10 horas para detalhes
     const userDamage = await getUserDamage({
@@ -103,7 +103,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Verificar se usuário existe
-    const user = await getUserByClerk();
+    const user = await getUserByClerkId(userId);
     if (!user) {
       return new Response(
         JSON.stringify({ error: "Usuário não encontrado" }),
