@@ -13,6 +13,7 @@ import { User as ClerkUser } from "@clerk/nextjs/server";
 import { revalidateRoute } from "@/actions/revalidateRoute";
 import { toast } from "sonner";
 import { ChangeEvent, useState } from "react";
+import DeleteAccountModal from "./DeleteAccountModal";
 
 type UserProfileProps = {
   user: User;
@@ -132,6 +133,8 @@ const UserProfile = ({ user, serverClerkUser, points }: UserProfileProps) => {
         <Button type="submit" className="w-full mt-7">
           Salvar
         </Button>
+        
+        <DeleteAccountModal />
       </form>
     </Form>
   );
