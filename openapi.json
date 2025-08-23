@@ -772,6 +772,355 @@
           }
         }
       }
+    },
+    "/user/lives": {
+      "delete": {
+        "summary": "Deletar/reduzir vidas do usuário",
+        "description": "Remove vidas do usuário ou deleta registros de dano",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": ["reduce", "delete_damage", "reset_all"]
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "damageId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operação realizada com sucesso"
+          }
+        }
+      }
+    },
+    "/user/courses": {
+      "post": {
+        "summary": "Relacionar usuário a curso concluído",
+        "description": "Cria uma relação entre usuário e curso concluído",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "courseId": {
+                    "type": "string"
+                  }
+                },
+                "required": ["courseId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Relação criada com sucesso"
+          }
+        }
+      },
+      "get": {
+        "summary": "Obter cursos concluídos do usuário",
+        "description": "Retorna lista de cursos concluídos pelo usuário",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de cursos concluídos"
+          }
+        }
+      }
+    },
+    "/certificates/create": {
+      "post": {
+        "summary": "Criar certificado manualmente",
+        "description": "Cria um certificado para um usuário e curso específico",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "courseId": {
+                    "type": "string"
+                  },
+                  "force": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": ["courseId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Certificado criado com sucesso"
+          }
+        }
+      }
+    },
+    "/user/points": {
+      "put": {
+        "summary": "Alterar pontuação do usuário",
+        "description": "Altera a pontuação do usuário com diferentes operações",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "enum": ["set", "add", "subtract"]
+                  },
+                  "points": {
+                    "type": "integer"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": ["operation", "points"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pontuação alterada com sucesso"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Alterar pontuação do usuário (alias)",
+        "description": "Alias para PUT que determina operação pelo sinal dos pontos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "type": "integer"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": ["points"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pontuação alterada com sucesso"
+          }
+        }
+      }
+    },
+    "/user/summary": {
+      "get": {
+        "summary": "Obter resumo do usuário",
+        "description": "Retorna resumo completo com horas estudadas, cursos em progresso e concluídos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["week", "month", "all"],
+              "default": "all"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resumo do usuário"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login via Clerk API",
+        "description": "Autentica usuário via Clerk e retorna informações completas",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "clerkUserId": {
+                    "type": "string"
+                  },
+                  "createIfNotExists": {
+                    "type": "boolean",
+                    "default": true
+                  }
+                },
+                "required": ["clerkUserId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout do usuário",
+        "description": "Realiza logout e atualiza informações de sessão",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sessionDuration": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Logout realizado com sucesso"
+          }
+        }
+      }
+    },
+    "/user/progress": {
+      "get": {
+        "summary": "Obter progresso detalhado por curso",
+        "description": "Retorna progresso detalhado do usuário por curso",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UserIdHeader"
+          },
+          {
+            "name": "courseId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["in_progress", "completed", "not_started", "all"],
+              "default": "all"
+            }
+          },
+          {
+            "name": "includeDetails",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Progresso detalhado por curso"
+          }
+        }
+      }
     }
   }
 }

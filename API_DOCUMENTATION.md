@@ -406,6 +406,234 @@ Marca uma aula como concluída.
 }
 ```
 
+### 9. Gerenciamento de Vidas
+
+#### DELETE /api/user/lives
+Deleta/reduz vidas do usuário ou remove registros de dano.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Body:**
+```json
+{
+  "action": "reduce", // "reduce", "delete_damage", "reset_all"
+  "amount": 1, // Para action "reduce"
+  "damageId": "damage_id" // Para action "delete_damage"
+}
+```
+
+### 10. Cursos do Usuário
+
+#### POST /api/user/courses
+Cria relação entre usuário e curso concluído.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Body:**
+```json
+{
+  "courseId": "course_cms_id"
+}
+```
+
+#### GET /api/user/courses
+Retorna cursos concluídos pelo usuário.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Query Parameters:**
+- `page`: Página (padrão: 1)
+- `limit`: Itens por página (padrão: 10)
+
+### 11. Criação Manual de Certificados
+
+#### POST /api/certificates/create
+Cria certificado manualmente para um usuário e curso.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>` (opcional se userId no body)
+
+**Body:**
+```json
+{
+  "userId": "clerk_user_id", // Opcional se X-User-Id no header
+  "courseId": "course_cms_id",
+  "force": false // Força criação mesmo se já existir
+}
+```
+
+### 12. Gerenciamento de Pontos
+
+#### PUT /api/user/points
+Altera pontuação do usuário com operações específicas.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Body:**
+```json
+{
+  "operation": "add", // "set", "add", "subtract"
+  "points": 50,
+  "reason": "Conclusão de curso" // Opcional
+}
+```
+
+#### PATCH /api/user/points
+Alias para PUT que determina operação pelo sinal dos pontos.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Body:**
+```json
+{
+  "points": 50, // Positivo = add, Negativo = subtract
+  "reason": "Conclusão de curso" // Opcional
+}
+```
+
+### 13. Resumo do Usuário
+
+#### GET /api/user/summary
+Retorna resumo completo do usuário com estatísticas.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Query Parameters:**
+- `period`: Período para filtrar ("week", "month", "all" - padrão: "all")
+
+**Resposta:**
+```json
+{
+  "user": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "points": 150
+  },
+  "studyHours": {
+    "total": 25.5,
+    "thisWeek": 8.0,
+    "thisMonth": 15.0
+  },
+  "courses": {
+    "inProgress": 3,
+    "completed": 5,
+    "total": 8
+  },
+  "certificates": {
+    "total": 5,
+    "recent": []
+  },
+  "ranking": {
+    "position": 15,
+    "totalUsers": 100
+  }
+}
+```
+
+### 14. Autenticação
+
+#### POST /api/auth/login
+Realiza login via Clerk API e retorna informações completas.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+
+**Body:**
+```json
+{
+  "clerkUserId": "clerk_user_id",
+  "createIfNotExists": true // Cria usuário se não existir
+}
+```
+
+#### POST /api/auth/logout
+Realiza logout e atualiza informações de sessão.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Body (opcional):**
+```json
+{
+  "sessionDuration": 3600 // Duração da sessão em segundos
+}
+```
+
+### 15. Progresso Detalhado
+
+#### GET /api/user/progress
+Retorna progresso detalhado do usuário por curso.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Query Parameters:**
+- `courseId`: ID específico do curso (opcional)
+- `status`: Filtro por status ("in_progress", "completed", "not_started", "all" - padrão: "all")
+- `includeDetails`: Incluir detalhes de aulas e exames (padrão: false)
+- `page`: Página (padrão: 1)
+- `limit`: Itens por página (padrão: 10)
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": "string",
+      "name": "string"
+    },
+    "progress": {
+      "overallProgress": null,
+      "totalCourses": 3,
+      "completedCourses": 1,
+      "inProgressCourses": 2,
+      "totalLectures": null,
+      "completedLectures": 15
+    },
+    "courses": [
+      {
+        "courseId": "course_id",
+        "status": "completed",
+        "progress": {
+          "completed": 10,
+          "total": null,
+          "percentage": null
+        },
+        "isCompleted": true,
+        "certificateId": "cert_id",
+        "completedAt": "2024-01-15T10:30:00Z",
+        "lastActivity": "2024-01-15T10:30:00Z"
+      }
+    ]
+  },
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 3,
+    "pages": 1,
+    "hasNext": false,
+    "hasPrev": false
+  }
+}
+```
+
 ## Configuração
 
 ### Variáveis de Ambiente
