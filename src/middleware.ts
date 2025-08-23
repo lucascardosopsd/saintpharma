@@ -7,8 +7,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/course(.*)",
   "/studio(.*)",
-  "/api/clerk(.*)",
-  "/api/sanity/revalidate(.*)",
+  "/api(.*)",
   "/privacy-policy",
   "/consent-terms", // Added this route as public
   "/",
