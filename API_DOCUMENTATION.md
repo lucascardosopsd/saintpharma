@@ -362,6 +362,41 @@ Marca uma aula como concluída.
 }
 ```
 
+#### GET /api/lectures/[id]/questions
+Retorna as questões de uma aula específica no formato QuestionResponse.
+
+**Headers:**
+- `Authorization: Bearer <API_TOKEN>`
+
+**Parâmetros:**
+- `id`: ID da aula (obrigatório)
+
+**Resposta de Sucesso (200):**
+```json
+{
+  "questions": [
+    {
+      "title": "string",
+      "question": "string",
+      "cover": {
+        "asset": {
+          "url": "string"
+        }
+      },
+      "answers": [
+        {
+          "answer": "string",
+          "isCorrect": true
+        }
+      ]
+    }
+  ],
+  "totalQuestions": 5,
+  "timeLimit": 30,
+  "passingScore": 70
+}
+```
+
 ## Códigos de Erro
 
 ### 400 - Bad Request

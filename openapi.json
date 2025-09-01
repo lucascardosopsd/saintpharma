@@ -196,6 +196,69 @@
           }
         }
       },
+      "QuestionResponse": {
+        "type": "object",
+        "properties": {
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Question"
+            }
+          },
+          "totalQuestions": {
+            "type": "integer"
+          },
+          "timeLimit": {
+            "type": "integer",
+            "description": "Tempo limite em minutos"
+          },
+          "passingScore": {
+            "type": "integer",
+            "description": "Porcentagem mínima para aprovação"
+          }
+        }
+      },
+      "Question": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "cover": {
+            "type": "object",
+            "properties": {
+              "asset": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            }
+          }
+        }
+      },
+      "Answer": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        }
+      },
       "Error": {
         "type": "object",
         "properties": {
@@ -423,6 +486,37 @@
                       "type": "integer"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lectures/{id}/questions": {
+      "get": {
+        "summary": "Obter questões de uma aula",
+        "description": "Retorna as questões de uma aula específica no formato QuestionResponse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ApiTokenHeader"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Questões da aula",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionResponse"
                 }
               }
             }
