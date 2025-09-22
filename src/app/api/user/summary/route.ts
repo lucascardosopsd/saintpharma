@@ -1,36 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+import {
+  serverErrorResponse,
+  successResponse,
+  unauthorizedResponse,
+  validateApiToken,
+} from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
+import { NextRequest } from "next/server";
 
 interface RequestBody {
-  period?: 'week' | 'month' | 'all';
+  period?: "week" | "month" | "all";
 }
 
 export async function GET(request: NextRequest) {
+  // Validar token de API
+  if (!validateApiToken(request)) {
+    return unauthorizedResponse();
+  }
+
   try {
-    // Validar token de API
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Token de autorização necessário' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (token !== process.env.API_TOKEN) {
-      return NextResponse.json(
-        { error: 'Token inválido' },
-        { status: 401 }
-      );
-    }
-
     // Validar X-User-Id
-    const userId = request.headers.get('X-User-Id');
+    const userId = request.headers.get("X-User-Id");
     if (!userId) {
-      return NextResponse.json(
-        { error: 'X-User-Id header é obrigatório' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: "X-User-Id header é obrigatório" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
       );
     }
 
@@ -40,23 +37,24 @@ export async function GET(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Usuário não encontrado' },
-        { status: 404 }
-      );
+      return new Response(JSON.stringify({ error: "Usuário não encontrado" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Obter parâmetros da query
     const { searchParams } = new URL(request.url);
-    const period = (searchParams.get('period') as 'week' | 'month' | 'all') || 'all';
+    const period =
+      (searchParams.get("period") as "week" | "month" | "all") || "all";
 
     // Calcular datas para filtros
     const now = new Date();
     let startDate: Date | undefined;
-    
-    if (period === 'week') {
+
+    if (period === "week") {
       startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    } else if (period === 'month') {
+    } else if (period === "month") {
       startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
 
@@ -67,7 +65,7 @@ export async function GET(request: NextRequest) {
         ...(startDate && { createdAt: { gte: startDate } }),
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
     });
 
@@ -77,14 +75,29 @@ export async function GET(request: NextRequest) {
         userId: user.id,
       },
       orderBy: {
-        lectureCmsId: 'desc',
+        lectureCmsId: "desc",
       },
     });
 
+    // Calcular horas estudadas baseado em timestamps reais
+    const currentTime = new Date();
+    const weekAgo = new Date(currentTime.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(currentTime.getTime() - 30 * 24 * 60 * 60 * 1000);
+
     // Calcular horas estudadas (estimativa baseada no número de aulas)
     const totalHours = userLectures.length * 0.5; // Estimativa de 30 min por aula
-    const weeklyHours = 0; // Não é possível calcular sem timestamps
-    const monthlyHours = 0; // Não é possível calcular sem timestamps
+
+    // Calcular horas da semana (aulas concluídas na última semana)
+    const weeklyLectures = userLectures.filter(
+      (ul) => ul.createdAt && new Date(ul.createdAt) >= weekAgo
+    );
+    const weeklyHours = weeklyLectures.length * 0.5;
+
+    // Calcular horas do mês (aulas concluídas no último mês)
+    const monthlyLectures = userLectures.filter(
+      (ul) => ul.createdAt && new Date(ul.createdAt) >= monthAgo
+    );
+    const monthlyHours = monthlyLectures.length * 0.5;
 
     // Buscar exames concluídos
     const exams = await prisma.exam.findMany({
@@ -102,37 +115,42 @@ export async function GET(request: NextRequest) {
     };
 
     // Calcular cursos em progresso (usuários que têm aulas concluídas mas não certificado)
-    const coursesWithProgress = [...new Set(userLectures.map(lecture => lecture.courseId))];
-    const completedCourseIds = certificates.map(cert => cert.courseCmsId);
-    courseStats.inProgress = coursesWithProgress.filter(courseId => !completedCourseIds.includes(courseId)).length;
+    const coursesWithProgress = [
+      ...new Set(userLectures.map((lecture) => lecture.courseId)),
+    ];
+    const completedCourseIds = certificates.map((cert) => cert.courseCmsId);
+    courseStats.inProgress = coursesWithProgress.filter(
+      (courseId) => !completedCourseIds.includes(courseId)
+    ).length;
     courseStats.total = coursesWithProgress.length + certificates.length;
 
     // Buscar informações do Clerk
     const client = await clerkClient();
     const clerkUser = await client.users.getUser(userId);
 
-    // Buscar ranking do usuário (sem campo points)
+    // Buscar ranking do usuário baseado em pontos
     const allUsers = await prisma.user.findMany({
       select: {
         id: true,
+        points: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        points: "desc",
       },
     });
 
-    const userPosition = allUsers.findIndex(u => u.id === user.id) + 1;
+    const userPosition = allUsers.findIndex((u) => u.id === user.id) + 1;
 
-    return NextResponse.json({
+    return successResponse({
       success: true,
       data: {
         user: {
           id: user.id,
           clerkId: user.clerkId,
-          name: user.name || clerkUser.firstName + ' ' + clerkUser.lastName,
+          name: user.name || clerkUser.firstName + " " + clerkUser.lastName,
           email: user.email,
           profileImage: user.profileImage,
-          points: 0, // Campo points não existe no modelo User
+          points: user.points, // Now using the actual points field from User model
         },
         studyHours: {
           total: Math.round(totalHours * 100) / 100,
@@ -142,7 +160,7 @@ export async function GET(request: NextRequest) {
         courses: courseStats,
         certificates: {
           total: certificates.length,
-          recent: certificates.slice(0, 5).map(cert => ({
+          recent: certificates.slice(0, 5).map((cert) => ({
             id: cert.id,
             courseId: cert.courseCmsId,
             courseTitle: cert.courseTitle,
@@ -158,29 +176,26 @@ export async function GET(request: NextRequest) {
           totalUsers: allUsers.length,
         },
         activities: {
-          recentLectures: userLectures.slice(0, 10).map(lecture => ({
+          recentLectures: userLectures.slice(0, 10).map((lecture) => ({
             id: lecture.id,
             courseId: lecture.courseId,
             lectureId: lecture.lectureCmsId,
-            lectureTitle: 'Aula concluída',
-            completedAt: new Date(), // Campo createdAt não existe no modelo
+            lectureTitle: "Aula concluída",
+            completedAt: lecture.createdAt, // Now using the actual createdAt field
           })),
-          recentExams: exams.slice(0, 5).map(exam => ({
+          recentExams: exams.slice(0, 5).map((exam) => ({
             id: exam.id,
             lectureId: exam.lectureCMSid,
-            lectureTitle: 'Exame concluído',
+            lectureTitle: "Exame concluído",
             score: 0, // Campo score não existe no modelo
-            passed: false,
+            passed: !exam.reproved, // Use reproved field to determine if passed
             completedAt: exam.createdAt,
           })),
         },
       },
     });
   } catch (error) {
-    console.error('Erro ao buscar resumo do usuário:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar resumo do usuário:", error);
+    return serverErrorResponse("Erro ao buscar resumo do usuário");
   }
 }

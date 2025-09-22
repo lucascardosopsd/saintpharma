@@ -1,15 +1,15 @@
 "use server";
 
-import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import { getUserDamage } from "@/actions/damage/getUserDamage";
-import { subHours } from "date-fns";
+import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import { defaultLifes } from "@/constants/exam";
 import { currentUser } from "@clerk/nextjs/server";
+import { subHours } from "date-fns";
 
 export const getUserLives = async (userId?: string): Promise<number | null> => {
   try {
     let userIdToUse = userId;
-    
+
     // If no userId provided, get it from current user (backward compatibility)
     if (!userIdToUse) {
       // First check if user is authenticated
@@ -22,10 +22,10 @@ export const getUserLives = async (userId?: string): Promise<number | null> => {
       if (!user) {
         return null;
       }
-      
+
       userIdToUse = user.id;
     }
-    
+
     // Final check to ensure userIdToUse is defined
     if (!userIdToUse) {
       return null;
@@ -36,7 +36,10 @@ export const getUserLives = async (userId?: string): Promise<number | null> => {
       from: subHours(new Date(), 10),
     });
 
-    return defaultLifes - userDamage.length;
+    // Calculate remaining lives, ensuring it's never negative
+    const remainingLives = Math.max(0, defaultLifes - userDamage.length);
+
+    return remainingLives;
   } catch (error) {
     console.error("Error fetching user lives:", error);
     return null;

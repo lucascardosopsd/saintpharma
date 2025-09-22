@@ -1,16 +1,24 @@
-import { NextRequest } from "next/server";
-import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import {
+  sanitizeString,
+  serverErrorResponse,
+  successResponse,
+  unauthorizedResponse,
+  validateApiToken,
+  validateInput,
+  validationErrorResponse,
+} from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { NextRequest } from "next/server";
 
 /**
  * PUT /api/user/points
  * Altera a pontuação do usuário
- * 
+ *
  * Headers necessários:
  * - Authorization: Bearer <API_TOKEN>
  * - X-User-Id: <clerk_user_id>
- * 
+ *
  * Body:
  * - points: número de pontos a definir (substitui o valor atual)
  * - operation: 'set' | 'add' | 'subtract' (padrão: 'set')
@@ -24,7 +32,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     const userId = request.headers.get("x-user-id");
-    
+
     if (!userId) {
       return new Response(
         JSON.stringify({ error: "Header X-User-Id é obrigatório" }),
@@ -38,66 +46,66 @@ export async function PUT(request: NextRequest) {
     // Verificar se usuário existe
     const user = await getUserByClerkId(userId);
     if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Usuário não encontrado" }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Usuário não encontrado" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const body = await request.json();
-    const { points, operation = 'set', reason } = body;
+    const { points, operation = "set", reason } = body;
 
-    if (typeof points !== 'number') {
-      return new Response(
-        JSON.stringify({ error: "points deve ser um número" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+    // Validação de entrada
+    const validation = validateInput(body, ["points"]);
+    if (!validation.isValid) {
+      return validationErrorResponse(
+        validation.errors,
+        "POINTS_VALIDATION_ERROR"
       );
     }
 
-    if (!['set', 'add', 'subtract'].includes(operation)) {
-      return new Response(
-        JSON.stringify({ error: "operation deve ser 'set', 'add' ou 'subtract'" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+    if (typeof points !== "number") {
+      return validationErrorResponse(
+        ["points deve ser um número"],
+        "INVALID_POINTS_TYPE"
       );
     }
 
-    // Buscar usuário atual
+    if (!["set", "add", "subtract"].includes(operation)) {
+      return validationErrorResponse(
+        ["operation deve ser 'set', 'add' ou 'subtract'"],
+        "INVALID_OPERATION"
+      );
+    }
+
+    // Sanitizar reason se fornecido
+    const sanitizedReason = reason ? sanitizeString(reason) : null;
+
+    // Buscar usuário atual com pontos
     const currentUser = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { id: true }
+      select: { id: true, points: true },
     });
 
     if (!currentUser) {
-      return new Response(
-        JSON.stringify({ error: "Usuário não encontrado" }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Usuário não encontrado" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    const currentPoints = 0; // Points não existe no modelo User
+    const currentPoints = currentUser.points || 0;
     let newPoints: number;
 
     // Calcular nova pontuação baseada na operação
     switch (operation) {
-      case 'set':
+      case "set":
         newPoints = points;
         break;
-      case 'add':
+      case "add":
         newPoints = currentPoints + points;
         break;
-      case 'subtract':
+      case "subtract":
         newPoints = currentPoints - points;
         break;
       default:
@@ -107,21 +115,25 @@ export async function PUT(request: NextRequest) {
     // Garantir que os pontos não sejam negativos
     newPoints = Math.max(0, newPoints);
 
-    // Atualizar usuário (points removido - não existe no modelo)
+    // Atualizar usuário com nova pontuação
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
-        // Points não existe no modelo User - removido
+        points: newPoints,
       },
       select: {
         id: true,
         clerkId: true,
         name: true,
-        email: true
-      }
+        email: true,
+        points: true,
+      },
     });
 
-    // Log de pontos removido - modelo pointsLog não existe
+    // Log de auditoria para alteração de pontos
+    console.log(
+      `[POINTS] User ${user.id}: ${currentPoints} -> ${newPoints} (${operation}: ${points}) - Reason: ${sanitizedReason || "N/A"}`
+    );
 
     return successResponse({
       message: "Pontuação atualizada com sucesso",
@@ -130,9 +142,9 @@ export async function PUT(request: NextRequest) {
         previous: currentPoints,
         new: newPoints,
         difference: newPoints - currentPoints,
-        operation: operation
+        operation: operation,
       },
-      reason: reason || null
+      reason: sanitizedReason || null,
     });
   } catch (error) {
     console.error("Erro ao alterar pontuação do usuário:", error);
@@ -143,11 +155,11 @@ export async function PUT(request: NextRequest) {
 /**
  * PATCH /api/user/points
  * Adiciona ou subtrai pontos do usuário (alias para PUT com operation)
- * 
+ *
  * Headers necessários:
  * - Authorization: Bearer <API_TOKEN>
  * - X-User-Id: <clerk_user_id>
- * 
+ *
  * Body:
  * - points: número de pontos (positivo para adicionar, negativo para subtrair)
  * - reason: string (opcional) - motivo da alteração
@@ -160,7 +172,7 @@ export async function PATCH(request: NextRequest) {
 
   try {
     const userId = request.headers.get("x-user-id");
-    
+
     if (!userId) {
       return new Response(
         JSON.stringify({ error: "Header X-User-Id é obrigatório" }),
@@ -174,29 +186,38 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const { points, reason } = body;
 
-    if (typeof points !== 'number') {
-      return new Response(
-        JSON.stringify({ error: "points deve ser um número" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+    // Validação de entrada
+    const validation = validateInput(body, ["points"]);
+    if (!validation.isValid) {
+      return validationErrorResponse(
+        validation.errors,
+        "POINTS_VALIDATION_ERROR"
       );
     }
 
+    if (typeof points !== "number") {
+      return validationErrorResponse(
+        ["points deve ser um número"],
+        "INVALID_POINTS_TYPE"
+      );
+    }
+
+    // Sanitizar reason se fornecido
+    const sanitizedReason = reason ? sanitizeString(reason) : null;
+
     // Determinar operação baseada no sinal dos pontos
-    const operation = points >= 0 ? 'add' : 'subtract';
+    const operation = points >= 0 ? "add" : "subtract";
     const absolutePoints = Math.abs(points);
 
     // Criar nova requisição para reutilizar a lógica do PUT
     const newRequest = new NextRequest(request.url, {
-      method: 'PUT',
+      method: "PUT",
       headers: request.headers,
       body: JSON.stringify({
         points: absolutePoints,
         operation: operation,
-        reason: reason
-      })
+        reason: sanitizedReason,
+      }),
     });
 
     return await PUT(newRequest);

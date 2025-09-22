@@ -1,16 +1,21 @@
-import { NextRequest } from "next/server";
-import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import {
+  serverErrorResponse,
+  successResponse,
+  unauthorizedResponse,
+  validateApiToken,
+} from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { NextRequest } from "next/server";
 
 /**
  * GET /api/user/progress
  * Retorna progresso detalhado do usuário por curso
- * 
+ *
  * Headers necessários:
  * - Authorization: Bearer <API_TOKEN>
  * - X-User-Id: <clerk_user_id>
- * 
+ *
  * Query parameters (opcionais):
  * - courseId: ID específico do curso para filtrar
  * - status: 'in_progress', 'completed', 'not_started', 'all' (padrão: 'all')
@@ -26,7 +31,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const userId = request.headers.get("x-user-id");
-    
+
     if (!userId) {
       return new Response(
         JSON.stringify({ error: "Header X-User-Id é obrigatório" }),
@@ -40,13 +45,10 @@ export async function GET(request: NextRequest) {
     // Verificar se usuário existe
     const user = await getUserByClerkId(userId);
     if (!user) {
-      return new Response(
-        JSON.stringify({ error: "Usuário não encontrado" }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Usuário não encontrado" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Obter parâmetros de query
@@ -58,32 +60,62 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
     const skip = (page - 1) * limit;
 
-    // Buscar aulas concluídas pelo usuário
-    const userLectures = await prisma.userLecture.findMany({
-      where: {
-        userId: user.id,
-        ...(courseId && { courseId })
-      }
-    });
-
-    // Buscar certificados do usuário
-    const userCertificates = await prisma.certificate.findMany({
-      where: {
-        userId: user.id,
-        ...(courseId && { courseCmsId: courseId })
-      }
-    });
-
-    // Buscar exames do usuário
-    const userExams = await prisma.exam.findMany({
-      where: {
-        userId: user.id
-      }
-    });
+    // Buscar dados do usuário com queries otimizadas
+    const [userLectures, userCertificates, userExams] = await Promise.all([
+      // Buscar aulas concluídas pelo usuário
+      prisma.userLecture.findMany({
+        where: {
+          userId: user.id,
+          ...(courseId && { courseId }),
+        },
+        select: {
+          id: true,
+          courseId: true,
+          lectureCmsId: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      // Buscar certificados do usuário
+      prisma.certificate.findMany({
+        where: {
+          userId: user.id,
+          ...(courseId && { courseCmsId: courseId }),
+        },
+        select: {
+          id: true,
+          courseCmsId: true,
+          courseTitle: true,
+          points: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      // Buscar exames do usuário
+      prisma.exam.findMany({
+        where: {
+          userId: user.id,
+        },
+        select: {
+          id: true,
+          lectureCMSid: true,
+          complete: true,
+          reproved: true,
+          createdAt: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+    ]);
 
     // Agrupar dados por curso
     const courseData = new Map();
-    
+
     // Processar aulas concluídas
     userLectures.forEach((lecture: any) => {
       const courseId = lecture.courseId;
@@ -92,7 +124,7 @@ export async function GET(request: NextRequest) {
           courseId,
           completedLectures: [],
           certificates: [],
-          exams: []
+          exams: [],
         });
       }
       courseData.get(courseId).completedLectures.push(lecture);
@@ -106,7 +138,7 @@ export async function GET(request: NextRequest) {
           courseId,
           completedLectures: [],
           certificates: [],
-          exams: []
+          exams: [],
         });
       }
       courseData.get(courseId).certificates.push(cert);
@@ -116,7 +148,9 @@ export async function GET(request: NextRequest) {
     if (includeDetails) {
       userExams.forEach((exam: any) => {
         // Encontrar o curso através do lectureCMSid
-        const relatedLecture = userLectures.find((ul: any) => ul.lectureCmsId === exam.lectureCMSid);
+        const relatedLecture = userLectures.find(
+          (ul: any) => ul.lectureCmsId === exam.lectureCMSid
+        );
         if (relatedLecture) {
           const courseId = relatedLecture.courseId;
           if (courseData.has(courseId)) {
@@ -129,79 +163,96 @@ export async function GET(request: NextRequest) {
     const totalCourses = courseData.size;
 
     // Processar dados dos cursos
-    const processedCourses = Array.from(courseData.values()).map((data: any) => {
-      const completedLectures = data.completedLectures.length;
-      const isCompleted = data.certificates.length > 0;
-      
-      // Determinar status do curso
-      let courseStatus = 'not_started';
-      if (isCompleted) {
-        courseStatus = 'completed';
-      } else if (completedLectures > 0) {
-        courseStatus = 'in_progress';
+    const processedCourses = Array.from(courseData.values()).map(
+      (data: any) => {
+        const completedLectures = data.completedLectures.length;
+        const isCompleted = data.certificates.length > 0;
+
+        // Determinar status do curso
+        let courseStatus = "not_started";
+        if (isCompleted) {
+          courseStatus = "completed";
+        } else if (completedLectures > 0) {
+          courseStatus = "in_progress";
+        }
+
+        // Dados básicos do curso
+        const courseInfo: any = {
+          courseId: data.courseId,
+          status: courseStatus,
+          progress: {
+            completed: completedLectures,
+            // Nota: não temos o total de aulas do curso no banco local
+            // seria necessário buscar do Sanity CMS
+            total: null,
+            percentage: null,
+          },
+          isCompleted,
+          certificateId: data.certificates[0]?.id || null,
+          completedAt: data.certificates[0]?.createdAt || null,
+        };
+
+        // Adicionar detalhes das aulas se solicitado
+        if (includeDetails) {
+          courseInfo.completedLectures = data.completedLectures.map(
+            (lecture: any) => ({
+              lectureCmsId: lecture.lectureCmsId,
+              courseId: lecture.courseId,
+              completedAt: lecture.createdAt || null,
+            })
+          );
+
+          courseInfo.exams = data.exams.map((exam: any) => ({
+            id: exam.id,
+            lectureCMSid: exam.lectureCMSid,
+            complete: exam.complete,
+            reproved: exam.reproved,
+            completedAt: exam.createdAt,
+          }));
+        }
+
+        // Última atividade no curso
+        if (data.completedLectures.length > 0) {
+          const lastActivity = data.completedLectures.sort(
+            (a: any, b: any) =>
+              new Date(b.createdAt || 0).getTime() -
+              new Date(a.createdAt || 0).getTime()
+          )[0];
+          courseInfo.lastActivity = lastActivity.createdAt;
+        }
+
+        return courseInfo;
       }
-
-      // Dados básicos do curso
-      const courseInfo: any = {
-        courseId: data.courseId,
-        status: courseStatus,
-        progress: {
-          completed: completedLectures,
-          // Nota: não temos o total de aulas do curso no banco local
-          // seria necessário buscar do Sanity CMS
-          total: null,
-          percentage: null
-        },
-        isCompleted,
-        certificateId: data.certificates[0]?.id || null,
-        completedAt: data.certificates[0]?.createdAt || null
-      };
-
-      // Adicionar detalhes das aulas se solicitado
-      if (includeDetails) {
-        courseInfo.completedLectures = data.completedLectures.map((lecture: any) => ({
-          lectureCmsId: lecture.lectureCmsId,
-          courseId: lecture.courseId,
-          completedAt: lecture.createdAt || null
-        }));
-
-        courseInfo.exams = data.exams.map((exam: any) => ({
-          id: exam.id,
-          lectureCMSid: exam.lectureCMSid,
-          complete: exam.complete,
-          reproved: exam.reproved,
-          completedAt: exam.createdAt
-        }));
-      }
-
-      // Última atividade no curso
-      if (data.completedLectures.length > 0) {
-        const lastActivity = data.completedLectures.sort((a: any, b: any) => 
-          new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
-        )[0];
-        courseInfo.lastActivity = lastActivity.createdAt;
-      }
-
-      return courseInfo;
-    });
+    );
 
     // Filtrar por status se especificado
     let filteredCourses = processedCourses;
-    if (status !== 'all') {
-      filteredCourses = processedCourses.filter((course: any) => course.status === status);
+    if (status !== "all") {
+      filteredCourses = processedCourses.filter(
+        (course: any) => course.status === status
+      );
     }
 
     // Aplicar paginação
     const paginatedCourses = filteredCourses.slice(skip, skip + limit);
+    const totalFiltered = filteredCourses.length;
+    const totalPages = Math.ceil(totalFiltered / limit);
 
     // Calcular estatísticas gerais
     const stats = {
       totalCourses: processedCourses.length,
-      completedCourses: processedCourses.filter((c: any) => c.status === 'completed').length,
-      inProgressCourses: processedCourses.filter((c: any) => c.status === 'in_progress').length,
+      completedCourses: processedCourses.filter(
+        (c: any) => c.status === "completed"
+      ).length,
+      inProgressCourses: processedCourses.filter(
+        (c: any) => c.status === "in_progress"
+      ).length,
       notStartedCourses: 0, // Não temos como saber cursos não iniciados sem dados do Sanity
       totalLectures: null, // Não disponível sem dados do Sanity
-      completedLectures: processedCourses.reduce((sum: number, c: any) => sum + c.progress.completed, 0)
+      completedLectures: processedCourses.reduce(
+        (sum: number, c: any) => sum + c.progress.completed,
+        0
+      ),
     };
 
     const overallProgress = null; // Não pode ser calculado sem o total de aulas
@@ -211,16 +262,16 @@ export async function GET(request: NextRequest) {
         id: user.id,
         clerkId: user.clerkId,
         name: user.name,
-        email: user.email
+        email: user.email,
       },
       progress: {
         overall: {
           percentage: overallProgress,
           completedLectures: stats.completedLectures,
-          totalLectures: stats.totalLectures
+          totalLectures: stats.totalLectures,
         },
         courses: paginatedCourses,
-        stats
+        stats,
       },
       pagination: {
         page,
@@ -228,13 +279,13 @@ export async function GET(request: NextRequest) {
         total: filteredCourses.length,
         pages: Math.ceil(filteredCourses.length / limit),
         hasNext: page * limit < filteredCourses.length,
-        hasPrev: page > 1
+        hasPrev: page > 1,
       },
       filters: {
         courseId,
         status,
-        includeDetails
-      }
+        includeDetails,
+      },
     };
 
     return successResponse(progressResponse);
