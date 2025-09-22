@@ -1,12 +1,12 @@
-import { NextRequest } from "next/server";
 import {
-  validateApiToken,
-  unauthorizedResponse,
   serverErrorResponse,
   successResponse,
+  unauthorizedResponse,
+  validateApiToken,
 } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
+import { NextRequest } from "next/server";
 
 /**
  * POST /api/auth/login
@@ -32,7 +32,10 @@ export async function POST(request: NextRequest) {
 
     if (!clerkUserId) {
       return new Response(
-        JSON.stringify({ error: "clerkUserId é obrigatório" }),
+        JSON.stringify({
+          error: "clerkUserId é obrigatório",
+          code: "MISSING_CLERK_USER_ID",
+        }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -50,6 +53,7 @@ export async function POST(request: NextRequest) {
       return new Response(
         JSON.stringify({
           error: "Usuário não encontrado no Clerk",
+          code: "CLERK_USER_NOT_FOUND",
           clerkError: clerkError.message,
         }),
         {
@@ -73,10 +77,15 @@ export async function POST(request: NextRequest) {
       user = await prisma.user.create({
         data: {
           clerkId: clerkUserId,
-          name: clerkUser.firstName && clerkUser.lastName 
-            ? `${clerkUser.firstName} ${clerkUser.lastName}` 
-            : clerkUser.username || 'Usuário',
-          email: clerkUser.emailAddresses.find((email: { id: string; emailAddress: string }) => email.id === clerkUser.primaryEmailAddressId)?.emailAddress || '',
+          name:
+            clerkUser.firstName && clerkUser.lastName
+              ? `${clerkUser.firstName} ${clerkUser.lastName}`
+              : clerkUser.username || "Usuário",
+          email:
+            clerkUser.emailAddresses.find(
+              (email: { id: string; emailAddress: string }) =>
+                email.id === clerkUser.primaryEmailAddressId
+            )?.emailAddress || "",
           profileImage: clerkUser.imageUrl,
         },
       });
@@ -110,9 +119,9 @@ export async function POST(request: NextRequest) {
         email: true,
         profileImage: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
-    const userRanking = allUsers.findIndex(u => u.id === user.id) + 1;
+    const userRanking = allUsers.findIndex((u) => u.id === user.id) + 1;
     const userPoints = 0; // Points não existe no modelo User
     const lastLogin = user.updatedAt;
 

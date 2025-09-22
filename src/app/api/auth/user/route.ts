@@ -1,13 +1,13 @@
-import { NextRequest } from "next/server";
+import { getUserPoints } from "@/actions/ranking/getUserPoints";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import { getUserLives } from "@/actions/user/getUserLives";
 import {
-  validateApiToken,
-  unauthorizedResponse,
   serverErrorResponse,
   successResponse,
+  unauthorizedResponse,
+  validateApiToken,
 } from "@/lib/auth";
-import { getUserByClerkId } from "@/actions/user/getUserByClerk";
-import { getUserPoints } from "@/actions/ranking/getUserPoints";
-import { getUserLives } from "@/actions/user/getUserLives";
+import { NextRequest } from "next/server";
 
 /**
  * GET /api/auth/user
@@ -28,7 +28,10 @@ export async function GET(request: NextRequest) {
 
     if (!userId) {
       return new Response(
-        JSON.stringify({ error: "Header X-User-Id é obrigatório" }),
+        JSON.stringify({
+          error: "Header X-User-Id é obrigatório",
+          code: "MISSING_USER_ID",
+        }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -42,10 +45,16 @@ export async function GET(request: NextRequest) {
     console.log("user", user);
 
     if (!user) {
-      return new Response(JSON.stringify({ error: "Usuário não encontrado" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Usuário não encontrado",
+          code: "USER_NOT_FOUND",
+        }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Buscar pontos e vidas do usuário
