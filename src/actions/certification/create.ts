@@ -1,6 +1,6 @@
 "use server";
-import { CourseProps } from "@/types/course";
 import prisma from "@/lib/prisma";
+import { CourseProps } from "@/types/course";
 
 type CreateCertificationProps = {
   userId: string;
@@ -23,7 +23,25 @@ export const createCertificate = async ({
       },
     });
 
-    console.log(certificate);
+    // Award points to user for completing the course
+    if (course.points && course.points > 0) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          points: {
+            increment: course.points,
+          },
+        },
+      });
+
+      console.log(
+        `[POINTS] User ${userId} earned ${course.points} points for completing course ${course._id}`
+      );
+    }
+
+    console.log(
+      `[CERTIFICATE] Created certificate ${certificate.id} for user ${userId} and course ${course._id}`
+    );
 
     return certificate;
   } catch (error) {
