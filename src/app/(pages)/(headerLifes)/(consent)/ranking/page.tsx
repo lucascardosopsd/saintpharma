@@ -11,7 +11,8 @@ export const dynamic = "force-dynamic";
 
 const ProfilePage = async () => {
   await requireAuth();
-  const ranking = await getRanking();
+  const rankingResult = await getRanking();
+  const ranking = rankingResult.data;
 
   revalidatePath("/ranking");
 
@@ -24,7 +25,7 @@ const ProfilePage = async () => {
       </p>
 
       <div className="mx-auto max-w-lg w-full">
-        {ranking.map((user, index) => (
+        {ranking.map((user: any, index: number) => (
           <Card className="w-full mt-5" key={index}>
             <CardHeader className="flex-row justify-between w-full">
               <div className="flex items-center gap-2">
