@@ -14,6 +14,20 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
+  // Handle CORS preflight requests
+  if (request.method === "OPTIONS") {
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers":
+          "Content-Type, Authorization, X-User-Id",
+        "Access-Control-Max-Age": "86400",
+      },
+    });
+  }
+
   // Check if the current path is a public route
   const isPublic = isPublicRoute(request);
 
@@ -27,7 +41,19 @@ export default clerkMiddleware(async (auth, request) => {
   const headers = new Headers(request.headers);
   headers.set("x-current-path", request.nextUrl.pathname);
 
-  return NextResponse.next({ headers });
+  // Add CORS headers to the response
+  const response = NextResponse.next({ headers });
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  response.headers.set(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  response.headers.set(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-User-Id"
+  );
+
+  return response;
 });
 
 export const config = {
