@@ -293,3 +293,4 @@ _Prioridade: 🟢 Baixa_
 **Stakeholders:** Product Owner, QA Team  
 **Data de Início:** [Data a definir]  
 **Data de Conclusão:** [Data a definir]
+
