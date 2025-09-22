@@ -34,3 +34,4 @@ CREATE INDEX IF NOT EXISTS idx_damage_user_created ON "Damage"("userId", "create
 CREATE INDEX IF NOT EXISTS idx_user_lecture_user_created ON "UserLecture"("userId", "createdAt");
 CREATE INDEX IF NOT EXISTS idx_certificate_user_created ON "Certificate"("userId", "createdAt");
 CREATE INDEX IF NOT EXISTS idx_exam_user_complete ON "Exam"("userId", "complete");
+
