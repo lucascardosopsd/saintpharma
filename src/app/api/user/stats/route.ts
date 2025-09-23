@@ -208,7 +208,7 @@ export async function GET(request: NextRequest) {
     const totalStudyHours = userLectures.length * estimatedHoursPerLecture;
 
     // Estatísticas por período
-    const stats = {
+    const stats: any = {
       period,
       user: {
         id: user.id,
