@@ -91,7 +91,9 @@ export async function GET(request: NextRequest) {
  *
  * Body:
  * {
- *   "lectureCMSid": "string"
+ *   "lectureCMSid": "string",
+ *   "timeLimit": "number (opcional, em minutos)",
+ *   "passingScore": "number (opcional, porcentagem mínima para aprovação)"
  * }
  *
  * Nota: Mantém compatibilidade com "lectureId" durante a transição
@@ -184,13 +186,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Criar exame
+    // Obter parâmetros opcionais do body
+    const { timeLimit, passingScore } = body;
+
+    // Criar exame (já consome uma vida automaticamente)
     const exam = await createExam({
       data: {
         lectureCMSid: sanitizedLectureId,
         userId: user.id,
         complete: false,
         reproved: false,
+        timeLimit: timeLimit || undefined,
+        passingScore: passingScore || undefined,
       },
     });
 
@@ -207,6 +214,21 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Erro ao criar exame:", error);
+
+    // Verificar se é erro de vidas insuficientes
+    if (error instanceof Error && error.message.includes("vidas suficientes")) {
+      return new Response(
+        JSON.stringify({
+          error: "Você não possui vidas suficientes para iniciar o exame",
+          code: "INSUFFICIENT_LIVES",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     return serverErrorResponse("Erro ao criar exame");
   }
 }

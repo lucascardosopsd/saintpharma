@@ -1,15 +1,20 @@
-import { NextRequest } from "next/server";
-import { validateApiToken, unauthorizedResponse, serverErrorResponse, successResponse } from "@/lib/auth";
 import { getCourseById } from "@/actions/courses/getId";
 import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import {
+  serverErrorResponse,
+  successResponse,
+  unauthorizedResponse,
+  validateApiToken,
+} from "@/lib/auth";
 import { UserLecture } from "@prisma/client";
+import { NextRequest } from "next/server";
 
 /**
  * GET /api/courses/[id]
  * Retorna detalhes de um curso específico com suas lectures
- * 
+ *
  * Headers necessários:
  * - Authorization: Bearer <API_TOKEN>
  * - X-User-Id: <clerk_user_id> (opcional, para verificar progresso)
@@ -25,7 +30,7 @@ export async function GET(
 
   try {
     const { id } = params;
-    
+
     if (!id) {
       return new Response(
         JSON.stringify({ error: "ID do curso é obrigatório" }),
@@ -38,24 +43,21 @@ export async function GET(
 
     // Buscar curso
     const course = await getCourseById({ id });
-    
+
     if (!course) {
-      return new Response(
-        JSON.stringify({ error: "Curso não encontrado" }),
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: "Curso não encontrado" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     // Buscar lectures do curso
     const lectures = await getLecturesByCourseId({ courseId: id });
-    
+
     // Verificar se há usuário logado para buscar progresso
     const userId = request.headers.get("x-user-id");
     let userProgress: UserLecture[] = [];
-    
+
     if (userId) {
       try {
         const user = await getUserByClerkId(userId);
@@ -68,18 +70,18 @@ export async function GET(
     }
 
     // Mapear lectures com status de conclusão
-    const lecturesWithProgress = lectures.map(lecture => ({
+    const lecturesWithProgress = lectures.map((lecture) => ({
       ...lecture,
       completed: userProgress.some(
-        progress => progress.lectureCmsId === lecture._id
-      )
+        (progress) => progress.lectureCmsId === lecture._id
+      ),
     }));
 
     return successResponse({
       course,
       lectures: lecturesWithProgress,
       totalLectures: lectures.length,
-      completedLectures: lecturesWithProgress.filter(l => l.completed).length
+      completedLectures: lecturesWithProgress.filter((l) => l.completed).length,
     });
   } catch (error) {
     console.error("Erro ao buscar curso:", error);

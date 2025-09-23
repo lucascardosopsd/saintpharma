@@ -4,6 +4,7 @@ import { getExamById } from "@/actions/exam/getExamById";
 import { getQuizByLectureId } from "@/actions/quiz/getByLectureId";
 import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import Exam from "@/components/Exam";
+import ModernExam from "@/components/ModernExam";
 import { defaultLifes } from "@/constants/exam";
 import { requireAuth } from "@/lib/authGuard";
 import { subHours } from "date-fns";
@@ -35,22 +36,37 @@ const LecturePage = async ({ params }: LecturePageProps) => {
     from: subHours(new Date(), 6),
   });
 
+  // Use modern exam by default, but you can switch to the old one
+  const useModernExam = true;
+
   return (
     <div className="flex flex-col">
-      <Link href={`/course/${courseId}`}>
-        <div className="p-5 flex items-center border-b border-border text-primary">
-          <ChevronLeft size={32} />
-        </div>
-      </Link>
+      {useModernExam ? (
+        <ModernExam
+          examId={exam?.id!}
+          userId={user?.id!}
+          courseId={courseId}
+          lectureId={lectureId}
+          userLifes={defaultLifes - userDamage.length}
+        />
+      ) : (
+        <>
+          <Link href={`/course/${courseId}`}>
+            <div className="p-5 flex items-center border-b border-border text-primary">
+              <ChevronLeft size={32} />
+            </div>
+          </Link>
 
-      <Exam
-        course={course}
-        quiz={quiz}
-        userId={user?.id!}
-        lectureId={lectureId}
-        examId={exam?.id!}
-        userLifes={defaultLifes - userDamage.length}
-      />
+          <Exam
+            course={course}
+            quiz={quiz}
+            userId={user?.id!}
+            lectureId={lectureId}
+            examId={exam?.id!}
+            userLifes={defaultLifes - userDamage.length}
+          />
+        </>
+      )}
     </div>
   );
 };
