@@ -27,6 +27,7 @@ model User {
   lectures     UserLecture[]
   Damage       Damage[]
   Exam         Exam[]
+  ExamAttempt  ExamAttempt[]
 }
 
 model Certificate {
@@ -60,12 +61,32 @@ model Damage {
 }
 
 model Exam {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  complete     Boolean? @default(false)
-  reproved     Boolean? @default(false)
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  complete     Boolean?      @default(false)
+  reproved     Boolean?      @default(false)
   lectureCMSid String
-  userId       String   @db.ObjectId
-  User         User?    @relation(fields: [userId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  userId       String        @db.ObjectId
+  timeLimit    Int?          // em minutos
+  passingScore Int?          // porcentagem mínima para aprovação
+  User         User?         @relation(fields: [userId], references: [id])
+  attempts     ExamAttempt[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ExamAttempt {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  examId         String   @db.ObjectId
+  userId         String   @db.ObjectId
+  answers        Json     // Array de respostas
+  score          Float    @default(0)
+  totalQuestions Int      @default(0)
+  correctAnswers Int      @default(0)
+  timeSpent      Int      @default(0) // em segundos
+  passed         Boolean  @default(false)
+  completedAt    DateTime?
+  Exam           Exam?    @relation(fields: [examId], references: [id])
+  User           User?    @relation(fields: [userId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
