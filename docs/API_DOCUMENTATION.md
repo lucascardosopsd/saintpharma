@@ -167,27 +167,27 @@ Returns information about the authenticated user.
 
 ### POST /api/clerk/upsert
 
-Creates or updates a user from Clerk webhook.
+Processes Clerk webhook events for user management.
 
 **Headers:**
 
-- `Authorization: Bearer <API_TOKEN>`
+- `Content-Type: application/json`
 
 **Request Body:**
 
 ```json
 {
-  "id": "string (clerk user id)",
-  "first_name": "string",
-  "last_name": "string",
-  "email_addresses": [
-    {
-      "email_address": "string",
-      "id": "string"
-    }
-  ],
-  "primary_email_address_id": "string",
-  "image_url": "string"
+  "type": "string (user.created | user.updated | user.deleted)",
+  "data": {
+    "id": "string (clerk user id)",
+    "email_addresses": [
+      {
+        "email_address": "string"
+      }
+    ],
+    "first_name": "string",
+    "image_url": "string"
+  }
 }
 ```
 
@@ -195,20 +195,16 @@ Creates or updates a user from Clerk webhook.
 
 ```json
 {
-  "success": true,
-  "data": {
-    "message": "User upserted successfully",
-    "user": {
-      "id": "string",
-      "clerkId": "string",
-      "name": "string",
-      "email": "string",
-      "profileImage": "string"
-    }
-  },
-  "timestamp": "string (ISO date)"
+  "status": 200,
+  "message": "Usuário processado com sucesso"
 }
 ```
+
+**Error Codes:**
+
+- `400`: Email é obrigatório / ClerkId é obrigatório para delete
+- `404`: Usuário não encontrado
+- `500`: Erro interno do servidor
 
 ---
 
@@ -291,7 +287,7 @@ Returns a specific course by ID.
 
 ### POST /api/courses/[id]/complete
 
-Marks a course as completed for the user.
+Marks a course as completed for the user and generates a certificate.
 
 **Headers:**
 
@@ -308,16 +304,22 @@ Marks a course as completed for the user.
 {
   "success": true,
   "data": {
-    "message": "Curso marcado como concluído",
+    "message": "Curso concluído com sucesso",
     "certificate": {
       "id": "string",
+      "userId": "string",
+      "courseCmsId": "string",
       "courseTitle": "string",
       "description": "string",
-      "imageUrl": "string"
+      "points": "number",
+      "workload": "number",
+      "createdAt": "string (ISO date)"
     },
-    "completedAt": "string (ISO date)",
-    "points": "number",
-    "workload": "number"
+    "course": {
+      "id": "string",
+      "name": "string",
+      "points": "number"
+    }
   },
   "timestamp": "string (ISO date)"
 }
@@ -326,7 +328,7 @@ Marks a course as completed for the user.
 **Error Codes:**
 
 - `COURSE_NOT_FOUND`: Course not found
-- `CERTIFICATE_ALREADY_EXISTS`: User already has certificate for this course
+- `CERTIFICATE_ALREADY_EXISTS`: Certificate already exists for this course
 - `INCOMPLETE_COURSE`: Not all lectures completed
 
 ---
@@ -433,6 +435,14 @@ Marks a lecture as completed for the user.
 
 - `id`: Lecture ID
 
+**Request Body:**
+
+```json
+{
+  "courseId": "string (required)"
+}
+```
+
 **Response:**
 
 ```json
@@ -440,11 +450,12 @@ Marks a lecture as completed for the user.
   "success": true,
   "data": {
     "message": "Aula marcada como concluída",
-    "lecture": {
+    "userLecture": {
       "id": "string",
       "lectureCmsId": "string",
       "courseId": "string",
-      "completedAt": "string (ISO date)"
+      "userId": "string",
+      "createdAt": "string (ISO date)"
     }
   },
   "timestamp": "string (ISO date)"
@@ -455,6 +466,8 @@ Marks a lecture as completed for the user.
 
 - `LECTURE_NOT_FOUND`: Lecture not found
 - `LECTURE_ALREADY_COMPLETED`: Lecture already completed
+
+---
 
 ---
 
@@ -502,6 +515,38 @@ Returns questions for a specific lecture.
 ---
 
 ## Exams
+
+### GET /api/exams/eligibility
+
+Verifica se o usuário pode iniciar um exame (tem vidas disponíveis).
+
+**Headers:**
+
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "canTakeExam": "boolean",
+    "remainingLives": "number",
+    "totalLives": "number",
+    "nextResetTime": "string (ISO date) | null",
+    "message": "string (opcional)"
+  },
+  "timestamp": "string (ISO date)"
+}
+```
+
+**Error Codes:**
+
+- `MISSING_USER_ID`: Header X-User-Id é obrigatório
+- `USER_NOT_FOUND`: Usuário não encontrado
+
+---
 
 ### GET /api/exams
 
@@ -563,7 +608,9 @@ Creates a new exam for a specific lecture.
 
 ```json
 {
-  "lectureCMSid": "string (required)"
+  "lectureCMSid": "string (required)",
+  "timeLimit": "number (optional, em minutos)",
+  "passingScore": "number (optional, porcentagem mínima para aprovação)"
 }
 ```
 
@@ -573,7 +620,6 @@ Creates a new exam for a specific lecture.
 {
   "success": true,
   "data": {
-    "message": "Exame criado com sucesso",
     "exam": {
       "id": "string",
       "lectureCMSid": "string",
@@ -581,6 +627,14 @@ Creates a new exam for a specific lecture.
       "complete": "boolean",
       "reproved": "boolean",
       "createdAt": "string (ISO date)"
+    },
+    "quiz": {
+      "_id": "string",
+      "questions": "array"
+    },
+    "lecture": {
+      "id": "string",
+      "title": "string"
     }
   },
   "timestamp": "string (ISO date)"
@@ -593,6 +647,7 @@ Creates a new exam for a specific lecture.
 - `USER_NOT_FOUND`: User not found
 - `LECTURE_NOT_FOUND`: Lecture not found
 - `QUIZ_NOT_FOUND`: Quiz not found for this lecture
+- `INSUFFICIENT_LIVES`: Usuário não possui vidas suficientes para iniciar o exame
 
 ---
 
@@ -621,6 +676,8 @@ Returns a specific exam by ID.
       "userId": "string",
       "complete": "boolean",
       "reproved": "boolean",
+      "timeLimit": "number (optional)",
+      "passingScore": "number (optional)",
       "createdAt": "string (ISO date)",
       "updatedAt": "string (ISO date)"
     }
@@ -654,7 +711,8 @@ Updates an exam (completes it).
 ```json
 {
   "complete": "boolean (required)",
-  "reproved": "boolean (optional)"
+  "reproved": "boolean (optional)",
+  "courseId": "string (required if complete = true)"
 }
 ```
 
@@ -664,7 +722,7 @@ Updates an exam (completes it).
 {
   "success": true,
   "data": {
-    "message": "Exame atualizado com sucesso",
+    "message": "Exame concluído com sucesso",
     "exam": {
       "id": "string",
       "lectureCMSid": "string",
@@ -673,7 +731,8 @@ Updates an exam (completes it).
       "reproved": "boolean",
       "updatedAt": "string (ISO date)"
     },
-    "pointsAwarded": "number"
+    "lectureCompleted": "boolean",
+    "pointsEarned": "number"
   },
   "timestamp": "string (ISO date)"
 }
@@ -684,6 +743,199 @@ Updates an exam (completes it).
 - `EXAM_NOT_FOUND`: Exam not found
 - `FORBIDDEN`: Access denied to exam
 - `EXAM_ALREADY_COMPLETED`: Exam already completed
+
+---
+
+### GET /api/exams/[id]/questions
+
+Returns an exam with its questions and answers.
+
+**Headers:**
+
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Path Parameters:**
+
+- `id`: Exam ID
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "exam": {
+      "id": "string",
+      "lectureCMSid": "string",
+      "userId": "string",
+      "complete": "boolean",
+      "reproved": "boolean",
+      "questions": [
+        {
+          "id": "string",
+          "title": "string",
+          "question": "string",
+          "cover": {
+            "asset": {
+              "url": "string"
+            }
+          },
+          "answers": [
+            {
+              "answer": "string",
+              "isCorrect": "boolean"
+            }
+          ],
+          "order": "number"
+        }
+      ],
+      "totalQuestions": "number",
+      "timeLimit": "number (optional, em minutos)",
+      "passingScore": "number (optional, porcentagem)",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)"
+    }
+  },
+  "timestamp": "string (ISO date)"
+}
+```
+
+**Error Codes:**
+
+- `MISSING_USER_ID`: X-User-Id header is required
+- `MISSING_EXAM_ID`: Exam ID is required
+- `USER_NOT_FOUND`: User not found
+- `EXAM_NOT_FOUND`: Exam not found
+
+---
+
+### POST /api/exams/[id]/submit
+
+Submits exam answers and calculates results.
+
+**Headers:**
+
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Path Parameters:**
+
+- `id`: Exam ID
+
+**Request Body:**
+
+```json
+{
+  "answers": [
+    {
+      "questionId": "string",
+      "selectedAnswer": "string"
+    }
+  ],
+  "timeSpent": "number (em segundos)"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Exame aprovado!",
+    "result": {
+      "examId": "string",
+      "score": "number",
+      "totalQuestions": "number",
+      "correctAnswers": "number",
+      "passed": "boolean",
+      "timeSpent": "number",
+      "answers": [
+        {
+          "questionId": "string",
+          "selectedAnswer": "string",
+          "isCorrect": "boolean",
+          "timeSpent": "number"
+        }
+      ],
+      "completedAt": "string (ISO date)"
+    }
+  },
+  "timestamp": "string (ISO date)"
+}
+```
+
+**Error Codes:**
+
+- `MISSING_USER_ID`: X-User-Id header is required
+- `MISSING_EXAM_ID`: Exam ID is required
+- `USER_NOT_FOUND`: User not found
+- `SUBMISSION_VALIDATION_ERROR`: Validation errors in request
+- `INVALID_ANSWERS_FORMAT`: answers must be a non-empty array
+- `INVALID_TIME_SPENT`: timeSpent must be a positive number
+- `INVALID_ANSWER_FORMAT`: Each answer must have questionId and selectedAnswer
+
+---
+
+### GET /api/exams/[id]/attempts
+
+Returns exam attempts with pagination.
+
+**Headers:**
+
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Path Parameters:**
+
+- `id`: Exam ID
+
+**Query Parameters:**
+
+- `page`: Page number (default: 0)
+- `limit`: Items per page (default: 10, max: 50)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "attempts": [
+      {
+        "id": "string",
+        "examId": "string",
+        "userId": "string",
+        "answers": "array",
+        "score": "number",
+        "totalQuestions": "number",
+        "correctAnswers": "number",
+        "timeSpent": "number",
+        "completedAt": "string (ISO date)",
+        "createdAt": "string (ISO date)",
+        "updatedAt": "string (ISO date)"
+      }
+    ],
+    "pagination": {
+      "page": "number",
+      "limit": "number",
+      "total": "number",
+      "pages": "number",
+      "hasNext": "boolean",
+      "hasPrev": "boolean"
+    }
+  },
+  "timestamp": "string (ISO date)"
+}
+```
+
+**Error Codes:**
+
+- `MISSING_USER_ID`: X-User-Id header is required
+- `MISSING_EXAM_ID`: Exam ID is required
+- `USER_NOT_FOUND`: User not found
+- `EXAM_NOT_FOUND`: Exam not found
 
 ---
 
@@ -728,7 +980,6 @@ Creates a certificate for a completed course.
 **Headers:**
 
 - `Authorization: Bearer <API_TOKEN>`
-- `X-User-Id: <clerk_user_id>`
 
 **Request Body:**
 
@@ -749,7 +1000,6 @@ Creates a certificate for a completed course.
 {
   "success": true,
   "data": {
-    "message": "Certificado criado com sucesso",
     "certificate": {
       "id": "string",
       "userId": "string",
@@ -759,8 +1009,7 @@ Creates a certificate for a completed course.
       "points": "number",
       "workload": "number",
       "createdAt": "string (ISO date)"
-    },
-    "pointsAwarded": "number"
+    }
   },
   "timestamp": "string (ISO date)"
 }
@@ -771,6 +1020,104 @@ Creates a certificate for a completed course.
 - `MISSING_USER_ID`: userId is required
 - `USER_NOT_FOUND`: User not found
 - `CERTIFICATE_ALREADY_EXISTS`: Certificate already exists for this course
+
+---
+
+### GET /api/certificate
+
+Returns user's certificates with pagination.
+
+**Headers:**
+
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Query Parameters:**
+
+- `page`: Page number (default: 0)
+- `limit`: Items per page (default: 20, max: 100)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "certificates": [
+      {
+        "id": "string",
+        "userId": "string",
+        "courseCmsId": "string",
+        "courseTitle": "string",
+        "description": "string",
+        "points": "number",
+        "workload": "number",
+        "createdAt": "string (ISO date)",
+        "updatedAt": "string (ISO date)"
+      }
+    ],
+    "pagination": {
+      "page": "number",
+      "limit": "number",
+      "total": "number",
+      "pages": "number",
+      "hasNext": "boolean",
+      "hasPrev": "boolean"
+    }
+  },
+  "timestamp": "string (ISO date)"
+}
+```
+
+**Error Codes:**
+
+- `MISSING_USER_ID`: X-User-Id header is required
+- `USER_NOT_FOUND`: User not found
+
+---
+
+### GET /api/certificate/[id]
+
+Returns a specific certificate by ID.
+
+**Headers:**
+
+- `Authorization: Bearer <API_TOKEN>`
+- `X-User-Id: <clerk_user_id>`
+
+**Path Parameters:**
+
+- `id`: Certificate ID
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "certificate": {
+      "id": "string",
+      "userId": "string",
+      "courseCmsId": "string",
+      "courseTitle": "string",
+      "description": "string",
+      "points": "number",
+      "workload": "number",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)"
+    }
+  },
+  "timestamp": "string (ISO date)"
+}
+```
+
+**Error Codes:**
+
+- `MISSING_USER_ID`: X-User-Id header is required
+- `MISSING_CERTIFICATE_ID`: Certificate ID is required
+- `USER_NOT_FOUND`: User not found
+- `CERTIFICATE_NOT_FOUND`: Certificate not found
+- `FORBIDDEN`: Access denied to certificate
 
 ---
 
@@ -953,16 +1300,12 @@ Returns user's remaining lives and regeneration information.
   "success": true,
   "data": {
     "userId": "string",
+    "totalLives": "number",
     "remainingLives": "number",
-    "maxLives": "number",
-    "nextResetTime": "string (ISO date) or null",
-    "livesRegenerating": "boolean",
-    "damageHistory": [
-      {
-        "id": "string",
-        "createdAt": "string (ISO date)"
-      }
-    ]
+    "damageCount": "number",
+    "lastDamage": "string (ISO date) or null",
+    "resetTime": "string (ISO date)",
+    "livesRegenerating": "boolean"
   },
   "timestamp": "string (ISO date)"
 }
@@ -979,16 +1322,27 @@ Removes a life from the user.
 - `Authorization: Bearer <API_TOKEN>`
 - `X-User-Id: <clerk_user_id>`
 
+**Request Body (Optional):**
+
+```json
+{
+  "amount": "number (default: 1)"
+}
+```
+
 **Response:**
 
 ```json
 {
   "success": true,
   "data": {
-    "message": "Vida removida com sucesso",
+    "message": "1 vida(s) removida(s) com sucesso",
     "userId": "string",
+    "livesRemoved": "number",
+    "totalLives": "number",
     "remainingLives": "number",
-    "nextResetTime": "string (ISO date)"
+    "resetTime": "string (ISO date)",
+    "livesRegenerating": "boolean"
   },
   "timestamp": "string (ISO date)"
 }
@@ -1371,19 +1725,18 @@ Completa dados do usuário, especificamente para adicionar ou atualizar o sobren
 
 ### POST /api/sanity/revalidate
 
-Revalidates Sanity CMS data.
+Revalidates Sanity CMS data via webhook.
 
 **Headers:**
 
-- `Authorization: Bearer <API_TOKEN>`
+- `Content-Type: application/json`
 
 **Request Body:**
 
 ```json
 {
-  "secret": "string (required)",
-  "type": "string",
-  "slug": "string"
+  "_type": "string (required)",
+  "slug": "string (optional)"
 }
 ```
 
@@ -1391,19 +1744,18 @@ Revalidates Sanity CMS data.
 
 ```json
 {
-  "success": true,
-  "data": {
-    "message": "Revalidation triggered",
-    "revalidated": "boolean"
-  },
-  "timestamp": "string (ISO date)"
+  "status": 200,
+  "revalidated": true,
+  "now": "number (timestamp)",
+  "body": "object"
 }
 ```
 
 **Error Codes:**
 
-- `UNAUTHORIZED`: Invalid secret
-- `INVALID_SECRET`: Secret is required
+- `401`: Invalid Signature
+- `400`: Bad Request
+- `500`: Internal Server Error
 
 ---
 
@@ -1428,6 +1780,31 @@ All API endpoints return errors in the following format:
 - `USER_NOT_FOUND`: User not found
 - `VALIDATION_ERROR`: Input validation failed
 - `INTERNAL_SERVER_ERROR`: Internal server error
+- `LECTURE_NOT_FOUND`: Lecture not found
+- `LECTURE_ALREADY_COMPLETED`: Lecture already completed
+- `EXAM_NOT_FOUND`: Exam not found
+- `EXAM_ALREADY_COMPLETED`: Exam already completed
+- `QUIZ_NOT_FOUND`: Quiz not found for this lecture
+- `COURSE_NOT_FOUND`: Course not found
+- `CERTIFICATE_ALREADY_EXISTS`: Certificate already exists for this course
+- `INCOMPLETE_COURSE`: Not all lectures completed
+- `INSUFFICIENT_LIVES`: User has no lives remaining
+- `MISSING_LECTURE_ID`: lectureCMSid is required
+- `MISSING_CLERK_USER_ID`: clerkUserId is required
+- `CLERK_USER_NOT_FOUND`: User not found in Clerk
+- `POINTS_VALIDATION_ERROR`: Validation errors in request
+- `INVALID_POINTS_TYPE`: Points must be a number
+- `INVALID_OPERATION`: Invalid operation type
+- `MISSING_FIELDS`: At least one field (lastName or firstName) must be provided
+- `EMPTY_FIELD`: Field cannot be empty
+- `INVALID_SECRET`: Secret is required
+- `MISSING_CERTIFICATE_ID`: Certificate ID is required
+- `CERTIFICATE_NOT_FOUND`: Certificate not found
+- `MISSING_EXAM_ID`: Exam ID is required
+- `SUBMISSION_VALIDATION_ERROR`: Validation errors in exam submission
+- `INVALID_ANSWERS_FORMAT`: answers must be a non-empty array
+- `INVALID_TIME_SPENT`: timeSpent must be a positive number
+- `INVALID_ANSWER_FORMAT`: Each answer must have questionId and selectedAnswer
 
 ## Authentication
 
