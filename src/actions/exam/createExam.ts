@@ -2,6 +2,7 @@
 
 import { createDamage } from "@/actions/damage/createDamage";
 import { getUserDamage } from "@/actions/damage/getUserDamage";
+import { revalidateRoute } from "@/actions/revalidateRoute";
 import { defaultLifes } from "@/constants/exam";
 import prisma from "@/lib/prisma";
 import { subHours } from "date-fns";
@@ -37,7 +38,12 @@ export const createExam = async ({ data }: CreateExamProps) => {
     await createDamage({ userId: data.userId });
 
     // Criar o exame
-    return prisma.exam.create({ data });
+    const exam = await prisma.exam.create({ data });
+
+    // Revalidar rotas relacionadas
+    await revalidateRoute({ fullPath: "/" });
+
+    return exam;
   } catch (error) {
     console.error("Erro ao criar exame:", error);
     throw new Error("Erro ao criar exame");

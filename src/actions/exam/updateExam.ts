@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidateRoute } from "@/actions/revalidateRoute";
 import prisma from "@/lib/prisma";
 
 type UpdateExamProps = {
@@ -14,8 +15,13 @@ type UpdateExamProps = {
 
 export const updateExam = async ({ data, id }: UpdateExamProps) => {
   try {
-    return prisma.exam.update({ where: { id }, data });
+    const exam = await prisma.exam.update({ where: { id }, data });
+
+    // Revalidar rotas relacionadas
+    await revalidateRoute({ fullPath: "/" });
+
+    return exam;
   } catch (error) {
-    throw new Error("error when create exam");
+    throw new Error("error when update exam");
   }
 };
