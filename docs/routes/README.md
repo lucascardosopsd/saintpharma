@@ -78,7 +78,6 @@ Authorization: Bearer <API_TOKEN>
 
 ### Autenticação (/api/auth)
 
-- [POST /api/auth/login](auth/login/POST.md) - Login
 - [POST /api/auth/logout](auth/logout/POST.md) - Logout
 - [GET /api/auth/user](auth/user/GET.md) - Usuário autenticado
 
