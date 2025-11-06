@@ -9,10 +9,18 @@ export const getUserCertificateByCourse = async ({
   userId: string;
 }) => {
   try {
-    return await prisma.certificate.findFirst({
+    const certificate = await prisma.certificate.findFirst({
       where: { AND: [{ courseCmsId: courseId }, { userId }] },
     });
+
+    if (!certificate) {
+      return null;
+    }
+
+    // Serializar o objeto Prisma para garantir que seja enviado corretamente ao cliente
+    return JSON.parse(JSON.stringify(certificate));
   } catch (error) {
-    throw new Error("Error when create certificates");
+    console.error("[getUserCertificateByCourse] Erro ao buscar certificado:", error);
+    throw new Error("Erro ao buscar certificado");
   }
 };

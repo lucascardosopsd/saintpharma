@@ -58,6 +58,17 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
     generateImage();
   }, [count]);
 
+  // Function to sanitize course name for filename
+  const sanitizeFileName = (name: string): string => {
+    return name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+      .replace(/[^a-zA-Z0-9\s-]/g, "") // Remove caracteres especiais
+      .replace(/\s+/g, "-") // Substitui espaços por hífens
+      .toLowerCase()
+      .trim();
+  };
+
   // Function to download the certificate as a PDF
   const downloadPDF = async () => {
     if (!imageData) {
@@ -75,7 +86,9 @@ const Certificate = ({ course, user, certificate }: CertificateButtonProps) => {
     const height = pdf.internal.pageSize.getHeight();
     pdf.addImage(imageData, "PNG", 0, 0, width, height);
 
-    pdf.save("certificado.pdf");
+    // Usar o nome do curso sanitizado como nome do arquivo
+    const fileName = sanitizeFileName(course.name);
+    pdf.save(`${fileName}.pdf`);
   };
 
   return (
