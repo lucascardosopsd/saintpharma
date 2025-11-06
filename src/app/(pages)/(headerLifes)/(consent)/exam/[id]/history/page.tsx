@@ -3,7 +3,7 @@ import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import { getExamById } from "@/actions/exam/getExamById";
 import ExamAttemptsHistory from "@/components/ExamAttemptsHistory";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, History } from "lucide-react";
 import Link from "next/link";
 
 interface ExamHistoryPageProps {
@@ -33,30 +33,35 @@ const ExamHistoryPage = async ({ params }: ExamHistoryPageProps) => {
   }
 
   return (
-    <div className="flex flex-col h-[92svh]">
-      {/* Header */}
-      <div className="border-b bg-background p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Link href={`/exam/${examId}`}>
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar ao Exame
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold">Histórico de Tentativas</h1>
-              <p className="text-muted-foreground">
-                Visualize todas as suas tentativas neste exame
-              </p>
+    <div className="min-h-[92svh]">
+      <div className="container max-w-4xl mx-auto py-8">
+        {/* Navigation */}
+        <div className="px-5 md:px-0 mb-8">
+          <Link href={`/exam/${examId}`}>
+            <Button variant="ghost" className="group">
+              <ArrowLeft className="h-4 w-4 mr-2 stroke-primary group-hover:stroke-accent-foreground transition-colors" />
+              Voltar ao Exame
+            </Button>
+          </Link>
+        </div>
+
+        {/* Header */}
+        <div className="px-5 md:px-0 mb-8">
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 md:p-8 border border-primary/20">
+            <div className="flex items-center gap-3 mb-3">
+              <History className="h-6 w-6 text-primary" />
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                Histórico de Tentativas
+              </h1>
             </div>
+            <p className="text-muted-foreground">
+              Visualize todas as suas tentativas neste exame e acompanhe seu progresso
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="max-w-4xl mx-auto">
+        {/* Content */}
+        <div className="px-5 md:px-0">
           <ExamAttemptsHistory
             examId={examId}
             userId={user.id}
