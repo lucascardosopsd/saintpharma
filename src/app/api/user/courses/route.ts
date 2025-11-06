@@ -82,64 +82,96 @@ export async function GET(request: NextRequest) {
     // Processar cada curso para determinar status e progresso
     const courseProgress = await Promise.all(
       allCourses.map(async (course) => {
+        const courseId = course._id;
+
         // Verificar se o curso foi concluído (tem certificado)
         const certificate = userCertificates.find(
-          (cert) => cert.courseCmsId === course._id
+          (cert) => cert.courseCmsId === courseId
         );
-
-        if (certificate) {
-          // Curso concluído
-          return {
-            id: course._id,
-            title: course.name,
-            description: course.description,
-            imageUrl: course.banner?.asset?.url || null,
-            points: course.points || 0,
-            workload: course.workload || 0,
-            status: "completed",
-            progress: 100,
-            completedAt: certificate.createdAt,
-            certificateId: certificate.id,
-            createdAt: certificate.createdAt,
-          };
-        }
 
         // Buscar aulas do curso
         const courseLectures = await getLecturesByCourseId({
-          courseId: course._id,
+          courseId,
         });
 
-        // Contar aulas concluídas pelo usuário neste curso
+        // Filtrar lectures completadas pelo usuário neste curso
         const completedLectures = userLectures.filter((ul) =>
-          courseLectures.some((lecture) => lecture._id === ul.lectureCmsId)
+          ul.courseId === courseId
+        );
+        const completedLectureIds = new Set(
+          completedLectures.map((ul) => ul.lectureCmsId)
         );
 
-        const progress =
-          courseLectures.length > 0
-            ? Math.round(
-                (completedLectures.length / courseLectures.length) * 100
-              )
+        // Calcular progresso
+        const totalLectures = courseLectures.length;
+        const completedCount = courseLectures.filter((lecture) =>
+          completedLectureIds.has(lecture._id)
+        ).length;
+        const progressPercentage =
+          totalLectures > 0
+            ? Math.round((completedCount / totalLectures) * 100)
             : 0;
 
         // Determinar status baseado no progresso
         let courseStatus = "not_started";
-        if (progress > 0 && progress < 100) {
+        if (certificate) {
+          courseStatus = "completed";
+        } else if (completedCount > 0) {
           courseStatus = "in_progress";
-        } else if (progress === 100) {
-          courseStatus = "ready_for_certificate"; // Pronto para certificado mas não gerado
         }
 
+        // Verificar se está pronto para certificado
+        const isReadyForCertificate =
+          !certificate && completedCount === totalLectures && totalLectures > 0;
+
+        // Calcular última atividade
+        let lastActivity = null;
+        if (completedLectures.length > 0) {
+          const sortedLectures = completedLectures.sort(
+            (a, b) =>
+              new Date(b.createdAt || 0).getTime() -
+              new Date(a.createdAt || 0).getTime()
+          );
+          lastActivity = sortedLectures[0].createdAt;
+        }
+
+        // Montar objeto de progresso detalhado
+        const progressData = {
+          status: courseStatus,
+          percentage: progressPercentage,
+          completedLectures: completedCount,
+          totalLectures,
+          remainingLectures: totalLectures - completedCount,
+          isCompleted: !!certificate,
+          isReadyForCertificate,
+        };
+
+        // Montar resposta do curso
         return {
-          id: course._id,
+          id: courseId,
           title: course.name,
+          slug: course.slug || null,
           description: course.description,
           imageUrl: course.banner?.asset?.url || null,
           points: course.points || 0,
           workload: course.workload || 0,
           status: courseStatus,
-          progress,
-          completedLectures: completedLectures.length,
-          totalLectures: courseLectures.length,
+          progress: progressPercentage, // Mantido para compatibilidade
+          progressDetails: progressData, // Novo objeto detalhado
+          completedLectures: completedCount, // Mantido para compatibilidade
+          totalLectures, // Mantido para compatibilidade
+          certificate: certificate
+            ? {
+                id: certificate.id,
+                courseTitle: certificate.courseTitle,
+                points: certificate.points,
+                workload: certificate.workload,
+                createdAt: certificate.createdAt,
+              }
+            : null,
+          certificateId: certificate?.id || null, // Mantido para compatibilidade
+          completedAt: certificate?.createdAt || null, // Mantido para compatibilidade
+          lastActivity,
           createdAt:
             completedLectures.length > 0
               ? completedLectures[0].createdAt
