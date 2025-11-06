@@ -90,3 +90,4 @@ model Exam {
 - A aula deve existir no Sanity CMS
 - Deve existir um quiz para a aula
 
+

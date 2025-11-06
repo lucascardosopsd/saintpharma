@@ -49,3 +49,4 @@ Headers:
 
 Os cursos são armazenados no Sanity CMS, não no banco de dados MongoDB. Esta rota busca os dados do Sanity.
 
+
