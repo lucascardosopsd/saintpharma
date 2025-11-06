@@ -56,9 +56,9 @@ export const createCertificate = async ({
       data: {
         courseCmsId: course._id,
         courseTitle: course.name,
-        description: course.description,
-        workload: course.workload,
-        points: course.points,
+        description: course.description ?? "",
+        workload: course.workload ?? 0,
+        points: course.points ?? 0,
         userId: userId,
       },
     });
