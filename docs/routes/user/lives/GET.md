@@ -60,3 +60,4 @@ model Damage {
 - **Cálculo**: `remainingLives = totalLives - damageCount (últimas 10 horas)`
 
 
+

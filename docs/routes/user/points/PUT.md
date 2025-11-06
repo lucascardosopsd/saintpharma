@@ -96,3 +96,4 @@ model User {
 **Nota**: Os pontos nunca podem ser negativos (mínimo: 0)
 
 
+
