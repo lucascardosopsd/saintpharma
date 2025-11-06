@@ -125,7 +125,6 @@ _Prioridade: 🟡 Média_
 
 #### **Task 4.1: Otimizar Queries do Banco**
 
-- [ ] Corrigir query de atividades recentes em `/api/auth/logout`
 - [ ] Otimizar queries com filtros de data
 - [ ] Implementar paginação adequada
 - [ ] Adicionar índices necessários
