@@ -8,6 +8,7 @@ export type CourseProps = {
     };
   };
   name: string;
+  slug?: string;
   points: number;
   workload: number;
   description: string;
