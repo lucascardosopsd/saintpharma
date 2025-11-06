@@ -3,7 +3,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { requireAuth } from "@/lib/authGuard";
-import { format } from "date-fns";
+import { format, startOfWeek, endOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { revalidatePath } from "next/cache";
 import { Trophy, Medal, Award, Home } from "lucide-react";
@@ -49,7 +49,7 @@ const ProfilePage = async () => {
                 Os 50 melhores da semana
               </p>
               <p className="text-muted-foreground capitalize">
-                Do mês de {format(new Date(), "LLLL", { locale: ptBR })}
+                Semana de {format(startOfWeek(new Date(), { locale: ptBR, weekStartsOn: 0 }), "dd 'de' LLLL", { locale: ptBR })} até {format(endOfWeek(new Date(), { locale: ptBR, weekStartsOn: 0 }), "dd 'de' LLLL", { locale: ptBR })}
               </p>
             </div>
             <div className="flex justify-center md:justify-end">
