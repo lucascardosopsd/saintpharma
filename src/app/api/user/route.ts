@@ -1,10 +1,13 @@
+import { getUserPoints } from "@/actions/ranking/getUserPoints";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import { getUserLives } from "@/actions/user/getUserLives";
 import {
   serverErrorResponse,
   successResponse,
   unauthorizedResponse,
   validateApiToken,
 } from "@/lib/auth";
+import { getUserFullName } from "@/lib/userName";
 import { NextRequest } from "next/server";
 
 // Handle CORS preflight requests
@@ -55,9 +58,28 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Buscar pontos e vidas do usuário
+    const [userPoints, userLives] = await Promise.all([
+      getUserPoints(user.id),
+      getUserLives(user.id),
+    ]);
+
+    const userData = {
+      id: user.id,
+      clerkId: user.clerkId,
+      name: getUserFullName(user),
+      email: user.email,
+      profileImage: user.profileImage,
+      points: userPoints,
+      lives: userLives,
+      quizzes: user.quizzes,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
     return successResponse({
       message: "Usuário encontrado com sucesso",
-      user,
+      user: userData,
     });
   } catch (error) {
     console.error("Erro ao buscar usuário:", error);
@@ -92,6 +114,7 @@ export async function GET(request: NextRequest) {
  *     "email": "usuario@exemplo.com",
  *     "profileImage": "https://example.com/avatar.jpg",
  *     "points": 100,
+ *     "lives": 3,
  *     "quizzes": ["quiz1", "quiz2"],
  *     "createdAt": "2024-01-01T00:00:00.000Z",
  *     "updatedAt": "2024-01-01T00:00:00.000Z"
