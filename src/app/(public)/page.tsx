@@ -26,31 +26,44 @@ export default async function Home({ searchParams }: PageProps) {
   const userPoints = await getWeekPoints();
 
   return (
-    <div className="flex flex-col">
-      <div className="h-[92svh] overflow-y-auto flex flex-col justify-between ">
-        <div>
-          <SearchSection defaultValue={sParams?.name} />
+    <div className="flex flex-col min-h-[92svh]">
+      <SearchSection defaultValue={sParams?.name} />
 
-          <Link href="/ranking" className="flex flex-col py-5 border">
-            <p className="h-10 w-full flex items-center justify-center font-semibold text-primary leading-none">
-              Conheça o Ranking <ExternalLink />
+      <div className="container py-8">
+        <Link 
+          href="/ranking" 
+          className="group flex flex-col items-center justify-center gap-3 p-6 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 transition-all duration-300 mb-12"
+        >
+          <div className="flex items-center gap-2">
+            <p className="text-xl font-bold text-primary">
+              Conheça o Ranking
             </p>
-            <p className="text-xs text-center leading-none">
-              Os 50 melhores da semana ganham acesso a um curso premium
+            <ExternalLink className="h-5 w-5 text-primary group-hover:translate-x-1 transition-transform" />
+          </div>
+          <p className="text-sm text-muted-foreground text-center max-w-md">
+            Os 50 melhores da semana ganham acesso a um curso premium
+          </p>
+        </Link>
+
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            {courses.length > 0 ? 'Cursos Disponíveis' : 'Nenhum curso encontrado'}
+          </h2>
+          {sParams?.name && (
+            <p className="text-sm text-muted-foreground">
+              Resultados para: <span className="font-semibold text-primary">{sParams.name}</span>
             </p>
-          </Link>
+          )}
         </div>
 
-        <div className="max-w-[1200px] mx-auto p-5 w-full h-full">
-          <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 tablet:gap-2 tablet:p-2 gap-5">
-            {courses.map((course) => (
-              <CourseCard
-                course={course}
-                key={course._id}
-                userPoints={userPoints}
-              />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-6">
+          {courses.map((course) => (
+            <CourseCard
+              course={course}
+              key={course._id}
+              userPoints={userPoints}
+            />
+          ))}
         </div>
       </div>
     </div>
