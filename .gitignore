@@ -39,4 +39,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-certificates
+# certificates (comentado para permitir a pasta de certificados da aplicação)
+# certificates
