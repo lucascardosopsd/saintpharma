@@ -27,3 +27,4 @@ export const getCoursesByIds = async ({ ids }: { ids: string[] }) => {
   return (await client.fetch(query, { ids })) as CourseProps[];
 };
 
+
