@@ -10,6 +10,7 @@ import { Trophy, Medal, Award, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getUserFullName, getUserInitials } from "@/lib/userName";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +100,7 @@ const ProfilePage = async () => {
                     ) : (
                       <div className="rounded-full h-14 w-14 relative flex items-center justify-center border-2 border-primary bg-primary/10 flex-shrink-0">
                         <p className="text-2xl text-primary font-bold">
-                          {user.name[0]?.toUpperCase()}
+                          {getUserInitials(user)}
                         </p>
                       </div>
                     )}
@@ -109,7 +110,7 @@ const ProfilePage = async () => {
                         "font-bold text-lg truncate",
                         isTopThree ? "text-primary" : "text-foreground"
                       )}>
-                        {user.name}
+                        {getUserFullName(user)}
                       </p>
                       {isTopThree && (
                         <p className="text-sm text-muted-foreground">

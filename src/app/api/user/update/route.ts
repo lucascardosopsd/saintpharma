@@ -23,7 +23,8 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 interface RequestBody {
-  name?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   profileImage?: string;
   points?: number;
@@ -61,10 +62,10 @@ export async function PUT(request: NextRequest) {
 
     // Parse do body da requisição
     const body: RequestBody = await request.json();
-    const { name, email, profileImage, points, quizzes } = body;
+    const { firstName, lastName, email, profileImage, points, quizzes } = body;
 
     // Validar se pelo menos um campo foi fornecido
-    if (!name && !email && !profileImage && points === undefined && !quizzes) {
+    if (!firstName && !lastName && !email && !profileImage && points === undefined && !quizzes) {
       return new Response(
         JSON.stringify({
           error: "Pelo menos um campo deve ser fornecido para atualização",
@@ -79,12 +80,12 @@ export async function PUT(request: NextRequest) {
     // Preparar dados para atualização
     const updateData: any = {};
 
-    // Validar e sanitizar nome
-    if (name !== undefined) {
-      if (name.trim().length === 0) {
+    // Validar e sanitizar firstName
+    if (firstName !== undefined) {
+      if (firstName.trim().length === 0) {
         return new Response(
           JSON.stringify({
-            error: "Nome não pode estar vazio",
+            error: "Primeiro nome não pode estar vazio",
           }),
           {
             status: 400,
@@ -92,7 +93,12 @@ export async function PUT(request: NextRequest) {
           }
         );
       }
-      updateData.name = sanitizeString(name);
+      updateData.firstName = sanitizeString(firstName);
+    }
+
+    // Validar e sanitizar lastName
+    if (lastName !== undefined) {
+      updateData.lastName = lastName.trim().length > 0 ? sanitizeString(lastName) : null;
     }
 
     // Validar email

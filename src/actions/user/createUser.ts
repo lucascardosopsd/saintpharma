@@ -5,14 +5,16 @@ import prisma from "@/lib/prisma";
 type CreateUserProps = {
   clerkId: string;
   email: string;
-  name?: string;
+  firstName?: string;
+  lastName?: string;
   profileImage?: string;
 };
 
 export const createUser = async ({
   clerkId,
   email,
-  name,
+  firstName,
+  lastName,
   profileImage,
 }: CreateUserProps) => {
   try {
@@ -34,12 +36,17 @@ export const createUser = async ({
       throw new Error("Usuário já existe com este email");
     }
 
+    // Processar nome
+    const finalFirstName: string | null = firstName?.trim() || "Usuário";
+    const finalLastName: string | null = lastName?.trim() || null;
+
     // Criar o usuário
     const user = await prisma.user.create({
       data: {
         clerkId,
         email,
-        name: name || "Usuário",
+        firstName: finalFirstName,
+        lastName: finalLastName,
         profileImage: profileImage || null,
         points: 0,
         quizzes: [],
@@ -47,7 +54,8 @@ export const createUser = async ({
       select: {
         id: true,
         clerkId: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         email: true,
         profileImage: true,
         points: true,

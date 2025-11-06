@@ -121,7 +121,8 @@ GET /api/user/stats?clerkId=user_2abc123def456&period=month&includeDetails=true
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   email        String        @unique
   points       Int           @default(0)
   certificates Certificate[]

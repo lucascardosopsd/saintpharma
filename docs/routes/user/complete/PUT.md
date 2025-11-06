@@ -56,7 +56,8 @@ Body:
   "user": {
     "id": "507f1f77bcf86cd799439011",
     "clerkId": "user_2abc123def456",
-    "name": "João Silva",
+    "firstName": "João",
+    "lastName": "Silva",
     "email": "user@example.com",
     "profileImage": "image_url",
     "updatedAt": "2024-01-01T00:00:00.000Z"
@@ -110,8 +111,9 @@ Body:
 
 ## Comportamento
 
-- Os campos `firstName` e `lastName` são combinados no campo `name` do usuário
-- Se ambos forem fornecidos, o formato será: `"firstName lastName"`
+- Os campos `firstName` e `lastName` são atualizados diretamente no banco de dados
+- Se `lastName` for fornecido, o `firstName` será atualizado também (mantendo o atual se não fornecido)
+- Se apenas `firstName` for fornecido, apenas o primeiro nome será atualizado
 - Campos são sanitizados antes de serem salvos
 
 ## Modelo de Dados (Banco de Dados)
@@ -122,7 +124,8 @@ O usuário atualizado segue o modelo `User` do Prisma:
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   email        String        @unique
   profileImage String?
   quizzes      String[]      @default([])

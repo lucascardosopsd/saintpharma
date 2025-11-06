@@ -62,7 +62,9 @@ export async function GET(request: NextRequest) {
 
     return successResponse({
       userId: user.id,
-      userName: user.name,
+      userName: user.firstName && user.lastName 
+        ? `${user.firstName} ${user.lastName}` 
+        : user.firstName || "Usuário",
       totalPoints,
       weekPoints,
       profileImage: user.profileImage,

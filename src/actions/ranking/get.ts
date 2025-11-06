@@ -1,5 +1,6 @@
 "use server";
 import prisma from "@/lib/prisma";
+import { getUserFullName } from "@/lib/userName";
 
 type UserRanking = {
   userId: string;
@@ -19,7 +20,8 @@ export const getRanking = async (page: number = 1, limit: number = 20) => {
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      name: true,
+      firstName: true,
+      lastName: true,
       points: true,
       profileImage: true,
     },
@@ -33,7 +35,7 @@ export const getRanking = async (page: number = 1, limit: number = 20) => {
   // Transform to ranking format
   const ranking: UserRanking[] = users.map((user, index) => ({
     userId: user.id,
-    name: user.name || "Usuário",
+    name: getUserFullName(user),
     points: user.points || 0,
     profileImage: user.profileImage || "",
     position: skip + index + 1, // Calculate actual position in ranking

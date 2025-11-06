@@ -45,7 +45,8 @@ Headers:
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   points       Int           @default(0)
 }
 ```

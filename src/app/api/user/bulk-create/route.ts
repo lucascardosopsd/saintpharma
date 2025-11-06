@@ -131,10 +131,21 @@ export async function POST(request: NextRequest) {
       const userData = users[i];
 
       try {
+        // Dividir name em firstName e lastName se fornecido
+        let firstName: string | undefined;
+        let lastName: string | undefined;
+        
+        if (userData.name) {
+          const nameParts = userData.name.trim().split(/\s+/);
+          firstName = nameParts[0];
+          lastName = nameParts.slice(1).join(" ").trim() || undefined;
+        }
+
         const user = await createUser({
           clerkId: userData.clerkId.trim(),
           email: userData.email.trim(),
-          name: userData.name?.trim(),
+          firstName: firstName,
+          lastName: lastName,
           profileImage: userData.profileImage?.trim(),
         });
 

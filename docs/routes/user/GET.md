@@ -90,7 +90,8 @@ Headers:
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   email        String        @unique
   profileImage String?
   quizzes      String[]      @default([])

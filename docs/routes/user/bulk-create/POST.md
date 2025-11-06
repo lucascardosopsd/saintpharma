@@ -23,7 +23,9 @@ Authorization: Bearer <API_TOKEN>
     {
       "clerkId": "string (obrigatório)",
       "email": "string (obrigatório)",
-      "name": "string (opcional)",
+      "name": "string (opcional, será dividido em firstName/lastName)",
+      "firstName": "string (opcional)",
+      "lastName": "string (opcional)",
       "profileImage": "string (opcional)"
     }
   ]
@@ -35,8 +37,12 @@ Authorization: Bearer <API_TOKEN>
 - `users` (array, obrigatório): Array de objetos de usuário
   - `clerkId` (string, obrigatório): ID do usuário no Clerk
   - `email` (string, obrigatório): Email do usuário
-  - `name` (string, opcional): Nome do usuário
+  - `name` (string, opcional): Nome completo (será automaticamente dividido em firstName/lastName se firstName/lastName não forem fornecidos)
+  - `firstName` (string, opcional): Primeiro nome do usuário
+  - `lastName` (string, opcional): Sobrenome do usuário
   - `profileImage` (string, opcional): URL da imagem de perfil
+
+**Nota**: Se `name` for fornecido mas `firstName`/`lastName` não, o `name` será dividido automaticamente. Caso contrário, use `firstName` e `lastName` diretamente.
 
 ## Limitações
 
@@ -56,7 +62,8 @@ Body:
     {
       "clerkId": "user_2abc123def456",
       "email": "usuario1@exemplo.com",
-      "name": "João Silva"
+      "firstName": "João",
+      "lastName": "Silva"
     },
     {
       "clerkId": "user_2def456ghi789",
@@ -81,7 +88,8 @@ Body:
         "user": {
           "id": "507f1f77bcf86cd799439011",
           "clerkId": "user_2abc123def456",
-          "name": "João Silva",
+          "firstName": "João",
+          "lastName": "Silva",
           "email": "usuario1@exemplo.com",
           "points": 0,
           "quizzes": [],
@@ -94,7 +102,8 @@ Body:
         "user": {
           "id": "507f1f77bcf86cd799439012",
           "clerkId": "user_2def456ghi789",
-          "name": "Maria Santos",
+          "firstName": "Maria",
+          "lastName": "Santos",
           "email": "usuario2@exemplo.com",
           "points": 0,
           "quizzes": [],
@@ -175,7 +184,8 @@ Cada usuário criado segue o modelo `User` do Prisma:
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   email        String        @unique
   profileImage String?
   quizzes      String[]      @default([])

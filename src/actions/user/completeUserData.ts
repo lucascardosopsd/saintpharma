@@ -25,18 +25,20 @@ export const completeUserData = async ({
     // Preparar dados para atualização
     const updateData: any = {};
 
-    // Se lastName foi fornecido, atualizar o nome completo
+    // Se lastName foi fornecido
     if (lastName) {
-      const currentName = currentUser.name || "";
-      const firstNamePart = firstName || currentName.split(" ")[0] || "";
-      updateData.name = `${firstNamePart} ${lastName}`.trim();
+      const firstNamePart = firstName || currentUser.firstName || "";
+      updateData.firstName = firstNamePart;
+      updateData.lastName = lastName;
     }
 
-    // Se firstName foi fornecido e lastName não, atualizar apenas o primeiro nome
+    // Se firstName foi fornecido e lastName não
     if (firstName && !lastName) {
-      const currentName = currentUser.name || "";
-      const lastNamePart = currentName.split(" ").slice(1).join(" ") || "";
-      updateData.name = `${firstName} ${lastNamePart}`.trim();
+      updateData.firstName = firstName;
+      // Manter lastName existente se houver
+      if (currentUser.lastName) {
+        updateData.lastName = currentUser.lastName;
+      }
     }
 
     // Atualizar o usuário
@@ -46,7 +48,8 @@ export const completeUserData = async ({
       select: {
         id: true,
         clerkId: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         email: true,
         profileImage: true,
         updatedAt: true,

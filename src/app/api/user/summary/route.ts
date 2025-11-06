@@ -147,7 +147,9 @@ export async function GET(request: NextRequest) {
         user: {
           id: user.id,
           clerkId: user.clerkId,
-          name: user.name || clerkUser.firstName + " " + clerkUser.lastName,
+          name: user.firstName && user.lastName 
+            ? `${user.firstName} ${user.lastName}` 
+            : user.firstName || `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "Usuário",
           email: user.email,
           profileImage: user.profileImage,
           points: user.points, // Now using the actual points field from User model

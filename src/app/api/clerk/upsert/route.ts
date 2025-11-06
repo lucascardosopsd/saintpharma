@@ -67,13 +67,17 @@ export async function POST(req: Request) {
 
     // Eventos de criação/atualização (comportamento original)
     if (type === "user.created" || type === "user.updated") {
-      const { id, email_addresses, first_name, image_url } = data;
+      const { id, email_addresses, first_name, last_name, image_url } = data;
       const email = email_addresses[0]?.email_address;
 
       if (!email) {
         console.error("Email não encontrado nos dados do usuário");
         return new NextResponse("Email é obrigatório", { status: 400 });
       }
+
+      // Processar firstName e lastName
+      const firstName = first_name?.trim() || 'Usuário';
+      const lastName = last_name?.trim() || null;
 
       const exists = await prisma.user.findFirst({ where: { email } });
 
@@ -83,7 +87,8 @@ export async function POST(req: Request) {
           data: {
             clerkId: id,
             email,
-            name: first_name || "",
+            firstName: firstName,
+            lastName: lastName,
             profileImage: image_url || "",
           },
         });
@@ -93,7 +98,8 @@ export async function POST(req: Request) {
           data: {
             clerkId: id,
             email,
-            name: first_name || "",
+            firstName: firstName,
+            lastName: lastName,
             profileImage: image_url || "",
           },
         });

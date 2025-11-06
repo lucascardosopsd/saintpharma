@@ -11,6 +11,7 @@ import { UserProfileSchema } from "@/validators/userProfile";
 import { z } from "zod";
 import { User as ClerkUser } from "@clerk/nextjs/server";
 import { revalidateRoute } from "@/actions/revalidateRoute";
+import { updateProfile } from "@/actions/user/updateProfile";
 import { toast } from "sonner";
 import { ChangeEvent, useState } from "react";
 import DeleteAccountModal from "./DeleteAccountModal";
@@ -25,26 +26,48 @@ const UserProfile = ({ user, serverClerkUser, points }: UserProfileProps) => {
   const { user: clerkUser } = useUser();
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
 
+  // Obter firstName e lastName do banco, Clerk ou name (fallback)
+  const dbFirstName = user?.firstName || null;
+  const dbLastName = user?.lastName || null;
+  const clerkFirstName = serverClerkUser?.firstName;
+  const clerkLastName = serverClerkUser?.lastName;
+
+  // Fallback: se não houver firstName/lastName no banco, usar do Clerk
+  const getFirstName = () => {
+    if (dbFirstName) return dbFirstName;
+    if (clerkFirstName) return clerkFirstName;
+    return "";
+  };
+
+  const getLastName = () => {
+    if (dbLastName) return dbLastName;
+    if (clerkLastName) return clerkLastName;
+    return "";
+  };
+
   const form = useUserProfileForm({
     defaultValues: {
-      firstName: serverClerkUser?.firstName || "",
-      lastName: serverClerkUser?.lastName || "",
+      firstName: getFirstName(),
+      lastName: getLastName(),
       email: serverClerkUser?.emailAddresses[0].emailAddress,
     },
   });
 
   const onSubmit = async (data: z.infer<typeof UserProfileSchema>) => {
     try {
-      clerkUser?.update({
+      await updateProfile({
         firstName: data.firstName,
         lastName: data.lastName,
       });
 
       toast.success("Informações atualizadas");
 
-      revalidateRoute({ fullPath: "/" });
+      revalidateRoute({ fullPath: "/profile" });
     } catch (error) {
-      toast.error("Ocorreu um erro ao salvar");
+      console.error("Erro ao atualizar perfil:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Ocorreu um erro ao salvar";
+      toast.error(errorMessage);
     }
   };
 

@@ -24,12 +24,15 @@ export const getUserByClerk = async (clerkUser?: User | null) => {
         (email) => email.id === clerk.primaryEmailAddressId
       );
       
+      // Criar usuário com firstName e lastName
+      const firstName = clerk.firstName || 'Usuário';
+      const lastName = clerk.lastName || null;
+
       user = await prisma.user.create({
         data: {
           clerkId: clerk.id,
-          name: clerk.firstName && clerk.lastName 
-            ? `${clerk.firstName} ${clerk.lastName}` 
-            : clerk.username || 'Usuário',
+          firstName: firstName,
+          lastName: lastName,
           email: primaryEmail?.emailAddress || '',
           profileImage: clerk.imageUrl,
         },

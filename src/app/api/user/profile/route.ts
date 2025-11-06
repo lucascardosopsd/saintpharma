@@ -5,6 +5,7 @@ import {
   unauthorizedResponse,
   validateApiToken,
 } from "@/lib/auth";
+import { getUserFullName } from "@/lib/userName";
 import { NextRequest } from "next/server";
 
 // Handle CORS preflight requests
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
       profile: {
         id: user.id,
         clerkId: user.clerkId,
-        name: user.name,
+        name: getUserFullName(user),
         email: user.email,
         profileImage: user.profileImage,
         points: user.points,

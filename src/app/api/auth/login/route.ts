@@ -127,7 +127,9 @@ export async function POST(request: NextRequest) {
       user: {
         id: user.id,
         clerkId: user.clerkId,
-        name: user.name,
+        name: user.firstName && user.lastName 
+          ? `${user.firstName} ${user.lastName}` 
+          : user.firstName || "Usuário",
         email: user.email,
         profileImage: user.profileImage,
         points: userPoints,

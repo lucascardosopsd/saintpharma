@@ -61,7 +61,8 @@ GET /api/ranking?page=1&limit=20
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   email        String        @unique
   profileImage String?
   points       Int           @default(0)

@@ -23,7 +23,8 @@ export async function OPTIONS(request: NextRequest) {
 interface RequestBody {
   clerkId: string;
   email: string;
-  name?: string;
+  firstName?: string;
+  lastName?: string;
   profileImage?: string;
 }
 
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse do body da requisição
     const body: RequestBody = await request.json();
-    const { clerkId, email, name, profileImage } = body;
+    const { clerkId, email, firstName, lastName, profileImage } = body;
 
     // Validações obrigatórias
     if (!clerkId || !email) {
@@ -82,7 +83,8 @@ export async function POST(request: NextRequest) {
     const user = await createUser({
       clerkId: clerkId.trim(),
       email: email.trim(),
-      name: name?.trim(),
+      firstName: firstName?.trim(),
+      lastName: lastName?.trim(),
       profileImage: profileImage?.trim(),
     });
 

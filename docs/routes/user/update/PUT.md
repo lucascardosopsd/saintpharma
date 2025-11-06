@@ -22,7 +22,8 @@ Todos os campos são opcionais, mas pelo menos um deve ser fornecido:
 
 ```json
 {
-  "name": "string (opcional)",
+  "firstName": "string (opcional)",
+  "lastName": "string (opcional)",
   "email": "string (opcional)",
   "profileImage": "string (opcional)",
   "points": "number (opcional)",
@@ -32,7 +33,8 @@ Todos os campos são opcionais, mas pelo menos um deve ser fornecido:
 
 ### Campos
 
-- `name` (string, opcional): Nome do usuário
+- `firstName` (string, opcional): Primeiro nome do usuário (não pode estar vazio se fornecido)
+- `lastName` (string, opcional): Sobrenome do usuário (pode ser `null` para remover)
 - `email` (string, opcional): Email do usuário (deve ser válido se fornecido)
 - `profileImage` (string, opcional): URL da imagem de perfil (pode ser `null` para remover)
 - `points` (number, opcional): Pontuação do usuário (deve ser não negativo)
@@ -48,7 +50,8 @@ Headers:
   Content-Type: application/json
 Body:
 {
-  "name": "João Silva Santos",
+  "firstName": "João",
+  "lastName": "Silva Santos",
   "email": "novoemail@exemplo.com",
   "profileImage": "https://example.com/new-avatar.jpg",
   "points": 150,
@@ -65,7 +68,8 @@ Body:
   "user": {
     "id": "507f1f77bcf86cd799439011",
     "clerkId": "user_2abc123def456",
-    "name": "João Silva Santos",
+    "firstName": "João",
+    "lastName": "Silva Santos",
     "email": "novoemail@exemplo.com",
     "profileImage": "https://example.com/new-avatar.jpg",
     "points": 150,
@@ -94,7 +98,7 @@ Body:
 
 ```json
 {
-  "error": "Nome não pode estar vazio"
+  "error": "Primeiro nome não pode estar vazio"
 }
 ```
 
@@ -155,11 +159,12 @@ Body:
 ## Validações
 
 1. **X-User-Id**: Deve ser fornecido no header
-2. **Campos vazios**: Nome e email não podem estar vazios se fornecidos
-3. **Email**: Deve ser um formato válido (regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`)
-4. **Pontos**: Deve ser um número não negativo
-5. **Quizzes**: Deve ser um array de strings
-6. **Unicidade**: Email deve ser único (se fornecido)
+2. **Campos vazios**: firstName e email não podem estar vazios se fornecidos
+3. **lastName**: Pode ser string vazia (será definido como `null`)
+4. **Email**: Deve ser um formato válido (regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`)
+5. **Pontos**: Deve ser um número não negativo
+6. **Quizzes**: Deve ser um array de strings
+7. **Unicidade**: Email deve ser único (se fornecido)
 
 ## Comportamento Especial
 
@@ -175,7 +180,8 @@ O usuário atualizado segue o modelo `User` do Prisma:
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   email        String        @unique
   profileImage String?
   quizzes      String[]      @default([])

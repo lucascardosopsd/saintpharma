@@ -21,7 +21,8 @@ Authorization: Bearer <API_TOKEN>
 {
   "clerkId": "string (obrigatório)",
   "email": "string (obrigatório)",
-  "name": "string (opcional)",
+  "firstName": "string (opcional)",
+  "lastName": "string (opcional)",
   "profileImage": "string (opcional)"
 }
 ```
@@ -30,7 +31,8 @@ Authorization: Bearer <API_TOKEN>
 
 - `clerkId` (string, obrigatório): ID do usuário no Clerk
 - `email` (string, obrigatório): Email do usuário (deve ser válido)
-- `name` (string, opcional): Nome do usuário
+- `firstName` (string, opcional): Primeiro nome do usuário (padrão: "Usuário" se não fornecido)
+- `lastName` (string, opcional): Sobrenome do usuário
 - `profileImage` (string, opcional): URL da imagem de perfil
 
 ## Exemplo de Uso
@@ -44,7 +46,8 @@ Body:
 {
   "clerkId": "user_2abc123def456",
   "email": "usuario@exemplo.com",
-  "name": "João Silva",
+  "firstName": "João",
+  "lastName": "Silva",
   "profileImage": "https://example.com/avatar.jpg"
 }
 ```
@@ -58,7 +61,8 @@ Body:
   "user": {
     "id": "507f1f77bcf86cd799439011",
     "clerkId": "user_2abc123def456",
-    "name": "João Silva",
+    "firstName": "João",
+    "lastName": "Silva",
     "email": "usuario@exemplo.com",
     "profileImage": "https://example.com/avatar.jpg",
     "points": 0,
@@ -125,7 +129,8 @@ O usuário criado segue o modelo `User` do Prisma:
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   clerkId      String        @unique
-  name         String?
+  firstName    String?
+  lastName     String?
   email        String        @unique
   profileImage String?
   quizzes      String[]      @default([])

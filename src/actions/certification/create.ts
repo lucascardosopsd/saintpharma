@@ -151,9 +151,13 @@ export const createCertificateForUser = async ({
       throw new Error("Usuário não encontrado");
     }
 
+    const userName = user.firstName && user.lastName 
+      ? `${user.firstName} ${user.lastName}` 
+      : user.firstName || "Usuário";
+    
     console.log("[createCertificateForUser] Usuário encontrado:", {
       userId: user.id,
-      userName: user.name,
+      userName: userName,
       userType: typeof user,
       userKeys: Object.keys(user || {}),
     });

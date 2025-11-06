@@ -133,7 +133,9 @@ export async function POST(request: NextRequest) {
       user: {
         id: updatedUser.id,
         clerkId: updatedUser.clerkId,
-        name: updatedUser.name,
+        name: updatedUser.firstName && updatedUser.lastName 
+          ? `${updatedUser.firstName} ${updatedUser.lastName}` 
+          : updatedUser.firstName || "Usuário",
         email: updatedUser.email,
       },
       session: sessionStats,

@@ -261,7 +261,9 @@ export async function GET(request: NextRequest) {
       user: {
         id: user.id,
         clerkId: user.clerkId,
-        name: user.name,
+        name: user.firstName && user.lastName 
+          ? `${user.firstName} ${user.lastName}` 
+          : user.firstName || "Usuário",
         email: user.email,
       },
       progress: {
