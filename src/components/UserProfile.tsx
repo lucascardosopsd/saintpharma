@@ -71,7 +71,7 @@ const UserProfile = ({ user, serverClerkUser, points }: UserProfileProps) => {
   return (
     <Form {...form}>
       <form
-        className="flex flex-col items-center justify-center gap-2 max-w-lg w-full px-5"
+        className="flex flex-col items-center justify-center gap-2 max-w-lg w-full px-5 mx-auto"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex items-center justify-center flex-col gap-2">

@@ -20,9 +20,9 @@ export default async function ProfilePage() {
   const serializedClerkUser = JSON.parse(JSON.stringify(clerkUser));
 
   return (
-    <div className="min-h-[92svh]">
-      <div className="container max-w-4xl mx-auto py-8">
-        <div className="px-5 md:px-0 mb-8">
+    <div className="min-h-[92svh] flex items-center justify-center">
+      <div className="container max-w-4xl mx-auto py-8 w-full">
+        <div className="px-5 md:px-0 mb-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
             Meu Perfil
           </h1>
@@ -31,7 +31,7 @@ export default async function ProfilePage() {
           </p>
         </div>
 
-        <div className="px-5 md:px-0">
+        <div className="px-5 md:px-0 mx-auto flex justify-center">
           <UserProfile
             user={serializedUser}
             serverClerkUser={serializedClerkUser}
