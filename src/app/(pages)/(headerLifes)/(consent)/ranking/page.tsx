@@ -6,8 +6,10 @@ import { requireAuth } from "@/lib/authGuard";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { revalidatePath } from "next/cache";
-import { Trophy, Medal, Award } from "lucide-react";
+import { Trophy, Medal, Award, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -37,16 +39,26 @@ const ProfilePage = async () => {
       <div className="container max-w-4xl mx-auto py-8">
         {/* Header */}
         <div className="px-5 md:px-0 mb-8">
-          <div className="text-center mb-2">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
-              Ranking
-            </h1>
-            <p className="text-xl text-primary font-semibold mb-2">
-              Os 50 melhores da semana
-            </p>
-            <p className="text-muted-foreground capitalize">
-              Do mês de {format(new Date(), "LLLL", { locale: ptBR })}
-            </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+            <div className="text-center md:text-left flex-1">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
+                Ranking
+              </h1>
+              <p className="text-xl text-primary font-semibold mb-2">
+                Os 50 melhores da semana
+              </p>
+              <p className="text-muted-foreground capitalize">
+                Do mês de {format(new Date(), "LLLL", { locale: ptBR })}
+              </p>
+            </div>
+            <div className="flex justify-center md:justify-end">
+              <Link href="/">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Home className="h-4 w-4" />
+                  Início
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
