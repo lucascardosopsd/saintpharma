@@ -16,7 +16,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="outline" size="icon" className="p-1 group">
+      <Button variant="default" size="icon" className="p-1 group">
         <Sun className="h-4 w-4 stroke-primary group-hover:stroke-primary-foreground transition-colors" />
       </Button>
     );
@@ -24,7 +24,7 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="outline"
+      variant="default"
       size="icon"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className="p-1 group"

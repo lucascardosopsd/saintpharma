@@ -83,7 +83,7 @@ const Header = ({
             {userLives !== null ? (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="group hover:[&_p]:text-primary-foreground">
+                  <Button variant="default" className="group hover:[&_p]:text-primary-foreground">
                     <p className="text-red-500 group-hover:text-primary-foreground transition-colors">{remainingLives}</p>
                     <Heart className="fill-red-500 stroke-red-500 group-hover:fill-primary-foreground group-hover:stroke-primary-foreground transition-colors" />
                   </Button>
@@ -112,7 +112,7 @@ const Header = ({
 
           <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="p-1 group">
+              <Button variant="default" size="icon" className="p-1 group">
                 <Menu className="stroke-primary group-hover:stroke-primary-foreground transition-colors" />
               </Button>
             </SheetTrigger>

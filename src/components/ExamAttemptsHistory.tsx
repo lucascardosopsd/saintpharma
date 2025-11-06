@@ -159,7 +159,7 @@ const ExamAttemptsHistory = ({
       {hasMore && (
         <div className="flex justify-center">
           <Button
-            variant="outline"
+            variant="default"
             onClick={loadMore}
             disabled={loading}
             className="w-full"

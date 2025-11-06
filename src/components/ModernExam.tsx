@@ -247,7 +247,7 @@ const ModernExam = ({
             </Button>
             <Button
               onClick={() => setShowHistory(true)}
-              variant="outline"
+              variant="default"
               className="w-full"
             >
               Ver Histórico de Tentativas
@@ -328,11 +328,7 @@ const ModernExam = ({
                 {currentQ.answers.map((answer, index) => (
                   <Button
                     key={index}
-                    variant={
-                      answers[currentQ.id] === answer.answer
-                        ? "default"
-                        : "outline"
-                    }
+                    variant="default"
                     className="w-full justify-start h-auto p-4 text-left"
                     onClick={() =>
                       handleAnswerSelect(currentQ.id, answer.answer)
@@ -354,7 +350,7 @@ const ModernExam = ({
       <div className="bg-background p-4">
         <div className="max-w-2xl mx-auto flex gap-3">
           <Button
-            variant="outline"
+            variant="default"
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
             className="flex-1 group"

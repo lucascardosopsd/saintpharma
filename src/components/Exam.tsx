@@ -224,7 +224,7 @@ const Exam = ({
           <div className="container flex gap-5 max-w-[500px]">
             <Button
               size="lg"
-              variant="outline"
+              variant="default"
               className="w-full"
               onClick={handlePrev}
               disabled={step === 0}
