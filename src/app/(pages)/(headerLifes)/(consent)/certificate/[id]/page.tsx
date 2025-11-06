@@ -6,13 +6,13 @@ import { requireAuth } from "@/lib/authGuard";
 
 type CertificatePageProps = {
   params: {
-    certificateId: string;
+    id: string;
   };
 };
 
 const CertificatePage = async ({ params }: CertificatePageProps) => {
   await requireAuth();
-  const { certificateId: id } = params;
+  const { id } = params;
 
   const user = await getClerkUser();
 
