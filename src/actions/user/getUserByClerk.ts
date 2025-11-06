@@ -102,3 +102,30 @@ export const getUserByClerkId = async (clerkId: string) => {
     return null;
   }
 };
+
+// Function to get user by database ID (for public certificate pages)
+export const getUserById = async (userId: string) => {
+  try {
+    const user = await prisma.user.findUnique({ 
+      where: { id: userId },
+      select: {
+        id: true,
+        clerkId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        profileImage: true,
+        quizzes: true,
+        points: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    
+    // Serialize the Prisma result to a plain object
+    return user ? JSON.parse(JSON.stringify(user)) : null;
+  } catch (error) {
+    console.error('Error fetching user by id:', error);
+    return null;
+  }
+};

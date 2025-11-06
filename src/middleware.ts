@@ -10,6 +10,7 @@ const isPublicRoute = createRouteMatcher([
   "/api(.*)",
   "/privacy-policy",
   "/consent-terms", // Added this route as public
+  "/certificate/public(.*)", // Public certificate viewing route
   "/",
 ]);
 
