@@ -114,15 +114,12 @@ export async function POST(request: NextRequest) {
     const allUsers = await prisma.user.findMany({
       select: {
         id: true,
-        clerkId: true,
-        name: true,
-        email: true,
-        profileImage: true,
+        points: true,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { points: "desc" },
     });
     const userRanking = allUsers.findIndex((u) => u.id === user.id) + 1;
-    const userPoints = 0; // Points não existe no modelo User
+    const userPoints = user.points || 0; // Usar pontos do modelo User
     const lastLogin = user.updatedAt;
 
     const loginResponse = {
