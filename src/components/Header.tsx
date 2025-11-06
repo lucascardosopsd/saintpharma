@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { revalidateRoute } from "@/actions/revalidateRoute";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 
 type HeaderProps = {
   userLives: number | null;
@@ -62,13 +63,13 @@ const Header = ({
   };
 
   return (
-    <div className="border-b border-border">
+    <div>
       <div className="container flex items-center justify-between py-2 px-5 h-[8svh]">
         {isCurrentlyOnLessonPage ? (
           <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={handleGoBack} className="p-1">
-              <ArrowLeft className="text-primary" />{" "}
-              <p className="text-primary font-medium">Voltar</p>
+            <Button variant="ghost" onClick={handleGoBack} className="p-1 group">
+              <ArrowLeft className="stroke-primary group-hover:stroke-accent-foreground transition-colors" />{" "}
+              <p className="font-medium">Voltar</p>
             </Button>
           </div>
         ) : (
@@ -76,13 +77,15 @@ const Header = ({
         )}
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
+          
           <SignedIn>
             {userLives !== null ? (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="text-red-500" variant="outline">
-                    <p>{remainingLives}</p>
-                    <Heart className="fill-red-500 stroke-red-500" />
+                  <Button variant="outline" className="group hover:[&_p]:text-primary-foreground">
+                    <p className="text-red-500 group-hover:text-primary-foreground transition-colors">{remainingLives}</p>
+                    <Heart className="fill-red-500 stroke-red-500 group-hover:fill-primary-foreground group-hover:stroke-primary-foreground transition-colors" />
                   </Button>
                 </DialogTrigger>
 
@@ -109,16 +112,16 @@ const Header = ({
 
           <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="p-1">
-                <Menu className="text-primary" />
+              <Button variant="outline" size="icon" className="p-1 group">
+                <Menu className="stroke-primary group-hover:stroke-primary-foreground transition-colors" />
               </Button>
             </SheetTrigger>
             <SheetContent className="w-full">
-              <SheetHeader className="border-b">
+              <SheetHeader>
                 <SheetTitle className="pb-2">
                   <SignedOut>
                     <Link href="/sign-in" className="flex items-center gap-2">
-                      <div className="h-10 w-10 flex items-center justify-center rounded-full border">
+                      <div className="h-10 w-10 flex items-center justify-center rounded-full">
                         <User2Icon />
                       </div>
 

@@ -274,15 +274,15 @@ const ModernExam = ({
   return (
     <div className="flex flex-col h-[92svh]">
       {/* Header */}
-      <div className="border-b bg-background p-4">
+      <div className="bg-background p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <Button
               variant="ghost"
               onClick={() => router.push(`/course/${courseId}`)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 group"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4 stroke-primary group-hover:stroke-accent-foreground transition-colors" />
               Voltar
             </Button>
             <div className="flex items-center gap-4">
@@ -351,15 +351,15 @@ const ModernExam = ({
       </div>
 
       {/* Navigation */}
-      <div className="border-t bg-background p-4">
+      <div className="bg-background p-4">
         <div className="max-w-2xl mx-auto flex gap-3">
           <Button
             variant="outline"
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className="flex-1"
+            className="flex-1 group"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2 stroke-primary group-hover:stroke-primary-foreground transition-colors" />
             Anterior
           </Button>
 
@@ -372,9 +372,9 @@ const ModernExam = ({
               {submitting ? "Submetendo..." : "Finalizar Exame"}
             </Button>
           ) : (
-            <Button onClick={handleNext} className="flex-1">
+            <Button onClick={handleNext} className="flex-1 group">
               Próxima
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <ArrowRight className="h-4 w-4 ml-2 stroke-primary-foreground" />
             </Button>
           )}
         </div>
