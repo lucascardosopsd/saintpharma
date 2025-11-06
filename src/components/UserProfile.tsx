@@ -86,7 +86,7 @@ const UserProfile = ({ user, serverClerkUser, points }: UserProfileProps) => {
 
           {!newImageFile && (
             <div className="relative w-full">
-              <div className="w-full h-10 rounded border border-border  flex items-center justify-center cursor-pointer">
+              <div className="w-full h-10 rounded flex items-center justify-center cursor-pointer">
                 <p className="text-sm text-primary/80">Atualizar imagem</p>
               </div>
               <Input

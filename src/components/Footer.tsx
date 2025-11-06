@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <div className="flex flex-col tablet:flex-row tablet:items-center justify-between w-full p-5 border-t">
+    <div className="flex flex-col tablet:flex-row tablet:items-center justify-between w-full p-5">
       <p className="text-primary font-semibold">SainTPharma Cursos</p>
 
       <div>
