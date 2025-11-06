@@ -12,12 +12,12 @@ export default async function ProfilePage() {
   const clerkUser = await requireAuth();
   const user = await getUserByClerk();
 
-  // Calculate points or get them from somewhere
-  const points = user?.points || 0;
-
   if (!user || !clerkUser) {
     return <div>User not found</div>;
   }
+
+  // Extract points before serialization to ensure it's preserved
+  const points = typeof user.points === 'number' ? user.points : 0;
 
   const serializedUser = JSON.parse(JSON.stringify(user));
   const serializedClerkUser = JSON.parse(JSON.stringify(clerkUser));

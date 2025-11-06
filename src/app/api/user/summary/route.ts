@@ -7,6 +7,7 @@ import {
 import prisma from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
+import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 
 interface RequestBody {
   period?: "week" | "month" | "all";
@@ -32,9 +33,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verificar se o usuário existe
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-    });
+    const user = await getUserByClerkId(userId);
 
     if (!user) {
       return new Response(JSON.stringify({ error: "Usuário não encontrado" }), {

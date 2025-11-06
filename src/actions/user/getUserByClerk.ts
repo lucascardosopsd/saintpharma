@@ -15,7 +15,21 @@ export const getUserByClerk = async (clerkUser?: User | null) => {
     return null;
   }
 
-  let user = await prisma.user.findUnique({ where: { clerkId: clerk.id } });
+  let user = await prisma.user.findUnique({ 
+    where: { clerkId: clerk.id },
+    select: {
+      id: true,
+      clerkId: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      profileImage: true,
+      quizzes: true,
+      points: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
   
   // If user doesn't exist in database but exists in Clerk, create it
   if (!user) {
@@ -35,6 +49,19 @@ export const getUserByClerk = async (clerkUser?: User | null) => {
           lastName: lastName,
           email: primaryEmail?.emailAddress || '',
           profileImage: clerk.imageUrl,
+          points: 0,
+        },
+        select: {
+          id: true,
+          clerkId: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          profileImage: true,
+          quizzes: true,
+          points: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
       
@@ -53,7 +80,19 @@ export const getUserByClerk = async (clerkUser?: User | null) => {
 export const getUserByClerkId = async (clerkId: string) => {
   try {
     const user = await prisma.user.findUnique({ 
-      where: { clerkId } 
+      where: { clerkId },
+      select: {
+        id: true,
+        clerkId: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        profileImage: true,
+        quizzes: true,
+        points: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     
     // Serialize the Prisma result to a plain object
