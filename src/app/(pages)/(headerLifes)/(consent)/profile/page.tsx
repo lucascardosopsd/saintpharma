@@ -20,12 +20,25 @@ export default async function ProfilePage() {
   const serializedClerkUser = JSON.parse(JSON.stringify(clerkUser));
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-10">
-      <UserProfile
-        user={serializedUser}
-        serverClerkUser={serializedClerkUser}
-        points={points}
-      />
+    <div className="min-h-[92svh]">
+      <div className="container max-w-4xl mx-auto py-8">
+        <div className="px-5 md:px-0 mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
+            Meu Perfil
+          </h1>
+          <p className="text-muted-foreground">
+            Gerencie suas informações pessoais e configurações
+          </p>
+        </div>
+
+        <div className="px-5 md:px-0">
+          <UserProfile
+            user={serializedUser}
+            serverClerkUser={serializedClerkUser}
+            points={points}
+          />
+        </div>
+      </div>
     </div>
   );
 }

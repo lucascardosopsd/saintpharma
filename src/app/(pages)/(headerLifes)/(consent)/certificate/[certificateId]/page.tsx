@@ -29,11 +29,22 @@ const CertificatePage = async ({ params }: CertificatePageProps) => {
   }
 
   return (
-    <>
-      <div className="w-full max-w-[800px] mx-auto flex flex-col gap-5 h-screen items-center justify-center pb-20">
-        <Certificate certificate={certificate!} course={course} user={user!} />
+    <div className="min-h-[92svh]">
+      <div className="container max-w-4xl mx-auto py-8">
+        <div className="px-5 md:px-0 mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
+            Certificado
+          </h1>
+          <p className="text-muted-foreground">
+            Certificado de conclusão do curso: {course.name}
+          </p>
+        </div>
+
+        <div className="px-5 md:px-0 flex justify-center">
+          <Certificate certificate={certificate!} course={course} user={user!} />
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
