@@ -33,10 +33,12 @@ src/
 ### Regras de Autenticação
 
 - **SEMPRE** usar `validateApiToken()` para rotas de API protegidas
+- **NUNCA** usar Clerk (`currentUser()`, `clerkClient()`) em rotas de API
 - **NUNCA** expor dados de usuários sem validação de ownership
 - **SEMPRE** validar `userId` em operações sensíveis
-- **SEMPRE** usar Clerk para autenticação web
-- **SEMPRE** usar API_TOKEN para autenticação de apps móveis
+- **SEMPRE** usar API_TOKEN para autenticação de todas as rotas de API
+- **SEMPRE** usar header `X-User-Id` com Clerk ID para identificar o usuário
+- **NUNCA** usar autenticação do Clerk em rotas de API (apenas em páginas web)
 
 ### Middleware
 
