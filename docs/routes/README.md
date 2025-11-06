@@ -49,6 +49,7 @@ Authorization: Bearer <API_TOKEN>
 
 - [GET /api/courses](courses/GET.md) - Listar cursos
 - [GET /api/courses/[id]](courses/[id]/GET.md) - Detalhes do curso
+- [GET /api/courses/[id]/progress](courses/[id]/progress/GET.md) - Progresso do curso para o usuário
 - [POST /api/courses/[id]/complete](courses/[id]/complete/POST.md) - Completar curso
 
 ### Exames (/api/exams)
