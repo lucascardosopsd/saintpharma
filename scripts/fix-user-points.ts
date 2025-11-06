@@ -190,3 +190,4 @@ fixUserPoints(clerkId, dryRun)
     process.exit(1);
   });
 
+

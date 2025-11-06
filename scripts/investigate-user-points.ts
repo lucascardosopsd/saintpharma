@@ -258,3 +258,4 @@ investigateUserPoints(clerkId)
     process.exit(1);
   });
 
+
