@@ -1,5 +1,7 @@
 import { getCourses } from "@/actions/courses/get";
 import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
+import { getCoursesProgress } from "@/actions/courses/getCoursesProgress";
+import { getUserByClerk } from "@/actions/user/getUserByClerk";
 import CourseCard from "@/components/CourseCard";
 import SearchSection from "@/components/SearchSection";
 import { ExternalLink } from "lucide-react";
@@ -24,6 +26,12 @@ export default async function Home({ searchParams }: PageProps) {
   }
 
   const userPoints = await getWeekPoints();
+
+  // Buscar progresso dos cursos se o usuário estiver logado
+  const user = await getUserByClerk();
+  const coursesProgress = user
+    ? await getCoursesProgress({ courses, userId: user.id })
+    : {};
 
   return (
     <div className="flex flex-col min-h-[92svh]">
@@ -62,6 +70,7 @@ export default async function Home({ searchParams }: PageProps) {
               course={course}
               key={course._id}
               userPoints={userPoints}
+              progress={coursesProgress[course._id]}
             />
           ))}
         </div>

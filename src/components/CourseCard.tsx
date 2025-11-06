@@ -1,10 +1,12 @@
 "use client";
 import { CourseProps } from "@/types/course";
+import { CourseProgress } from "@/actions/courses/getCoursesProgress";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
+import { Progress } from "./ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -16,14 +18,17 @@ import {
 type CourseCardProps = {
   course: CourseProps;
   userPoints: number;
+  progress?: CourseProgress;
 };
 
-const CourseCard = ({ course, userPoints }: CourseCardProps) => {
+const CourseCard = ({ course, userPoints, progress }: CourseCardProps) => {
   const [open, setOpen] = useState(false);
 
   const { user } = useUser();
 
   const disabled = userPoints <= course.premiumPoints && !!course.premiumPoints;
+  
+  const showProgress = progress && progress.totalLectures > 0;
 
   const handleOpenModal = () => {
     if (disabled) {
@@ -90,6 +95,28 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
                 {course.workload} hrs
               </span>
             </div>
+            {showProgress && (
+              <div className="mt-3 space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-primary-foreground/80 font-medium">
+                    {progress.isCompleted ? (
+                      <span className="flex items-center gap-1">
+                        <span>✓ Concluído</span>
+                      </span>
+                    ) : (
+                      `${progress.completedCount} de ${progress.totalLectures} aulas`
+                    )}
+                  </span>
+                  <span className="text-primary-foreground/80 font-semibold">
+                    {progress.progressPercentage}%
+                  </span>
+                </div>
+                <Progress 
+                  value={progress.progressPercentage} 
+                  className="h-1.5 bg-primary-foreground/20 border border-primary-foreground/30"
+                />
+              </div>
+            )}
           </div>
         </div>
       </Link>
