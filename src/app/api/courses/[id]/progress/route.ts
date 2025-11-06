@@ -4,6 +4,7 @@ import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 import { getUserCertificateByCourse } from "@/actions/certification/getUserCertificatesByCourse";
+import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 import {
   serverErrorResponse,
   successResponse,
@@ -115,6 +116,9 @@ export async function GET(
 
     // Buscar dados do usuário uma única vez
     const userLectures = await getUserLectures({ userId: user.id });
+    
+    // Calcular pontos da semana do usuário
+    const weekPoints = await getWeekPoints(userId);
 
     // Processar cada curso
     const courseProgressData = await Promise.all(
@@ -156,6 +160,12 @@ export async function GET(
         // Verificar se está pronto para certificado
         const isReadyForCertificate =
           !certificate && completedCount === totalLectures && totalLectures > 0;
+
+        // Verificar acesso ao curso premium baseado em pontos da semana
+        let canAccess = true;
+        if (course.premiumPoints && course.premiumPoints > 0) {
+          canAccess = weekPoints > course.premiumPoints;
+        }
 
         // Buscar exames relacionados ao curso se solicitado
         let examsData: any[] = [];
@@ -202,7 +212,11 @@ export async function GET(
             description: course.description,
             points: course.points || 0,
             workload: course.workload || 0,
+            premiumPoints: course.premiumPoints || null,
             imageUrl: course.banner?.asset?.url || null,
+            canAccess,
+            weekPointsRequired: course.premiumPoints || null,
+            userWeekPoints: weekPoints,
           },
           progress: {
             status,

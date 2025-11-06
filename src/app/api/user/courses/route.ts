@@ -2,6 +2,7 @@ import { getCourses } from "@/actions/courses/get";
 import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 import {
   serverErrorResponse,
   successResponse,
@@ -79,6 +80,9 @@ export async function GET(request: NextRequest) {
     // Buscar aulas concluídas pelo usuário
     const userLectures = await getUserLectures({ userId: user.id });
 
+    // Calcular pontos da semana do usuário
+    const weekPoints = await getWeekPoints(userId);
+
     // Processar cada curso para determinar status e progresso
     const courseProgress = await Promise.all(
       allCourses.map(async (course) => {
@@ -146,6 +150,12 @@ export async function GET(request: NextRequest) {
           isReadyForCertificate,
         };
 
+        // Verificar acesso ao curso premium baseado em pontos da semana
+        let canAccess = true;
+        if (course.premiumPoints && course.premiumPoints > 0) {
+          canAccess = weekPoints > course.premiumPoints;
+        }
+
         // Montar resposta do curso
         return {
           id: courseId,
@@ -155,11 +165,15 @@ export async function GET(request: NextRequest) {
           imageUrl: course.banner?.asset?.url || null,
           points: course.points || 0,
           workload: course.workload || 0,
+          premiumPoints: course.premiumPoints || null,
           status: courseStatus,
           progress: progressPercentage, // Mantido para compatibilidade
           progressDetails: progressData, // Novo objeto detalhado
           completedLectures: completedCount, // Mantido para compatibilidade
           totalLectures, // Mantido para compatibilidade
+          canAccess,
+          weekPointsRequired: course.premiumPoints || null,
+          userWeekPoints: weekPoints,
           certificate: certificate
             ? {
                 id: certificate.id,

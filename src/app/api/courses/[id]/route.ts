@@ -2,6 +2,7 @@ import { getCourseById } from "@/actions/courses/getId";
 import { getLecturesByCourseId } from "@/actions/lecture/getLecturesByCourseId";
 import { getUserLectures } from "@/actions/lecture/getUserLectures";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import { getWeekPoints } from "@/actions/ranking/getWeekPoints";
 import {
   serverErrorResponse,
   successResponse,
@@ -57,12 +58,20 @@ export async function GET(
     // Verificar se há usuário logado para buscar progresso
     const userId = request.headers.get("x-user-id");
     let userProgress: UserLecture[] = [];
+    let weekPoints = 0;
+    let canAccess = true;
 
     if (userId) {
       try {
         const user = await getUserByClerkId(userId);
         if (user) {
           userProgress = await getUserLectures({ userId: user.id });
+          weekPoints = await getWeekPoints(userId);
+          
+          // Verificar acesso ao curso premium baseado em pontos da semana
+          if (course.premiumPoints && course.premiumPoints > 0) {
+            canAccess = weekPoints > course.premiumPoints;
+          }
         }
       } catch (error) {
         console.warn("Erro ao buscar progresso do usuário:", error);
@@ -78,7 +87,12 @@ export async function GET(
     }));
 
     return successResponse({
-      course,
+      course: {
+        ...course,
+        canAccess,
+        weekPointsRequired: course.premiumPoints || null,
+        userWeekPoints: userId ? weekPoints : null,
+      },
       lectures: lecturesWithProgress,
       totalLectures: lectures.length,
       completedLectures: lecturesWithProgress.filter((l) => l.completed).length,
