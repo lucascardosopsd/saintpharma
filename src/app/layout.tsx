@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ptBR } from "@clerk/localizations";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "next-themes";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -23,10 +24,17 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider localization={ptBR}>
-      <html lang="pt-BR">
+      <html lang="pt-BR" suppressHydrationWarning>
         <body className={`min-h-screen ${poppins.className}`}>
-          <main>{children}</main>
-          <Toaster position="top-center" />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main>{children}</main>
+            <Toaster position="top-center" />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
