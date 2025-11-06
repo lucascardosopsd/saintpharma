@@ -229,6 +229,12 @@ src/
 
 ## 🔧 Ferramentas e Comandos
 
+### Git
+
+- **SEMPRE** usar `:q` após comandos `git diff` para sair do vim quando o pager abrir
+- **SEMPRE** agrupar commits por lógica de modificação
+- **SEMPRE** usar conventional commits em inglês
+
 ### Comandos Essenciais
 
 ```bash
