@@ -57,9 +57,12 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
       </Dialog>
 
       <Link href={link} onClick={handleOpenModal}>
-        <div className="h-[250px] w-full relative flex items-end tablet:rounded group overflow-hidden cursor-pointer rounded">
+        <div className={cn(
+          "h-[280px] w-full relative flex items-end rounded-xl group overflow-hidden cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300",
+          disabled && "opacity-60"
+        )}>
           {course.premiumPoints > 0 && (
-            <span className="p-1 absolute right-5 px-4 top-5 rounded-full flex items-center justify-center bg-blue-800 text-background font-semibold text-xs gap-1">
+            <span className="absolute right-4 top-4 px-3 py-1.5 rounded-full flex items-center justify-center bg-primary text-primary-foreground font-semibold text-xs gap-1 shadow-md z-20">
               <p>Premium</p>
               <p>{course.premiumPoints}</p>
             </span>
@@ -67,25 +70,26 @@ const CourseCard = ({ course, userPoints }: CourseCardProps) => {
 
           <Image
             src={course.banner.asset.url}
-            alt="Imagem curso"
+            alt={`Banner do curso ${course.name}`}
             height={1000}
             width={1000}
             className={cn(
-              "w-full h-full object-cover absolute -z-50 left-0 top-0 tablet:rounded group-hover:scale-125 transition-all",
+              "w-full h-full object-cover absolute inset-0 group-hover:scale-110 transition-transform duration-500",
               disabled && "grayscale"
             )}
           />
 
-          <div
-            className={cn(
-              "h-full w-full absolute left-0 top-0 bg-gradient-to-t from-primary via-transparent to-transparent z-10 tablet:rounded"
-            )}
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/50 to-transparent z-10" />
 
-          <div className="flex justify-between text-background p-5 w-full z-50">
-            <p className="font-semibold">{course.name}</p>
-
-            <p className="font-semibold">{course.workload} hrs</p>
+          <div className="relative z-20 w-full p-5">
+            <div className="flex justify-between items-start gap-3 mb-2">
+              <p className="font-bold text-lg text-primary-foreground leading-tight flex-1">
+                {course.name}
+              </p>
+              <span className="flex-shrink-0 px-2 py-1 rounded-md bg-primary-foreground/20 text-primary-foreground text-xs font-semibold">
+                {course.workload} hrs
+              </span>
+            </div>
           </div>
         </div>
       </Link>
