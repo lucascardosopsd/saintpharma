@@ -5,7 +5,6 @@ import {
   validateApiToken,
 } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { clerkClient } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import { getUserByClerkId } from "@/actions/user/getUserByClerk";
 
@@ -123,10 +122,6 @@ export async function GET(request: NextRequest) {
     ).length;
     courseStats.total = coursesWithProgress.length + certificates.length;
 
-    // Buscar informações do Clerk
-    const client = await clerkClient();
-    const clerkUser = await client.users.getUser(userId);
-
     // Buscar ranking do usuário baseado em pontos
     const allUsers = await prisma.user.findMany({
       select: {
@@ -148,7 +143,7 @@ export async function GET(request: NextRequest) {
           clerkId: user.clerkId,
           name: user.firstName && user.lastName 
             ? `${user.firstName} ${user.lastName}` 
-            : user.firstName || `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "Usuário",
+            : user.firstName || "Usuário",
           email: user.email,
           profileImage: user.profileImage,
           points: user.points, // Now using the actual points field from User model
