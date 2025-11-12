@@ -48,8 +48,11 @@ const ProfilePage = async () => {
               <p className="text-xl text-primary font-semibold mb-2">
                 Os 50 melhores da semana
               </p>
-              <p className="text-muted-foreground capitalize">
+              <p className="text-muted-foreground capitalize mb-2">
                 Semana de {format(startOfWeek(new Date(), { locale: ptBR, weekStartsOn: 0 }), "dd 'de' LLLL", { locale: ptBR })} até {format(endOfWeek(new Date(), { locale: ptBR, weekStartsOn: 0 }), "dd 'de' LLLL", { locale: ptBR })}
+              </p>
+              <p className="text-sm text-muted-foreground/80 italic">
+                ⚠️ O ranking mostra apenas os pontos conquistados nesta semana. Cursos concluídos em semanas anteriores não aparecem aqui.
               </p>
             </div>
             <div className="flex justify-center md:justify-end">
@@ -65,7 +68,19 @@ const ProfilePage = async () => {
 
         {/* Ranking List */}
         <div className="px-5 md:px-0 space-y-3">
-          {ranking.map((user: any, index: number) => {
+          {ranking.length === 0 ? (
+            <Card className="w-full">
+              <CardHeader className="flex flex-col items-center justify-center p-12">
+                <p className="text-lg text-muted-foreground text-center">
+                  Nenhum usuário conquistou pontos nesta semana ainda.
+                </p>
+                <p className="text-sm text-muted-foreground/80 text-center mt-2">
+                  Seja o primeiro a aparecer no ranking completando cursos, exames ou aulas!
+                </p>
+              </CardHeader>
+            </Card>
+          ) : (
+            ranking.map((user: any, index: number) => {
             const isTopThree = index < 3;
             
             return (
@@ -130,7 +145,8 @@ const ProfilePage = async () => {
                 </CardHeader>
               </Card>
             );
-          })}
+          })
+          )}
         </div>
       </div>
     </div>

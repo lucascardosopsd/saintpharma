@@ -86,14 +86,17 @@ export const getRanking = async (page: number = 1, limit: number = 20) => {
     })
   );
 
-  // Sort by weekly points descending
-  usersWithWeekPoints.sort((a, b) => b.points - a.points);
+  // Filter out users with 0 points (only show users who earned points this week)
+  const usersWithPoints = usersWithWeekPoints.filter((user) => user.points > 0);
 
-  // Get total count for pagination
-  const total = usersWithWeekPoints.length;
+  // Sort by weekly points descending
+  usersWithPoints.sort((a, b) => b.points - a.points);
+
+  // Get total count for pagination (only users with points)
+  const total = usersWithPoints.length;
 
   // Get paginated users
-  const paginatedUsers = usersWithWeekPoints.slice(skip, skip + limit);
+  const paginatedUsers = usersWithPoints.slice(skip, skip + limit);
 
   // Transform to ranking format
   const ranking: UserRanking[] = paginatedUsers.map((user, index) => ({
