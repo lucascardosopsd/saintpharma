@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-points": "tsx scripts/check-points.ts",
+    "check-all-points": "tsx scripts/check-all-points.ts",
+    "check-week-points": "tsx scripts/check-week-points.ts",
+    "check-recent-certificates": "tsx scripts/check-recent-certificates.ts",
+    "fix-points": "tsx scripts/fix-points.ts",
+    "recalculate-points": "tsx scripts/recalculate-points.ts"
   },
   "dependencies": {
     "@clerk/localizations": "^3.9.5",
