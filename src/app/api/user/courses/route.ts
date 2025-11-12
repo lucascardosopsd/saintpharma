@@ -340,17 +340,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Buscar informações do curso do Sanity para obter os pontos corretos
+    const { getCourseById } = await import("@/actions/courses/getId");
+    const course = await getCourseById({ id: courseId });
+    
+    const coursePoints = course?.points || 100; // Fallback para 100 se não encontrar
+    const courseTitle = course?.name || `Curso ${courseId}`;
+    const courseDescription = course?.description || "Curso concluído com sucesso";
+    const courseWorkload = course?.workload || courseLectures.length * 60;
+
     // Criar certificado
     const certificate = await prisma.certificate.create({
       data: {
         userId: user.id,
         courseCmsId: courseId,
-        courseTitle: `Curso ${courseId}`,
-        description: "Curso concluído com sucesso",
-        points: 100,
-        workload: courseLectures.length * 60,
+        courseTitle: courseTitle,
+        description: courseDescription,
+        points: coursePoints,
+        workload: courseWorkload,
       },
     });
+
+    // Atribuir pontos ao usuário
+    if (coursePoints > 0) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          points: {
+            increment: coursePoints,
+          },
+        },
+      });
+
+      console.log(
+        `[POINTS] User ${user.id} earned ${coursePoints} points for completing course ${courseId}`
+      );
+    }
 
     return successResponse({
       message: "Curso marcado como concluído com sucesso",
