@@ -206,3 +206,6 @@ Body:
 3. **Aprovação**: A nota mínima para aprovação é definida no exame (`passingScore`)
 
 
+
+
+

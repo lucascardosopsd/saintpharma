@@ -95,3 +95,6 @@ Headers:
 3. **Regeneração**: As vidas regeneram a cada 10 horas
 
 
+
+
+

@@ -146,3 +146,6 @@ Body:
 3. **Idempotência**: Se já existe um certificado, retorna erro 409 com o ID do certificado existente
 
 
+
+
+

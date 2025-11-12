@@ -109,3 +109,6 @@ Headers:
 3. **Acesso**: O usuário só pode ver seus próprios exames
 
 
+
+
+

@@ -116,3 +116,6 @@ Headers:
 3. **Segurança**: Tentativas de acessar certificados de outros usuários retornam erro 403
 
 
+
+
+

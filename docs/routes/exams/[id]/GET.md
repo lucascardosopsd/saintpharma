@@ -109,3 +109,6 @@ Headers:
 3. **Validação**: A API verifica se o exame pertence ao usuário antes de retornar
 
 
+
+
+

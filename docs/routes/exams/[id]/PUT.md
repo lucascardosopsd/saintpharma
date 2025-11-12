@@ -204,3 +204,6 @@ Body:
 4. **Validação**: A API verifica se o exame pertence ao usuário antes de atualizar
 
 
+
+
+

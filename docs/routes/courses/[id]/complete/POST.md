@@ -141,3 +141,6 @@ Headers:
 3. **Idempotência**: Se já existe um certificado, retorna erro 409 com o certificado existente
 
 
+
+
+
