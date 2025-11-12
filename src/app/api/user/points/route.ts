@@ -124,7 +124,8 @@ export async function PUT(request: NextRequest) {
       select: {
         id: true,
         clerkId: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         email: true,
         points: true,
       },

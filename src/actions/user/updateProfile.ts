@@ -26,7 +26,7 @@ export const updateProfile = async ({
     }
 
     const trimmedFirstName = firstName.trim();
-    const trimmedLastName = lastName?.trim() || null;
+    const trimmedLastName = lastName?.trim() || undefined;
 
     // Atualizar no Clerk
     const client = await clerkClient();
@@ -42,19 +42,12 @@ export const updateProfile = async ({
       throw new Error("Usuário não encontrado no banco de dados");
     }
 
-    // Combinar firstName e lastName para o campo name (compatibilidade)
-    const fullName = [trimmedFirstName, trimmedLastName]
-      .filter(Boolean)
-      .join(" ")
-      .trim();
-
     // Atualizar no banco de dados
     await updateUser({
       userId: user.id,
       data: {
         firstName: trimmedFirstName,
         lastName: trimmedLastName,
-        name: fullName, // Manter para compatibilidade
       },
     });
 
