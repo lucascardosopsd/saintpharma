@@ -7,10 +7,11 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { requireAuth } from "@/lib/authGuard";
 import { cn } from "@/lib/utils";
-import { Check, ChevronRight, Clock, BookOpen } from "lucide-react";
+import { Check, ChevronRight, Clock, BookOpen, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 type CoursePageProps = {
   params: Promise<{
@@ -54,6 +55,16 @@ const CoursePage = async ({ params }: CoursePageProps) => {
   return (
     <div className="min-h-[92svh]">
       <div className="container max-w-4xl mx-auto">
+        {/* Navigation */}
+        <div className="px-5 md:px-0 pt-6 pb-4">
+          <Link href="/">
+            <Button variant="ghost" className="group">
+              <ArrowLeft className="h-4 w-4 mr-2 stroke-primary group-hover:stroke-accent-foreground transition-colors" />
+              Voltar
+            </Button>
+          </Link>
+        </div>
+
         {/* Hero Section */}
         <div className="h-[320px] md:h-[400px] w-full relative flex items-end group overflow-hidden rounded-b-xl">
           <Image
