@@ -110,7 +110,10 @@ const Exam = ({
         });
       }
 
-      revalidateRoute({ fullPath: "/" });
+      // Revalidar de forma não bloqueante
+      revalidateRoute({ fullPath: "/" }).catch((error) => {
+        console.error("[Exam] Erro ao revalidar (não crítico):", error);
+      });
 
       router.push(`/course/${course._id}`);
     } catch (error) {
