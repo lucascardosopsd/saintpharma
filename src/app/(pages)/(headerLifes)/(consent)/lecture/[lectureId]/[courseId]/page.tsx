@@ -11,9 +11,7 @@ import { requireAuth } from "@/lib/authGuard";
 import { LecturePageSerializer } from "@/serializers/course";
 import { subHours } from "date-fns";
 import { PortableText } from "next-sanity";
-import { ArrowLeft, BookOpen } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { BookOpen } from "lucide-react";
 
 type LecturePageProps = {
   params: Promise<{
@@ -47,16 +45,6 @@ const LecturePage = async ({ params }: LecturePageProps) => {
   return (
     <div className="min-h-[92svh]">
       <div className="container max-w-4xl mx-auto">
-        {/* Navigation */}
-        <div className="px-5 md:px-0 pt-6 pb-4">
-          <Link href={`/course/${courseId}`}>
-            <Button variant="ghost" className="group">
-              <ArrowLeft className="h-4 w-4 mr-2 stroke-primary group-hover:stroke-accent-foreground transition-colors" />
-              Voltar ao curso
-            </Button>
-          </Link>
-        </div>
-
         {/* Hero Section */}
         <div className="px-5 md:px-0 mb-8">
           <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 md:p-8 border border-primary/20">
