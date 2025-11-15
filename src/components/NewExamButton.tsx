@@ -1,6 +1,7 @@
 "use client";
 
 import { createExam } from "@/actions/exam/createExam";
+import { checkExamEligibility } from "@/actions/exam/checkExamEligibility";
 import { Exam } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,40 +36,54 @@ const NewExamButton = ({
   };
 
   const handleNewExam = async () => {
+    console.log("[NewExamButton] handleNewExam INICIADO");
     setLoading(true);
     try {
-      // Verificar elegibilidade primeiro
-      const response = await fetch("/api/exams/eligibility", {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-          "X-User-Id": userId,
-        },
-      });
+      console.log(
+        "[NewExamButton] Verificando elegibilidade com userId:",
+        userId
+      );
+      // Verificar elegibilidade primeiro usando a action
+      const eligibility = await checkExamEligibility({ userId });
+      console.log(
+        "[NewExamButton] Elegibilidade verificada com sucesso:",
+        eligibility
+      );
 
-      if (!response.ok) {
-        throw new Error("Erro ao verificar elegibilidade");
-      }
-
-      const eligibilityData = await response.json();
-
-      if (!eligibilityData.success || !eligibilityData.data.canTakeExam) {
-        toast.error(
-          eligibilityData.data.message || "Você não possui vidas suficientes"
-        );
+      if (!eligibility.canTakeExam) {
+        toast.error(eligibility.message || "Você não possui vidas suficientes");
+        setLoading(false);
         return;
       }
 
+      console.log("[NewExamButton] Criando exame com:", {
+        lectureCMSid: lectureId,
+        userId,
+      });
       const newExam = await createExam({
         data: {
           lectureCMSid: lectureId,
           userId,
         },
       });
+      console.log("[NewExamButton] Exame criado com sucesso:", newExam);
+      console.log(
+        "[NewExamButton] Redirecionando para:",
+        `/exam/${newExam.id}/${courseId}/${lectureId}`
+      );
 
       router.push(`/exam/${newExam.id}/${courseId}/${lectureId}`);
     } catch (error) {
       console.error("Erro ao iniciar exame:", error);
-      toast.error("Erro ao iniciar a prova");
+      console.error("Detalhes do erro:", {
+        name: error instanceof Error ? error.name : "Unknown",
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      // Mostrar mensagem de erro específica se disponível
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao iniciar a prova";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -77,24 +92,11 @@ const NewExamButton = ({
   const handleRetryExam = async () => {
     setLoading(true);
     try {
-      // Verificar elegibilidade primeiro
-      const response = await fetch("/api/exams/eligibility", {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-          "X-User-Id": userId,
-        },
-      });
+      // Verificar elegibilidade primeiro usando a action
+      const eligibility = await checkExamEligibility({ userId });
 
-      if (!response.ok) {
-        throw new Error("Erro ao verificar elegibilidade");
-      }
-
-      const eligibilityData = await response.json();
-
-      if (!eligibilityData.success || !eligibilityData.data.canTakeExam) {
-        toast.error(
-          eligibilityData.data.message || "Você não possui vidas suficientes"
-        );
+      if (!eligibility.canTakeExam) {
+        toast.error(eligibility.message || "Você não possui vidas suficientes");
         return;
       }
 
@@ -109,7 +111,15 @@ const NewExamButton = ({
       router.push(`/exam/${newExam.id}/${courseId}/${lectureId}`);
     } catch (error) {
       console.error("Erro ao repetir exame:", error);
-      toast.error("Erro ao iniciar a prova");
+      console.error("Detalhes do erro:", {
+        name: error instanceof Error ? error.name : "Unknown",
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+      // Mostrar mensagem de erro específica se disponível
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao iniciar a prova";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

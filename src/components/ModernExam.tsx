@@ -170,7 +170,8 @@ const ModernExam = ({
           )}
           {eligibility?.nextResetTime && (
             <p className="text-sm text-muted-foreground mb-4">
-              Próximo reset: {eligibility.nextResetTime.toLocaleString("pt-BR")}
+              Próximo reset:{" "}
+              {new Date(eligibility.nextResetTime).toLocaleString("pt-BR")}
             </p>
           )}
           <Button

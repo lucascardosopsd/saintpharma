@@ -7,7 +7,7 @@ interface ExamEligibilityResult {
   canTakeExam: boolean;
   remainingLives: number;
   totalLives: number;
-  nextResetTime: Date | null;
+  nextResetTime: string | null; // ISO string format (Next.js 15 serialization)
   message?: string;
 }
 
