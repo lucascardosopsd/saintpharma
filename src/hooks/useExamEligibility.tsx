@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { getExamEligibility } from "@/actions/api/examEligibility";
+import { useEffect, useState } from "react";
+import { checkExamEligibility } from "@/actions/exam/checkExamEligibility";
 
 interface ExamEligibilityResult {
   canTakeExam: boolean;
   remainingLives: number;
   totalLives: number;
-  nextResetTime: string | null; // ISO string após serialização
-  message: string | null;
+  nextResetTime: Date | null;
+  message?: string;
 }
 
 interface UseExamEligibilityProps {
@@ -31,38 +31,29 @@ export const useExamEligibility = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchEligibility = useCallback(async () => {
+  const fetchEligibility = async () => {
     if (!userId) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const { getExamEligibility } = await import(
-        "@/actions/api/examEligibility"
-      );
-      const result = await getExamEligibility(userId);
-
-      if (result && result.success && result.data) {
-        setEligibility(result.data);
-      } else {
-        const errorMessage = result?.error || "Erro ao verificar elegibilidade";
-        setError(errorMessage);
-      }
+      const data = await checkExamEligibility({ userId });
+      setEligibility(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  };
 
-  const refetch = useCallback(async () => {
+  const refetch = async () => {
     await fetchEligibility();
-  }, [fetchEligibility]);
+  };
 
   useEffect(() => {
     fetchEligibility();
-  }, [fetchEligibility]);
+  }, [userId]);
 
   return {
     eligibility,
