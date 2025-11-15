@@ -20,7 +20,6 @@ export const createUserLecture = async ({ data }: createUserLectureProps) => {
         courseId: true,
         userId: true,
         createdAt: true,
-        updatedAt: true,
       },
     });
     
@@ -31,7 +30,6 @@ export const createUserLecture = async ({ data }: createUserLectureProps) => {
       courseId: String(userLecture.courseId),
       userId: String(userLecture.userId),
       createdAt: userLecture.createdAt.toISOString(),
-      updatedAt: userLecture.updatedAt.toISOString(),
     };
     
     return JSON.parse(JSON.stringify(serialized));
