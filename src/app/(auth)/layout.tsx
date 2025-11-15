@@ -1,13 +1,7 @@
-import HeaderWithLives from "@/components/HeaderWithLives";
 import { ReactNode } from "react";
 
 const layout = ({ children }: { children: ReactNode }) => {
-  return (
-    <>
-      <HeaderWithLives />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 };
 
 export default layout;
