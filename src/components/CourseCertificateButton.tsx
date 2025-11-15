@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { getUserCertificateByCourse } from "@/actions/certification/getUserCertificatesByCourse";
+import { createCertificateForUser } from "@/actions/certification/create";
 import { revalidateRoute } from "@/actions/revalidateRoute";
 import { CourseProps } from "@/types/course";
 import { useRouter } from "next/navigation";
@@ -46,65 +47,26 @@ const CourseCertificateButton = ({
         return;
       }
 
-      // Se não existe, criar um novo via API route
-      console.log("[CourseCertificateButton] Certificado não encontrado, chamando API...");
+      // Se não existe, criar um novo usando a action
+      console.log("[CourseCertificateButton] Certificado não encontrado, criando via action...");
       
-      // Next.js 15: fetch não é mais cacheado por padrão
-      // Para POST requests, explicitamente definimos no-store
-      const response = await fetch("/api/certificate/for-user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ course }),
-        cache: 'no-store', // Explícito para Next.js 15
-      });
+      const certificate = await createCertificateForUser({ course });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.error || `Erro ${response.status}: ${response.statusText}`
-        );
-      }
-
-      const apiResponse = await response.json();
-      
-      // successResponse retorna { success: true, data: { certificate }, timestamp }
-      const certificate = apiResponse.data?.certificate || apiResponse.certificate;
-
-      console.log("[CourseCertificateButton] Resultado da API:", {
+      console.log("[CourseCertificateButton] Resultado da action:", {
         hasCertificate: !!certificate,
         hasId: !!certificate?.id,
         certificateId: certificate?.id,
-        fullResponse: apiResponse,
       });
 
       // Validar que o certificado foi retornado corretamente
       if (!certificate || !certificate?.id) {
-        // Fallback: tentar buscar novamente
-        console.log("[CourseCertificateButton] API retornou certificado inválido, buscando diretamente...");
-        
-        const newCertificate = await getUserCertificateByCourse({
-          courseId: course._id,
-          userId,
-        });
-
-        console.log("[CourseCertificateButton] Resultado após busca:", {
-          hasCertificate: !!newCertificate,
-          hasId: !!newCertificate?.id,
-          certificateId: newCertificate?.id,
-        });
-
-        if (newCertificate && newCertificate.id) {
-          await revalidateRoute({ fullPath: "/" });
-          router.push(`/certificate/${newCertificate.id}`);
-          return;
-        }
-
         throw new Error("Erro ao criar certificado. Tente novamente.");
       }
 
-      await revalidateRoute({ fullPath: "/" });
+      // Revalidar de forma não bloqueante
+      revalidateRoute({ fullPath: "/" }).catch((error) => {
+        console.error("[CourseCertificateButton] Erro ao revalidar (não crítico):", error);
+      });
       router.push(`/certificate/${certificate.id}`);
     } catch (error) {
       console.error("[CourseCertificateButton] Erro ao criar certificado:", error);
