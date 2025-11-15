@@ -5,14 +5,15 @@ import Certificate from "@/components/Certificate";
 import { requireAuth } from "@/lib/authGuard";
 
 type CertificatePageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 const CertificatePage = async ({ params }: CertificatePageProps) => {
   await requireAuth();
-  const { id } = params;
+  // Next.js 15: params agora é uma Promise e precisa ser aguardado
+  const { id } = await params;
 
   const user = await getClerkUser();
 

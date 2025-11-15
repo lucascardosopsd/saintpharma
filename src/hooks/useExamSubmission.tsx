@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ExamResult } from "@/types/examAttempt";
+import { submitExamAnswers } from "@/actions/api/examSubmit";
 
 interface UseExamSubmissionProps {
   examId: string;
@@ -36,31 +37,8 @@ export const useExamSubmission = ({
     setError(null);
 
     try {
-      const response = await fetch(`/api/exams/${examId}/submit`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-          "X-User-Id": userId,
-        },
-        body: JSON.stringify({
-          answers,
-          timeSpent,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Erro ao submeter exame");
-      }
-
-      const data: { success: boolean; data: { result: ExamResult } } = await response.json();
-
-      if (data.success) {
-        return data.data.result;
-      }
-
-      return null;
+      const result = await submitExamAnswers(examId, userId, answers, timeSpent);
+      return result;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
       return null;

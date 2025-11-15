@@ -49,12 +49,15 @@ const CourseCertificateButton = ({
       // Se não existe, criar um novo via API route
       console.log("[CourseCertificateButton] Certificado não encontrado, chamando API...");
       
+      // Next.js 15: fetch não é mais cacheado por padrão
+      // Para POST requests, explicitamente definimos no-store
       const response = await fetch("/api/certificate/for-user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ course }),
+        cache: 'no-store', // Explícito para Next.js 15
       });
 
       if (!response.ok) {

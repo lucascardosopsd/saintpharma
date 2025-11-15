@@ -11,27 +11,24 @@ import { requireAuth } from "@/lib/authGuard";
 import { LecturePageSerializer } from "@/serializers/course";
 import { subHours } from "date-fns";
 import { PortableText } from "next-sanity";
-import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 type LecturePageProps = {
-  params: {
+  params: Promise<{
     lectureId: string;
     courseId: string;
-  };
+  }>;
 };
 
 const LecturePage = async ({ params }: LecturePageProps) => {
   await requireAuth();
-  const headerList = headers();
-  const pathname = headerList.get("x-current-path");
-
-  revalidatePath(pathname!);
-
-  const { lectureId, courseId } = params;
+  
+  // Next.js 15: params agora é uma Promise e precisa ser aguardado
+  // Next.js 15: revalidatePath não pode ser usado durante o render
+  // A revalidação deve ser feita em Server Actions quando necessário
+  const { lectureId, courseId } = await params;
   const exam = await getExamByLectureId({ lectureId });
 
   const quiz = await getQuizByLectureId({ lectureId });

@@ -19,7 +19,7 @@ import { getUserByClerkId } from "@/actions/user/getUserByClerk";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Validar token de API
   if (!validateApiToken(request)) {
@@ -27,7 +27,8 @@ export async function GET(
   }
 
   try {
-    const { id } = params;
+    // Next.js 15: params agora é uma Promise e precisa ser aguardado
+    const { id } = await params;
 
     if (!id) {
       return new Response(

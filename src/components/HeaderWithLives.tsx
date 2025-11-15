@@ -10,7 +10,8 @@ import { defaultLifes } from "@/constants/exam";
 const HeaderWithLives = async () => {
   // Fetch all data on the server
   const userLives = await getUserLives();
-  const headersList = headers();
+  // Next.js 15: headers() agora é uma Promise e precisa ser aguardado
+  const headersList = await headers();
   const pathname = headersList.get("x-current-path") || "";
 
   // Get Clerk user

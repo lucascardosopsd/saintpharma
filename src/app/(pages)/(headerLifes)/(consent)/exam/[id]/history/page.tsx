@@ -7,14 +7,15 @@ import { ArrowLeft, History } from "lucide-react";
 import Link from "next/link";
 
 interface ExamHistoryPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const ExamHistoryPage = async ({ params }: ExamHistoryPageProps) => {
   await requireAuth();
-  const { id: examId } = params;
+  // Next.js 15: params agora é uma Promise e precisa ser aguardado
+  const { id: examId } = await params;
 
   const user = await getUserByClerk();
   const exam = await getExamById({ id: examId });

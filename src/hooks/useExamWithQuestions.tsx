@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ExamWithQuestions } from "@/types/examAttempt";
+import { getExamWithQuestions } from "@/actions/api/examQuestions";
 
 interface UseExamWithQuestionsProps {
   examId: string;
@@ -23,43 +24,29 @@ export const useExamWithQuestions = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchExam = async () => {
+  const fetchExam = useCallback(async () => {
     if (!examId || !userId) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`/api/exams/${examId}/questions`, {
-        headers: {
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-          "X-User-Id": userId,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao buscar exame com perguntas");
-      }
-
-      const data: { success: boolean; data: { exam: ExamWithQuestions } } = await response.json();
-
-      if (data.success) {
-        setExam(data.data.exam);
-      }
+      const examData = await getExamWithQuestions(examId, userId);
+      setExam(examData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
     }
-  };
+  }, [examId, userId]);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     await fetchExam();
-  };
+  }, [fetchExam]);
 
   useEffect(() => {
     fetchExam();
-  }, [examId, userId]);
+  }, [fetchExam]);
 
   return {
     exam,

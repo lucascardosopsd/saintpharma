@@ -34,7 +34,7 @@ import { NextRequest } from "next/server";
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Validar token de API
   if (!validateApiToken(request)) {
@@ -42,7 +42,8 @@ export async function PUT(
   }
 
   try {
-    const { id: examId } = params;
+    // Next.js 15: params agora é uma Promise e precisa ser aguardado
+    const { id: examId } = await params;
     const userId = request.headers.get("x-user-id");
 
     if (!userId) {
@@ -242,7 +243,7 @@ export async function PUT(
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Validar token de API
   if (!validateApiToken(request)) {
@@ -250,7 +251,8 @@ export async function GET(
   }
 
   try {
-    const { id: examId } = params;
+    // Next.js 15: params agora é uma Promise e precisa ser aguardado
+    const { id: examId } = await params;
     const userId = request.headers.get("x-user-id");
 
     if (!userId) {
@@ -322,7 +324,7 @@ export async function GET(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Validar token de API
   if (!validateApiToken(request)) {
@@ -331,7 +333,8 @@ export async function DELETE(
 
   try {
     const userId = request.headers.get("x-user-id");
-    const { id } = params;
+    // Next.js 15: params agora é uma Promise e precisa ser aguardado
+    const { id } = await params;
 
     if (!userId) {
       return new Response(

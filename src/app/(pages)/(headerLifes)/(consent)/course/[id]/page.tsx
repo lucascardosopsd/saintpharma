@@ -13,13 +13,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 type CoursePageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 const CoursePage = async ({ params }: CoursePageProps) => {
-  const { id } = params;
+  // Next.js 15: params agora é uma Promise e precisa ser aguardado
+  const { id } = await params;
   await requireAuth();
   const user = await getUserByClerk();
 

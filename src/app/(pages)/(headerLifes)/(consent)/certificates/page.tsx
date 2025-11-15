@@ -8,7 +8,6 @@ import { ptBR } from "date-fns/locale";
 import Link from "next/link";
 import { Award, Clock, Calendar, ExternalLink, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +25,8 @@ const CertificatesPage = async () => {
 
   const certificates = await getUserCertificates({ userId: user.id });
 
-  revalidatePath("/certificates");
+  // Next.js 15: revalidatePath não pode ser usado durante o render
+  // A revalidação deve ser feita em Server Actions quando necessário
 
   return (
     <div className="min-h-[92svh]">

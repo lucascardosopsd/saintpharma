@@ -16,7 +16,7 @@ import { QuestionResponse, Question } from "@/types/questionResponse";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Validar token de API
   if (!validateApiToken(request)) {
@@ -24,7 +24,8 @@ export async function GET(
   }
 
   try {
-    const { id: lectureId } = params;
+    // Next.js 15: params agora é uma Promise e precisa ser aguardado
+    const { id: lectureId } = await params;
     
     if (!lectureId) {
       return new Response(

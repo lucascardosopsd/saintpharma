@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ExamAttemptsResponse, ExamAttempt } from "@/types/examAttempt";
+import { getExamAttempts } from "@/actions/api/examAttempts";
 
 interface UseExamAttemptsProps {
   examId: string;
@@ -32,58 +33,42 @@ export const useExamAttempts = ({
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(page);
 
-  const fetchAttempts = async (pageNum: number, append = false) => {
+  const fetchAttempts = useCallback(async (pageNum: number, append = false) => {
     if (!examId || !userId) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(
-        `/api/exams/${examId}/attempts?page=${pageNum}&limit=${limit}`,
-        {
-          headers: {
-            "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-            "X-User-Id": userId,
-          },
-        }
-      );
+      const data = await getExamAttempts(examId, userId, pageNum, limit);
 
-      if (!response.ok) {
-        throw new Error("Erro ao buscar tentativas do exame");
+      if (append) {
+        setAttempts(prev => [...prev, ...data.attempts]);
+      } else {
+        setAttempts(data.attempts);
       }
-
-      const data: { success: boolean; data: ExamAttemptsResponse } = await response.json();
-
-      if (data.success) {
-        if (append) {
-          setAttempts(prev => [...prev, ...data.data.attempts]);
-        } else {
-          setAttempts(data.data.attempts);
-        }
-        setPagination(data.data.pagination);
-        setCurrentPage(pageNum);
-      }
+      setPagination(data.pagination);
+      setCurrentPage(pageNum);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
     }
-  };
+  }, [examId, userId, limit]);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     await fetchAttempts(0, false);
-  };
+  }, [fetchAttempts]);
 
-  const loadMore = async () => {
+  const loadMore = useCallback(async () => {
     if (pagination?.hasNext && !loading) {
       await fetchAttempts(currentPage + 1, true);
     }
-  };
+  }, [pagination?.hasNext, loading, currentPage, fetchAttempts]);
 
   useEffect(() => {
     fetchAttempts(page, false);
-  }, [examId, userId, page, limit]);
+  }, [fetchAttempts, page]);
 
   return {
     attempts,

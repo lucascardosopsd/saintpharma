@@ -43,7 +43,21 @@ export const createExam = async ({ data }: CreateExamProps) => {
     // Revalidar rotas relacionadas
     await revalidateRoute({ fullPath: "/" });
 
-    return exam;
+    // Next.js 15: Serializar o objeto para garantir compatibilidade com Server Actions
+    // Converter Date objects para strings ISO e garantir que todos os campos estejam presentes
+    const serializedExam = {
+      id: exam.id,
+      complete: exam.complete ?? false,
+      reproved: exam.reproved ?? false,
+      lectureCMSid: exam.lectureCMSid,
+      userId: exam.userId,
+      timeLimit: exam.timeLimit ?? null,
+      passingScore: exam.passingScore ?? null,
+      createdAt: exam.createdAt.toISOString(),
+      updatedAt: exam.updatedAt.toISOString(),
+    };
+
+    return JSON.parse(JSON.stringify(serializedExam));
   } catch (error) {
     console.error("Erro ao criar exame:", error);
     throw new Error("Erro ao criar exame");

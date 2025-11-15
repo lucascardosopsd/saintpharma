@@ -21,7 +21,7 @@ import { NextRequest } from "next/server";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Validar token de API
   if (!validateApiToken(request)) {
@@ -29,7 +29,8 @@ export async function GET(
   }
 
   try {
-    const { id: certificateId } = params;
+    // Next.js 15: params agora é uma Promise e precisa ser aguardado
+    const { id: certificateId } = await params;
     const userId = request.headers.get("x-user-id");
 
     if (!userId) {

@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { requireAuth } from "@/lib/authGuard";
 import { format, startOfWeek, endOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { revalidatePath } from "next/cache";
 import { Trophy, Medal, Award, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -19,7 +18,8 @@ const ProfilePage = async () => {
   const rankingResult = await getRanking();
   const ranking = rankingResult.data;
 
-  revalidatePath("/ranking");
+  // Next.js 15: revalidatePath não pode ser usado durante o render
+  // A revalidação deve ser feita em Server Actions quando necessário
 
   const getRankIcon = (index: number) => {
     if (index === 0) return <Trophy className="h-6 w-6 text-yellow-500 fill-yellow-500" />;

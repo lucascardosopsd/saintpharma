@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { getExamEligibility } from "@/actions/api/examEligibility";
 
 interface ExamEligibilityResult {
   canTakeExam: boolean;
   remainingLives: number;
   totalLives: number;
-  nextResetTime: Date | null;
-  message?: string;
+  nextResetTime: string | null; // ISO string após serialização
+  message: string | null;
 }
 
 interface UseExamEligibilityProps {
@@ -30,44 +31,38 @@ export const useExamEligibility = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchEligibility = async () => {
+  const fetchEligibility = useCallback(async () => {
     if (!userId) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/exams/eligibility", {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-          "X-User-Id": userId,
-        },
-      });
+      const { getExamEligibility } = await import(
+        "@/actions/api/examEligibility"
+      );
+      const result = await getExamEligibility(userId);
 
-      if (!response.ok) {
-        throw new Error("Erro ao verificar elegibilidade");
-      }
-
-      const data: { success: boolean; data: ExamEligibilityResult } =
-        await response.json();
-
-      if (data.success) {
-        setEligibility(data.data);
+      if (result && result.success && result.data) {
+        setEligibility(result.data);
+      } else {
+        const errorMessage = result?.error || "Erro ao verificar elegibilidade";
+        setError(errorMessage);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     await fetchEligibility();
-  };
+  }, [fetchEligibility]);
 
   useEffect(() => {
     fetchEligibility();
-  }, [userId]);
+  }, [fetchEligibility]);
 
   return {
     eligibility,

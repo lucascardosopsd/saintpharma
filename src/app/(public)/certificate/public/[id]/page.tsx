@@ -5,13 +5,14 @@ import Certificate from "@/components/Certificate";
 import { notFound } from "next/navigation";
 
 type PublicCertificatePageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 const PublicCertificatePage = async ({ params }: PublicCertificatePageProps) => {
-  const { id: certificateId } = params;
+  // Next.js 15: params agora é uma Promise e precisa ser aguardado
+  const { id: certificateId } = await params;
 
   // Buscar certificado
   const certificate = await getCertificateById({ id: certificateId });

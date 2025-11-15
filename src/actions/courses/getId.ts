@@ -1,4 +1,4 @@
-"us server";
+"use server";
 import { client } from "@/sanity/lib/client";
 import { CourseProps } from "@/types/course";
 

@@ -12,16 +12,17 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 type LecturePageProps = {
-  params: {
+  params: Promise<{
     courseId: string;
     lectureId: string;
     id: string;
-  };
+  }>;
 };
 
 const LecturePage = async ({ params }: LecturePageProps) => {
   await requireAuth();
-  const { courseId, lectureId } = params;
+  // Next.js 15: params agora é uma Promise e precisa ser aguardado
+  const { courseId, lectureId, id } = await params;
 
   const quiz = await getQuizByLectureId({ lectureId });
 
@@ -29,7 +30,7 @@ const LecturePage = async ({ params }: LecturePageProps) => {
 
   const user = await getUserByClerk();
 
-  const exam = await getExamById({ id: params.id });
+  const exam = await getExamById({ id });
 
   const userDamage = await getUserDamage({
     userId: user?.id!,
