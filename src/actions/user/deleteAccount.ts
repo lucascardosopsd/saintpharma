@@ -21,6 +21,11 @@ export async function deleteAccount() {
 
     // Deletar todos os dados relacionados ao usuário no banco
     await prisma.$transaction(async (tx) => {
+      // Deletar tentativas de exame do usuário (deve ser deletado antes dos exames)
+      await tx.examAttempt.deleteMany({
+        where: { userId: user.id },
+      });
+
       // Deletar danos do usuário
       await tx.damage.deleteMany({
         where: { userId: user.id },
@@ -36,7 +41,7 @@ export async function deleteAccount() {
         where: { userId: user.id },
       });
 
-      // Deletar exames do usuário
+      // Deletar exames do usuário (após deletar ExamAttempt)
       await tx.exam.deleteMany({
         where: { userId: user.id },
       });

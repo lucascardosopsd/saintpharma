@@ -24,7 +24,8 @@ export async function POST(req: Request) {
           certificates: true,
           lectures: true,
           Exam: true,
-          Damage: true
+          Damage: true,
+          ExamAttempt: true
         }
       });
 
@@ -35,6 +36,11 @@ export async function POST(req: Request) {
 
       // Deletar dados relacionados e o usuário
       await prisma.$transaction(async (tx) => {
+        // Deletar tentativas de exame do usuário (deve ser deletado antes dos exames)
+        await tx.examAttempt.deleteMany({
+          where: { userId: user.id }
+        });
+
         // Deletar certificados
         await tx.certificate.deleteMany({
           where: { userId: user.id }
@@ -45,7 +51,7 @@ export async function POST(req: Request) {
           where: { userId: user.id }
         });
 
-        // Deletar exames
+        // Deletar exames (após deletar ExamAttempt)
         await tx.exam.deleteMany({
           where: { userId: user.id }
         });
