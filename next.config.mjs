@@ -15,6 +15,23 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      canvas: false,
+    };
+    
+    // Copiar arquivos de fonte do PDFKit para o build
+    if (isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        // PDFKit precisa encontrar os arquivos de fonte
+        // Vamos usar o caminho correto do node_modules
+      };
+    }
+    
+    return config;
+  },
   async headers() {
         return [
             {
