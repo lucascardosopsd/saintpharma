@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import prisma from "@/lib/prisma";
+import { getCertificateById } from "@/actions/certification/getById";
 import { getCourseById } from "@/actions/courses/getId";
-import { getUserByClerkId } from "@/actions/user/getUserByClerk";
+import { getUserById } from "@/actions/user/getUserByClerk";
 import { generateCertificatePuppeteer } from "@/lib/generateCertificatePuppeteer";
 
 export async function GET(
@@ -12,28 +11,8 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Verificar autenticação usando auth() que funciona com o middleware
-    const { userId } = await auth();
-    if (!userId) {
-      console.error("[PDF Route] Usuário não autenticado");
-      return new NextResponse("Não autorizado - usuário não autenticado", {
-        status: 401,
-      });
-    }
-
-    console.log("[PDF Route] Usuário autenticado:", userId);
-
-    // Buscar dados do usuário do Clerk
-    const clerkUser = await currentUser();
-    if (!clerkUser) {
-      console.error("[PDF Route] Dados do usuário não encontrados no Clerk");
-      return new NextResponse("Usuário não encontrado", { status: 404 });
-    }
-
-    // Buscar certificado
-    const certificate = await prisma.certificate.findUnique({
-      where: { id },
-    });
+    // Buscar certificado (rota pública, sem autenticação)
+    const certificate = await getCertificateById({ id });
 
     if (!certificate) {
       console.error("[PDF Route] Certificado não encontrado:", id);
@@ -43,36 +22,35 @@ export async function GET(
     console.log("[PDF Route] Certificado encontrado:", {
       certificateId: certificate.id,
       certificateUserId: certificate.userId,
-      currentClerkUserId: userId,
     });
 
-    // Buscar usuário no banco de dados usando o Clerk ID
-    const user = await getUserByClerkId(userId);
+    // Buscar usuário pelo ID do banco de dados (sem autenticação)
+    if (!certificate.userId) {
+      console.error("[PDF Route] Certificado inválido - sem userId");
+      return new NextResponse("Certificado inválido", { status: 400 });
+    }
+
+    const user = await getUserById(certificate.userId);
     if (!user) {
       console.error("[PDF Route] Usuário não encontrado no banco de dados");
-      return new NextResponse("Usuário não encontrado no sistema", {
-        status: 404,
-      });
+      return new NextResponse("Usuário não encontrado", { status: 404 });
     }
 
-    console.log("[PDF Route] Usuário do banco encontrado:", {
+    console.log("[PDF Route] Usuário encontrado:", {
       userDbId: user.id,
-      certificateUserId: certificate.userId,
     });
 
-    // Verificar se o certificado pertence ao usuário (comparar IDs do banco)
-    if (certificate.userId !== user.id) {
-      console.error("[PDF Route] Certificado não pertence ao usuário:", {
-        certificateUserId: certificate.userId,
-        userDbId: user.id,
-      });
-      return new NextResponse(
-        "Não autorizado - certificado não pertence ao usuário",
-        { status: 403 }
-      );
-    }
+    // Criar objeto compatível com o formato esperado pelo generateCertificatePuppeteer
+    const clerkUserLike = {
+      id: user.clerkId,
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      emailAddresses: [{ emailAddress: user.email }],
+      imageUrl: user.profileImage || "",
+      primaryEmailAddressId: user.email,
+    } as any;
 
-    console.log("[PDF Route] Autorização confirmada, gerando PDF...");
+    console.log("[PDF Route] Gerando PDF...");
 
     // Buscar curso
     const course = await getCourseById({ id: certificate.courseCmsId });
@@ -94,7 +72,7 @@ export async function GET(
       // Adicionar timeout de 60 segundos (Puppeteer pode demorar mais)
       const generatePromise = generateCertificatePuppeteer({
         course,
-        user: clerkUser,
+        user: clerkUserLike,
         certificate,
         signatureUrl,
         logoUrl,
