@@ -1,4 +1,5 @@
 import HeaderWithLives from "@/components/HeaderWithLives";
+import Footer from "@/components/Footer";
 import { ReactNode } from "react";
 
 const layout = ({ children }: { children: ReactNode }) => {
@@ -6,6 +7,7 @@ const layout = ({ children }: { children: ReactNode }) => {
     <>
       <HeaderWithLives />
       {children}
+      <Footer />
     </>
   );
 };
