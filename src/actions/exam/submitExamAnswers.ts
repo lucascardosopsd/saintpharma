@@ -51,10 +51,13 @@ export const submitExamAnswers = async ({
       // Encontrar a pergunta correspondente
       const question = quiz.questions.find(
         (q: any) =>
-          q._id === userAnswer.questionId || q.title === userAnswer.questionId
+          q._id === userAnswer.questionId || 
+          q.title === userAnswer.questionId ||
+          `question_${quiz.questions.indexOf(q)}` === userAnswer.questionId
       );
 
       if (!question) {
+        console.error('Pergunta não encontrada:', userAnswer.questionId);
         continue;
       }
 
@@ -62,7 +65,20 @@ export const submitExamAnswers = async ({
       const correctAnswer = question.answers?.find(
         (answer: any) => answer.isCorrect
       );
-      const isCorrect = correctAnswer?.answer === userAnswer.selectedAnswer;
+      
+      // Comparar respostas removendo espaços extras e normalizando
+      const normalizedCorrectAnswer = correctAnswer?.answer?.trim();
+      const normalizedUserAnswer = userAnswer.selectedAnswer?.trim();
+      const isCorrect = normalizedCorrectAnswer === normalizedUserAnswer;
+
+      // Log para debug
+      console.log('Validando resposta:', {
+        questionId: userAnswer.questionId,
+        questionTitle: question.title,
+        userAnswer: normalizedUserAnswer,
+        correctAnswer: normalizedCorrectAnswer,
+        isCorrect
+      });
 
       if (isCorrect) {
         correctAnswers++;

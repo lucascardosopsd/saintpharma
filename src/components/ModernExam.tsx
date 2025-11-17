@@ -326,21 +326,28 @@ const ModernExam = ({
               <p className="text-muted-foreground">{currentQ.question}</p>
 
               <div className="space-y-2">
-                {currentQ.answers.map((answer, index) => (
-                  <Button
-                    key={index}
-                    variant="default"
-                    className="w-full justify-start h-auto p-4 text-left"
-                    onClick={() =>
-                      handleAnswerSelect(currentQ.id, answer.answer)
-                    }
-                  >
-                    <span className="font-medium mr-2">
-                      {String.fromCharCode(65 + index)}.
-                    </span>
-                    {answer.answer}
-                  </Button>
-                ))}
+                {currentQ.answers.map((answer, index) => {
+                  const isSelected = answers[currentQ.id] === answer.answer;
+                  return (
+                    <Button
+                      key={index}
+                      variant={isSelected ? "default" : "outline"}
+                      className={`w-full justify-start h-auto p-4 text-left ${
+                        isSelected
+                          ? "bg-primary text-primary-foreground"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        handleAnswerSelect(currentQ.id, answer.answer)
+                      }
+                    >
+                      <span className="font-medium mr-2">
+                        {String.fromCharCode(65 + index)}.
+                      </span>
+                      {answer.answer}
+                    </Button>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>

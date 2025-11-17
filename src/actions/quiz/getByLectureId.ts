@@ -12,6 +12,7 @@ export const getQuizByLectureId = async ({
         _id,
         title,
         questions[] -> {
+            _id,
             title,
             cover{
               asset -> {

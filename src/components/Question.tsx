@@ -1,5 +1,6 @@
 import { QuestionProps } from "@/types/quiz";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
 
@@ -19,6 +20,18 @@ const QuestionForm = ({
   steps,
 }: questionForm) => {
   const coverUrl = question.cover?.asset.url;
+  const [selectedValue, setSelectedValue] = useState<string | undefined>(
+    initialValue
+  );
+
+  useEffect(() => {
+    setSelectedValue(initialValue);
+  }, [initialValue]);
+
+  const handleValueChange = (value: string) => {
+    setSelectedValue(value);
+    onAnswer(value);
+  };
 
   return (
     <>
@@ -39,21 +52,28 @@ const QuestionForm = ({
         <p>{question.question}</p>
         <div className="flex flex-col gap-5">
           <RadioGroup
-            onValueChange={(value) => onAnswer(value)}
-            defaultValue={initialValue}
+            onValueChange={handleValueChange}
+            value={selectedValue}
           >
-            {question.answers.map((answer, index) => (
-              <Label
-                key={index}
-                htmlFor={String(index)}
-                className="p-5 border border-primary rounded transition-colors cursor-pointer"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={String(index)} id={String(index)} />
-                  <p>{answer.answer}</p>
-                </div>
-              </Label>
-            ))}
+            {question.answers.map((answer, index) => {
+              const isSelected = selectedValue === String(index);
+              return (
+                <Label
+                  key={index}
+                  htmlFor={String(index)}
+                  className={`p-5 border rounded transition-colors cursor-pointer ${
+                    isSelected
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-primary"
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value={String(index)} id={String(index)} />
+                    <p>{answer.answer}</p>
+                  </div>
+                </Label>
+              );
+            })}
           </RadioGroup>
         </div>
       </div>

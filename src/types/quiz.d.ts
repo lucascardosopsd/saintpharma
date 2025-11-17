@@ -4,6 +4,7 @@ export type AnswerProps = {
 };
 
 export type QuestionProps = {
+  _id?: string;
   title: string;
   question: string;
   cover?: {
