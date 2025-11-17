@@ -16,7 +16,10 @@ export default function SSOCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        await handleRedirectCallback();
+        await handleRedirectCallback({}, async (to: string) => {
+          // Callback success - redirect to target URL
+          return Promise.resolve();
+        });
         
         // Aguardar 10 segundos para o registro ser salvo no banco
         toast.success("Login realizado! Preparando seu perfil...");
