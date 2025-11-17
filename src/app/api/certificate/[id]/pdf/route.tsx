@@ -4,6 +4,8 @@ import { getCourseById } from "@/actions/courses/getId";
 import { getUserById } from "@/actions/user/getUserByClerk";
 import { generateCertificatePuppeteer } from "@/lib/generateCertificatePuppeteer";
 
+export const maxDuration = 60; // ou 300 para Enterprise
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
