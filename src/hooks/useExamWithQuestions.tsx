@@ -31,7 +31,7 @@ export const useExamWithQuestions = ({
     setError(null);
 
     try {
-      const examData = await getExamWithQuestions(examId, userId);
+      const examData = await getExamWithQuestions({ examId, userId });
       setExam(examData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");

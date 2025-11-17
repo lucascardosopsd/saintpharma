@@ -40,7 +40,12 @@ export const useExamAttempts = ({
     setError(null);
 
     try {
-      const data = await getExamAttempts(examId, userId, pageNum, limit);
+      const data = await getExamAttempts({ 
+        examId, 
+        userId, 
+        page: pageNum, 
+        limit 
+      });
 
       if (append) {
         setAttempts(prev => [...prev, ...data.attempts]);

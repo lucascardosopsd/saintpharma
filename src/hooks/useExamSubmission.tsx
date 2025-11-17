@@ -37,7 +37,12 @@ export const useExamSubmission = ({
     setError(null);
 
     try {
-      const result = await submitExamAnswers(examId, userId, answers, timeSpent);
+      const result = await submitExamAnswers({
+        examId,
+        userId,
+        answers,
+        timeSpent,
+      });
       return result;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
