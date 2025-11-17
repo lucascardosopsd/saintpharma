@@ -63,7 +63,7 @@ const Header = ({
   };
 
   return (
-    <div>
+    <div className="border-b border-border">
       <div className="container flex items-center justify-between py-2 px-5 h-[8svh]">
         {isCurrentlyOnLessonPage ? (
           <div className="flex items-center gap-2">
@@ -84,8 +84,8 @@ const Header = ({
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="default" className="group hover:[&_p]:text-primary-foreground">
-                    <p className="text-red-500 group-hover:text-primary-foreground transition-colors">{remainingLives}</p>
-                    <Heart className="fill-red-500 stroke-red-500 group-hover:fill-primary-foreground group-hover:stroke-primary-foreground transition-colors" />
+                    <p className="text-red-700 dark:text-red-500 group-hover:text-primary-foreground transition-colors">{remainingLives}</p>
+                    <Heart className="fill-red-700 stroke-red-700 dark:fill-red-500 dark:stroke-red-500 group-hover:fill-primary-foreground group-hover:stroke-primary-foreground transition-colors" />
                   </Button>
                 </DialogTrigger>
 
@@ -93,7 +93,7 @@ const Header = ({
                   <div>
                     <div className="flex gap-2 justify-center">
                       <p className="text-center">Vidas</p>
-                      <Heart className="fill-red-500 stroke-red-500" />
+                      <Heart className="fill-red-700 stroke-red-700 dark:fill-red-500 dark:stroke-red-500" />
                     </div>
                     <p className="text-center">
                       Esse é o total de vidas que ainda restam para tentar
@@ -106,7 +106,7 @@ const Header = ({
                 </DialogContent>
               </Dialog>
             ) : (
-              <CircleDashed className="animate-spin text-red-500" />
+              <CircleDashed className="animate-spin text-red-700 dark:text-red-500" />
             )}
           </SignedIn>
 
