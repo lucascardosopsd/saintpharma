@@ -1,4 +1,6 @@
 import puppeteer from "puppeteer";
+import puppeteerCore from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import { CourseProps } from "@/types/course";
 import { Certificate as CertificateType } from "@prisma/client";
 import { User } from "@clerk/nextjs/server";
@@ -260,10 +262,21 @@ export async function generateCertificatePuppeteer(
   `;
 
   // Iniciar Puppeteer
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
+  // Em produção (Vercel), usar puppeteer-core com @sparticuz/chromium
+  // Em desenvolvimento, usar puppeteer normal
+  const isProduction = process.env.NODE_ENV === "production";
+  
+  const browser = isProduction
+    ? await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      })
+    : await puppeteer.launch({
+        headless: true,
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
 
   try {
     const page = await browser.newPage();
