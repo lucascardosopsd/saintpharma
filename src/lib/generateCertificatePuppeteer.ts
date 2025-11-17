@@ -272,7 +272,6 @@ export async function generateCertificatePuppeteer(
         defaultViewport: null,
         executablePath: await chromium.executablePath(),
         headless: true,
-        ignoreHTTPSErrors: true,
       })
     : await puppeteer.launch({
         headless: true,
