@@ -332,7 +332,7 @@ const ModernExam = ({
                     <Button
                       key={index}
                       variant={isSelected ? "default" : "outline"}
-                      className={`w-full justify-start h-auto p-4 text-left ${
+                      className={`w-full justify-start h-auto p-4 text-left whitespace-normal break-words ${
                         isSelected
                           ? "bg-primary text-primary-foreground"
                           : ""
@@ -341,10 +341,10 @@ const ModernExam = ({
                         handleAnswerSelect(currentQ.id, answer.answer)
                       }
                     >
-                      <span className="font-medium mr-2">
+                      <span className="font-medium mr-2 flex-shrink-0">
                         {String.fromCharCode(65 + index)}.
                       </span>
-                      {answer.answer}
+                      <span className="break-words">{answer.answer}</span>
                     </Button>
                   );
                 })}

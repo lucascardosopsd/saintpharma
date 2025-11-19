@@ -67,9 +67,9 @@ const QuestionForm = ({
                       : "border-primary"
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value={String(index)} id={String(index)} />
-                    <p>{answer.answer}</p>
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value={String(index)} id={String(index)} className="mt-1 flex-shrink-0" />
+                    <p className="break-words whitespace-normal">{answer.answer}</p>
                   </div>
                 </Label>
               );

@@ -174,14 +174,14 @@ const ExamAttemptDetails = ({
                             <div className="space-y-2">
                               <div>
                                 <span className="text-sm font-medium">Sua resposta: </span>
-                                <span className={`text-sm ${isCorrect ? "text-green-600" : "text-red-600"}`}>
+                                <span className={`text-sm break-words whitespace-normal ${isCorrect ? "text-green-600" : "text-red-600"}`}>
                                   {userAnswer?.selectedAnswer || "Não respondida"}
                                 </span>
                               </div>
                               {!isCorrect && correctAnswer && (
                                 <div>
                                   <span className="text-sm font-medium">Resposta correta: </span>
-                                  <span className="text-sm text-green-600">
+                                  <span className="text-sm text-green-600 break-words whitespace-normal">
                                     {correctAnswer.answer}
                                   </span>
                                 </div>
