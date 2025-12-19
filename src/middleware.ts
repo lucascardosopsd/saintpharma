@@ -10,6 +10,7 @@ const isPublicRoute = createRouteMatcher([
   "/studio(.*)",
   "/api(.*)",
   "/api/certificate(.*)/pdf(.*)",
+  "/delete-account",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
